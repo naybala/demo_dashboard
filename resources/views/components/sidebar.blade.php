@@ -70,7 +70,7 @@
     <aside class="z-20 w-64 overflow-y-hidden bg-gray-50 border-r dark:bg-gray-800 flex-shrink-0 asideShowHide"
         id="asideShowHide">
         <div class=" text-gray-500 dark:text-gray-400 ">
-            <img src="{{ asset('images/logo.png') }}" />
+            <img src="{{ asset('images/logo.jpg') }}" />
             <ul class="overflow-y-hidden hover:overflow-y-auto aside sidebar-scrollbar">
                 <li
                     class="flex flex-col justify-end items-center mx-2 menu-title pb-4 border-y border-gray-700/25 gap-2">

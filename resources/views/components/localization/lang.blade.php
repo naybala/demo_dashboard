@@ -42,11 +42,11 @@
     "icon": "<img class=\"w-6 h-4 rounded-xs\" src=\"https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg\" alt=\"English\" />"}'>
             English
         </option>
-        {{-- <option {{ session()->get('locale') == 'mm' ? 'selected' : '' }} value="mm"
+        <option {{ session()->get('locale') == 'mm' ? 'selected' : '' }} value="mm"
             data-hs-select-option='{
     "icon": "<img class=\"size-6 rounded-md\" src=\"https://upload.wikimedia.org/wikipedia/commons/8/8c/Flag_of_Myanmar.svg\" alt=\"Myanmar\" />"}'>
             Myanmar
-        </option> --}}
+        </option> 
         <option {{ session()->get('locale') == 'km' ? 'selected' : '' }} value="km"
             data-hs-select-option='{
     "icon": "<img class=\"w-6 h-4 rounded-xs\" src=\"https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_Cambodia.svg\" alt=\"Cambodia\" />"}'>
