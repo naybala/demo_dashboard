@@ -19,15 +19,6 @@ return [
     'placeholder_education_status'              => 'Please enter education status',
     'placeholder_name'                          => 'Please enter name',
 
-    // Country
-    'placeholder_zip_code'                      => "Please enter zip code",
-    'placeholder_country_code'                  => "Please enter country code",
-    'placeholder_currency_code'                 => "Please enter currency code",
-    'placeholder_currency_rate'                 => "Please enter currency rate",
-    'placeholder_country_name'                  => "Please enter Country name",
-    'placeholder_measure'                       => "Please enter Area Measurement",
-    'placeholder_measure_unit'                  => "Unit for Area Measurement",
-
     //Category
     'placeholder_category_name'                 => "Please enter Category Name",
     'placeholder_category_name_other'           => "Please enter Category Name in English Language",
