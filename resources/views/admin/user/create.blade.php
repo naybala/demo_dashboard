@@ -6,13 +6,15 @@
             <x-file.simple-img-upload title="user.avatar" name="avatar" id="avatar" photoId="avatar-pic" />
             <br>
             {{-- Profile Photo --}}
+             <h5>Hello</h5>
+                <x-table.filter :viewData="$viewRoles" key="role_marked" wrapperClass="w-1/2" />
             <x-form.grid>
                 {{-- fullname --}}
                 <x-form.input-group title='user.fullname' name='fullname' id='fullname' :required="true" />
                 {{-- fullname --}}
 
                 {{-- user_type --}}
-                <x-form.enum-select title='user.user_type' name='user_type' id='user_type' enumClass='UserType'
+                <x-form.enum-select title='user.user_type' name='user_type' id='user_type' enumClass='Users\UserType'
                     :required="true" />
                 {{-- user_type --}}
 
@@ -32,22 +34,14 @@
                 {{-- Role Single Select --}}
                 <x-form.compose-single-select title="user.role" name="role_marked" id="role_marked" :required="true"
                     :dataArray="$viewRoles" :required="true" />
+               
+
+
                 {{-- Role Single Select --}}
 
                 {{-- status --}}
-                <x-form.enum-select title='user.status' name='status' id='status' enumClass='Status' :required="true" />
+                <x-form.enum-select title='user.status' name='status' id='status' enumClass='Common\Status' :required="true" />
                 {{-- status --}}
-                <!-- User Group -->
-                @if ($userHasGroup)
-                <input type="hidden" name="group_id" value="{{ $userHasGroup }}" />
-                @else
-                <x-form.simple-select title="user.group" name="group_id" id="group_id">
-                    @foreach ($viewGroups as $key => $value)
-                    <option @selected($key==$userHasGroup) value="{{ $key }}">{{ $value }}</option>
-                    @endforeach
-                </x-form.simple-select>
-                @endif
-                <!-- User Group -->
 
             </x-form.grid>
             {{-- Save And Cancel --}}

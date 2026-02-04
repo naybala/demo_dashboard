@@ -1,4 +1,4 @@
-$document.ready(function () {
+$(document).ready(function () {
   const validate = document.getElementById("toast-success");
   if (validate) {
     setTimeout(() => {

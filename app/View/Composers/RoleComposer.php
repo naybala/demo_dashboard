@@ -14,13 +14,7 @@ class RoleComposer
     }
 
     public function compose(View $view)
-    {
-        $authUserId   = Auth::id();
-        $userHasGroup = GroupUser::where('user_id', $authUserId)->value('group_id');
-        if ($userHasGroup) {
-            $view->with('viewRoles', DB::table('roles')->where('name', 'like', '%Partner Bank%')->pluck('name', 'id'));
-        } else {
-            $view->with('viewRoles', DB::table('roles')->pluck('name', 'id'));
-        }
+    {      
+        $view->with('viewRoles', DB::table('roles')->pluck('name', 'id'));
     }
 }
