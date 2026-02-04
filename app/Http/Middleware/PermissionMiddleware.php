@@ -33,7 +33,7 @@ class PermissionMiddleware
         if ($request->route()->uri == "/") {
             return $next($request);
         }
-        if ($request->route()->uri == "mappriceRegions/{id}/packages/edit") {
+        if ($request->route()->uri == "profile") {
             return $next($request);
         }
 

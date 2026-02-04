@@ -2,7 +2,7 @@
 <td class="px-3 py-0.5 me-2">
     <style>
         .my-svg {
-            fill: rgb(95, 85, 85);
+            fill: #c9c1c1;
             /* Change to desired color */
         }
     </style>

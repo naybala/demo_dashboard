@@ -33,7 +33,7 @@
                                 class="align-middle rounded-full focus:shadow-outline-purple focus:outline-none"
                                 aria-label="Account" aria-haspopup="true" id="click">
                                 <img class="object-cover w-8 h-8 rounded-full"
-                                    src="{{ Storage::url(auth()->user()->avatar ?? "upload/profile.png") }}"
+                                    src="{{ auth()->user()->avatar ? auth()->user()->avatar : asset('images/default_profile_pic.jpg') }}"
                                     alt="" aria-hidden="true" style="border: 1px solid #bababa;" />
                             </button>
                         </div>
@@ -47,7 +47,7 @@
                         aria-labelledby="dropdownDefaultButton">
                         <li class="flex flex-col items-center ">
                             <img class="object-cover w-16 h-16 rounded-full"
-                                src="{{ Storage::url(auth()->user()->avatar ?? "upload/profile.png") }}"
+                                src="{{ auth()->user()->avatar ? auth()->user()->avatar : asset('images/default_profile_pic.jpg') }}"
                                 alt="" aria-hidden="true" style="border: 1px solid #bababa;" />
 
                             <strong class="text-black text-lg py-2" id="operatorName">

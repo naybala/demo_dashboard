@@ -9,7 +9,7 @@
     'disabled' => false
     ])
 <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}" value="{!! old($name) ? old($name) : $value !!}" @if($disabled) disabled @endif
-    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm dark:bg-gray-100 dark:text-gray-900 tracking-wider rounded-lg block w-full px-2.5 py-2 {{ $class }}"
+    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm dark:bg-gray-700 dark:text-gray-200 tracking-wider rounded-lg block w-full px-2.5 py-2 {{ $class }}"
     placeholder="{{ $placeholder ? __('placeholder.placeholder_' . $placeholder) : __('placeholder.placeholder_' . $name) }}" {!! implode(
         ' ',
         array_map(
@@ -19,4 +19,8 @@
             $customAttributes,
             array_keys($customAttributes),
         ),
-    ) !!} />
+    ) 
+    />
+
+
+    

@@ -11,12 +11,9 @@ return [
     'placeholder_new_password'                  => "Please enter strong new password",
     'placeholder_phone_number'                  => "Please enter Phone Number",
     'placeholder_id_number'                     => "Please enter NRC number or Passport number",
-    'placeholder_father_name'                   => "Please enter father name",
-    'placeholder_father_name_other'             => "Please enter father name in English Language",
     'placeholder_occupation'                    => "Please enter occupation",
     'placeholder_Active'                        => 'Active',
     'placeholder_Inactive'                      => 'Inactive',
-    'placeholder_education_status'              => 'Please enter education status',
     'placeholder_name'                          => 'Please enter name',
 
     // Country

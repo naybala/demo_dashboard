@@ -47,11 +47,11 @@
     "icon": "<img class=\"size-6 rounded-md\" src=\"https://upload.wikimedia.org/wikipedia/commons/8/8c/Flag_of_Myanmar.svg\" alt=\"Myanmar\" />"}'>
             Myanmar
         </option> 
-        <option {{ session()->get('locale') == 'km' ? 'selected' : '' }} value="km"
+        <!-- <option {{ session()->get('locale') == 'km' ? 'selected' : '' }} value="km"
             data-hs-select-option='{
     "icon": "<img class=\"w-6 h-4 rounded-xs\" src=\"https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_Cambodia.svg\" alt=\"Cambodia\" />"}'>
             Cambodia
-        </option>
+        </option> -->
     </select>
     <!-- End Select -->
 </div>
