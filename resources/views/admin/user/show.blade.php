@@ -28,21 +28,9 @@
             <x-show.text-group title='user.role_marked' :data="$data['role_marked']" />
             {{-- role_marked --}}
 
-            {{-- group_marked --}}
-            <x-show.text-group title='user.group_marked' :data="$data['group']" />
-            {{-- group_marked --}}
-
-            {{-- province_ids --}}
-            <x-show.text-group title='user.province_ids' :data="$data['provinces']" />
-            {{-- province_ids --}}
-
             {{-- status --}}
             <x-show.text-group title="user.status" :data="$data['status_text']" />
             {{-- status --}}
-
-            {{-- remember_token --}}
-            {{-- <x-show.text-group title='user.remember_token' :data="$data['remember_token']" /> --}}
-            {{-- remember_token --}}
 
         </x-form.grid>
     </x-form.layout>

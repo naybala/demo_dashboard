@@ -1,7 +1,7 @@
 @props(['width' => '', 'height' => '', 'src' => '', 'rounded' => null ])
 <div class="gap-4">
     <x-form.label title="user.avartar_photo" />
-    <img class="{{ $width }} {{ $height }} {{ $rounded }} cursor-pointer" src="{{ $src }}"
+    <img class="{{ $width }} {{ $height }} {{ $rounded }} cursor-pointer" src="{{ $src == "" || null ? asset('images/default_profile_pic.jpg') : $src }}"
         alt="" id="avartar-photo" onclick="viewImage()">
     <div class="div" id="popup">
         <img src="" alt="" id="selected-image" />

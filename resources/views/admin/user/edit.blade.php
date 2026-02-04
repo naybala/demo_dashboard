@@ -19,12 +19,8 @@
                 {{-- fullname --}}
 
                 {{-- user_type --}}
-                @if ($data['userHasGroup'])
-                <input type="hidden" name="user_type" value="{{ $newData['user_type'] }}" />
-                @else
-                <x-form.enum-select title='user.user_type' name='user_type' id='user_type' enumClass='UserType'
+                <x-form.enum-select title='user.user_type' name='user_type' id='user_type' enumClass='Users\UserType'
                     :selectedValue="$newData['user_type']" />
-                @endif
                 {{-- user_type --}}
 
                 {{-- email --}}
@@ -43,30 +39,13 @@
                 {{-- phone_number --}}
 
                 {{-- Role Single Select --}}
-
-                @if ($data['userHasGroup'])
-                <input type="hidden" name="role_marked" value="{{ $newData['role_marked'] }}" />
-                @else
-                <x-form.compose-single-select title="user.role" name="role_marked" id="role_marked"
-                    :selectedValue="$newData['role_marked']" :required="true" :dataArray="$viewRoles"
-                    :required="true" />
-                @endif
+                 <x-form.searchable-select title="user.role" name="role_marked" id="role_marked" :required="true" :selectedValue="$newData['role_marked']"
+                    :viewData="$viewRoles" />    
 
                 {{-- status --}}
-                <x-form.enum-select title="user.status" name="status" id="status" enumClass="Status" required="true"
+                <x-form.enum-select title="user.status" name="status" id="status" enumClass="Common\Status" required="true"
                     :selectedValue="$newData['status']" />
                 {{-- status --}}
-
-
-                @if ($data['userHasGroup'])
-                <input type="hidden" name="group_id" value="{{ $data['userHasGroup'] }}" />
-                @else
-                <x-form.simple-select title="user.group" name="group_id" id="group_id">
-                    @foreach ($viewGroups as $key => $value)
-                    <option @selected($key==$newData['group_id']) value="{{ $key }}">{{ $value }}</option>
-                    @endforeach
-                </x-form.simple-select>
-                @endif
 
             </x-form.grid>
             {{-- Save And Cancel --}}

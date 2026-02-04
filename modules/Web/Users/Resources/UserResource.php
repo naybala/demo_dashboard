@@ -10,7 +10,7 @@ class UserResource extends JsonResource
     public function toArray($request): array
     {
 
-        $avatarPhoto = $this->avatar ?: "/Default/default_profile_photo.jpg";
+        // $avatarPhoto = $this->avatar ?: "/Default/default_profile_photo.jpg";
         return [
             "id"              => customEncoder($this->id),
             'fullname'        => $this->fullname,
@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'phone_number'    => $this->phone_number,
             "email"           => $this->email,
             'password'        => $this->password,
-            "avatar"          => Storage::url($avatarPhoto),
+            "avatar"          => $this->avatar,
             "status"          => $this->status,
             "status_text"     => $this->status->label(),
             'role_marked'     => $this->roles->value('name'),

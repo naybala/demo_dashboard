@@ -6,8 +6,6 @@
             <x-file.simple-img-upload title="user.avatar" name="avatar" id="avatar" photoId="avatar-pic" />
             <br>
             {{-- Profile Photo --}}
-             <h5>Hello</h5>
-                <x-table.filter :viewData="$viewRoles" key="role_marked" wrapperClass="w-1/2" />
             <x-form.grid>
                 {{-- fullname --}}
                 <x-form.input-group title='user.fullname' name='fullname' id='fullname' :required="true" />
@@ -31,14 +29,16 @@
                 <x-form.input-group title='user.phone_number' name='phone_number' id='phone_number' />
                 {{-- phone_number --}}
 
-                {{-- Role Single Select --}}
-                <x-form.compose-single-select title="user.role" name="role_marked" id="role_marked" :required="true"
-                    :dataArray="$viewRoles" :required="true" />
                
+                {{-- Role Multi Select --}}
+                <x-form.searchable-multi-select title="user.role" name="hello" id="hello" :required="true"
+                    :viewData="$viewRoles" />
 
 
                 {{-- Role Single Select --}}
-
+                <x-form.searchable-select title="user.role" name="role_marked" id="role_marked" :required="true"
+                    :viewData="$viewRoles" />
+            
                 {{-- status --}}
                 <x-form.enum-select title='user.status' name='status' id='status' enumClass='Common\Status' :required="true" />
                 {{-- status --}}
@@ -54,3 +54,7 @@
     'resources/js/common/maxFileSize.js',
     ])
 </x-master-layout>
+
+
+
+              

@@ -5,22 +5,15 @@ namespace BasicDashboard\Web\Users\Services;
 use Exception;
 use Illuminate\View\View;
 use Illuminate\Support\Arr;
-use function Termwind\renderUsing;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
-use Illuminate\Support\Facades\Response;
 use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Foundations\Domain\Users\User;
-use BasicDashboard\Foundations\Domain\Groups\Group;
 use BasicDashboard\Web\Users\Resources\UserResource;
 use BasicDashboard\Web\Users\Resources\UserEditResource;
-use BasicDashboard\Foundations\Domain\GroupUsers\GroupUser;
-use BasicDashboard\Web\Users\Resources\CurrentUserResource;
 use BasicDashboard\Foundations\Domain\Roles\Repositories\RoleRepositoryInterface;
 use BasicDashboard\Foundations\Domain\Users\Repositories\UserRepositoryInterface;
-use BasicDashboard\Foundations\Domain\GroupUsers\Repositories\GroupUserRepositoryInterface;
 
 // use Illuminate\Support\Facades\Response;
 
@@ -128,6 +121,16 @@ class UserService extends BaseController
         }
     }
 
+    public function profile()
+    {
+        $id   = customEncoder(Auth::id());
+        $user = $this->userRepositoryInterface->show($id);
+        $user = new UserResource($user);
+        $user = $user->response()->getData(true)['data'];
+        return $this->returnView(self::VIEW . '.profile', $user);
+    }
+
+    //Private Section
 
     private function getRoleName(string $roleId)
     {
@@ -156,14 +159,6 @@ class UserService extends BaseController
         return $data;
     }
 
-    public function profile()
-    {
-        $id   = customEncoder(Auth::id());
-        $user = $this->userRepositoryInterface->show($id);
-        $user = new UserResource($user);
-        $user = $user->response()->getData(true)['data'];
 
-        return $this->returnView(self::VIEW . '.profile', $user);
-    }
 
 }
