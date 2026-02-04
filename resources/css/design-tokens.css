@@ -1,0 +1,70 @@
+:root {
+    /* Primary Colors (Blue Theme) */
+    --color-theme: #1146f5;
+    --color-secondary: #184bd6;
+
+    /* Form Components (Inputs, Selects, Textareas) */
+    --form-input-bg: #f9fafb;
+    /* bg-gray-50 */
+    --form-input-border: #d1d5db;
+    /* border-gray-300 */
+    --form-input-text: #1f2937;
+    /* text-gray-800 */
+    --form-input-placeholder: #9ca3af;
+    /* text-gray-400 */
+
+    /* Dropdown Styles */
+    --dropdown-bg: #ffffff;
+    /* white */
+    --dropdown-border: #e5e7eb;
+    /* border-gray-200 */
+    --dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    /* Option Styles */
+    --option-bg: #ffffff;
+    --option-hover-bg: #f3f4f6;
+    /* bg-gray-100 */
+    --option-text: #374151;
+    /* text-gray-700 */
+    --option-selected-bg: #eff6ff;
+    /* light blue */
+    --option-selected-text: var(--color-theme);
+
+    /* Tag Styles (for Multi-Select) */
+    --tag-bg: #eff6ff;
+    /* light blue */
+    --tag-border: #bfdbfe;
+    /* blue-200 */
+    --tag-text: var(--color-theme);
+}
+
+.dark {
+    /* Form Components (Inputs, Selects, Textareas) */
+    --form-input-bg: #374151;
+    /* bg-gray-700 */
+    --form-input-border: #4b5563;
+    /* border-gray-600 */
+    --form-input-text: #f3f4f6;
+    /* text-gray-100 */
+
+    /* Dropdown Styles */
+    --dropdown-bg: #1f2937;
+    /* bg-gray-800 */
+    --dropdown-border: #374151;
+    /* bg-gray-700 */
+
+    /* Option Styles */
+    --option-bg: #1f2937;
+    --option-hover-bg: #374151;
+    /* bg-gray-700 */
+    --option-text: #d1d5db;
+    /* text-gray-300 */
+    --option-selected-bg: rgba(17, 70, 245, 0.1);
+    --option-selected-text: #60a5fa;
+    /* light blue */
+
+    /* Tag Styles (for Multi-Select) */
+    --tag-bg: rgba(17, 70, 245, 0.2);
+    --tag-border: rgba(17, 70, 245, 0.3);
+    --tag-text: #60a5fa;
+}

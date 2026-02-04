@@ -1,18 +1,19 @@
 @props(['title', 'name','id', 'enumClass', 'selectedValue' => null,'required'=>false,'hasSearch'=>false])
 @php
-    $enumClass = "\App\Enums\\" . $enumClass;
-    $enumCases = $enumClass::cases();
-    $selectedValue ??= old($name)
+    $enumNamespace = "\App\Enums\\" . $enumClass;
+    $enumCases = $enumNamespace::cases();
+    $viewData = [];
+    foreach ($enumCases as $status) {
+        $viewData[$status->value] = $status->label();
+    }
 @endphp
 
-<x-form.single-select title="{{ $title }}" :id="$id" name="{{ $name }}" :required="$required" :hasSearch="$hasSearch">
-    @foreach ($enumCases as $status)
-        <option value="{{ $status->value }}" 
-            @if ($selectedValue == (string) $status->value) selected @endif>
-            {{ str_replace('_', ' ', $status->label()) }}
-        </option>
-    @endforeach
-    <x-slot name="ajaxError">
-        <p id="{{$name}}-error" class="text-red-500 text-xs italic ajax-error-shower"></p>
-    </x-slot>   
-</x-form.single-select>
+<x-form.single-select 
+    :title="$title" 
+    :id="$id" 
+    :name="$name" 
+    :required="$required" 
+    :hasSearch="$hasSearch" 
+    :viewData="$viewData" 
+    :selectedValue="$selectedValue" 
+/>

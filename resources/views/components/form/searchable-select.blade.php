@@ -59,11 +59,11 @@
         <!-- Selected Value Display -->
         <button type="button" 
             @click="toggle()"
-            class="w-full relative py-1.5 ps-4 pe-9 flex gap-x-2 text-nowrap cursor-pointer bg-gray-50 border border-gray-200 rounded-lg text-start text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+            class="hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-[var(--form-input-bg)] border border-[var(--form-input-border)] rounded-lg text-start text-sm focus:outline-none focus:ring-1 focus:ring-[var(--color-theme)] focus:border-[var(--color-theme)] text-[var(--form-input-text)] tracking-wider"
             aria-haspopup="listbox" 
             :aria-expanded="isOpen">
             
-            <span x-text="selectedLabel || @js($placeholder)" :class="!selectedLabel && 'text-gray-400'"></span>
+            <span x-text="selectedLabel || @js($placeholder)" :class="!selectedLabel && 'text-[var(--form-input-placeholder)]'"></span>
 
             <span class="absolute top-1/2 end-3 -translate-y-1/2">
                 <svg class="shrink-0 size-3.5 text-gray-600 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -78,25 +78,26 @@
             x-transition:enter="transition ease-out duration-100"
             x-transition:enter-start="opacity-0 scale-95"
             x-transition:enter-end="opacity-100 scale-100"
-            class="absolute z-50 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden">
+            class="absolute z-50 mt-2 max-h-72 w-full bg-[var(--dropdown-bg)] border border-[var(--dropdown-border)] shadow-[var(--dropdown-shadow)] rounded-lg overflow-hidden overflow-y-auto">
             
             <!-- Search Input -->
-            <div class="p-2 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-2 border-b border-[var(--dropdown-border)]">
                 <input type="text" 
                     x-model="search"
                     x-ref="searchInput"
                     placeholder="Search..."
-                    class="w-full px-3 py-1.5 text-sm border-0 focus:ring-0 dark:bg-gray-700 dark:text-white"
+                    class="py-1 px-4 w-full text-sm text-[var(--form-input-text)] cursor-pointer hover:bg-[var(--option-hover-bg)] rounded-lg bg-[var(--form-input-bg)] border border-[var(--form-input-border)] tracking-wider focus:outline-none focus:ring-1 focus:ring-[var(--color-theme)] focus:border-[var(--color-theme)]"
                     @keydown.escape="isOpen = false"
+                    @click.stop
                 >
             </div>
 
             <!-- Options List -->
-            <ul class="max-h-60 overflow-y-auto py-1">
+            <ul class="py-1">
                 <template x-for="(label, key) in filteredOptions" :key="key">
                     <li @click="selectOption(key, label)"
-                        class="px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300"
-                        :class="selectedValue == key ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''">
+                        class="py-2 px-4 w-full text-sm text-[var(--option-text)] cursor-pointer hover:bg-[var(--option-hover-bg)] bg-[var(--option-bg)] border-b last:border-0 border-[var(--dropdown-border)] tracking-wider"
+                        :class="selectedValue == key ? 'bg-[var(--option-selected-bg)] !text-[var(--option-selected-text)] font-medium' : ''">
                         <span x-text="label"></span>
                     </li>
                 </template>

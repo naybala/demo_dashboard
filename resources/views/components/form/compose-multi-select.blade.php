@@ -4,11 +4,12 @@
         $selectedValue = old($name) ?? [];
     }
 @endphp
-<x-form.multi-select :title="$title" :name="$name" :id="$id" :hasSearch="$hasSearch" :required="$required">
-    @foreach ($dataArray as $key=>$value)
-        <option value="{{ $key }}"
-            @if (in_array($key,$selectedValue)) selected @endif>
-            {{ $value }}
-        </option>
-    @endforeach
-</x-form.multi-select>
+<x-form.multi-select 
+    :title="$title" 
+    :name="$name" 
+    :id="$id" 
+    :hasSearch="$hasSearch" 
+    :required="$required" 
+    :viewData="$dataArray" 
+    :selectedValue="$selectedValue" 
+/>

@@ -9,7 +9,7 @@
     </label>
 
     <textarea name="{{ $name }}" id="{{ $name }}" rows="{{ $rows }}"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm dark:bg-gray-100 dark:text-gray-900 tracking-wider rounded-lg block w-full px-2.5 py-2"
+        class="bg-[var(--form-input-bg)] border border-[var(--form-input-border)] text-[var(--form-input-text)] placeholder-[var(--form-input-placeholder)] text-sm tracking-wider rounded-lg block w-full px-2.5 py-2 focus:ring-1 focus:ring-[var(--color-theme)] focus:border-[var(--color-theme)] focus:outline-none"
         placeholder="{{ $placeholder ? __('placeholder.placeholder_' . $placeholder) : __('placeholder.placeholder_' . $name) }}">{!! old($name) ? old($name) : $value !!}</textarea>
 
     @if ($helperText)

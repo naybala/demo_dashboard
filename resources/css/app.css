@@ -1,3 +1,4 @@
+@import "./design-tokens.css";
 @import "@fortawesome/fontawesome-free/css/all.css";
 @tailwind base;
 @tailwind components;
@@ -8,10 +9,12 @@
     background-color: #cccccc;
     cursor: not-allowed;
 }
+
 .my-svg {
     fill: rgb(95, 85, 85);
     /* Change to desired color */
 }
+
 .rotating-180 {
     animation: rotate 2s linear infinite;
 }
@@ -22,16 +25,16 @@
     }
 }
 
-.lightning-text{
-    animation: lightning 1s linear infinite ;
+.lightning-text {
+    animation: lightning 1s linear infinite;
 }
 
 @keyframes lightning {
     to {
-        opacity:0.4;
+        opacity: 0.4;
     }
 }
-  
+
 /* image preview setting */
 #popup {
     position: fixed;
@@ -63,26 +66,29 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-  }
-  
-  .ql-editor {
+}
+
+.ql-editor {
     height: 100%;
     flex: 1;
     overflow-y: auto;
     width: 100%;
-  }
-
-  .ql-container img{
-    border:1px solid #000;
-    max-width:500px;
-    max-height:500px;
 }
-.chevron-icon{
+
+.ql-container img {
+    border: 1px solid #000;
+    max-width: 500px;
+    max-height: 500px;
+}
+
+.chevron-icon {
     transition: all 0.5s;
 }
-.select-box-spinner{
+
+.select-box-spinner {
     animation: rotation 2s linear infinite;
 }
+
 .custom-loader {
     width: 20px;
     height: 20px;
@@ -92,13 +98,14 @@
     position: relative;
     box-sizing: border-box;
     animation: rotation 2s linear infinite;
-  }
-  
-  @keyframes rotation {
+}
+
+@keyframes rotation {
     0% {
-      transform: rotate(0deg);
+        transform: rotate(0deg);
     }
+
     100% {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  } 
+}
