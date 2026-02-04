@@ -10,15 +10,17 @@
     <title>{{ config('app.name') }}</title>
     <link rel="icon" href="{{ asset('images/logo.jpg') }}" />
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js'])
+    <!-- @if(app()->environment('production'))
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "945ee764-8511-41dc-a51a-c371b845b684",
-    });
-  });
-</script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "945ee764-8511-41dc-a51a-c371b845b684",
+        });
+      });
+    </script>
+    @endif -->
 </head>
 
 <body class="dark:bg-black">
