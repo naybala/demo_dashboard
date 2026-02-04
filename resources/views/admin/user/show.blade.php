@@ -1,13 +1,11 @@
 <x-master-layout name="User" headerName="{{ __('sidebar.user') }}">
     <x-form.layout>
         <x-show.go-to-edit model="users" :id="$data['id']" />
-        <x-form.grid>
-
             {{-- Profile Photo --}}
-            <x-show.profile-photo :src="$data['avatar']" width="w-20" height="h-20" :created_at="$data['created_at']" />
+            <x-show.profile-photo :src="$data['avatar']" width="w-42" height="h-42" :created_at="$data['created_at']" />
             <br>
             {{-- Profile Photo --}}
-
+        <x-form.grid>
             {{-- fullname --}}
             <x-show.text-group title='user.fullname' :data="$data['fullname']" />
             {{-- fullname --}}

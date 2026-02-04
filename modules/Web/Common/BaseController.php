@@ -20,46 +20,6 @@ use Illuminate\Support\Str;
 
 class BaseController extends Controller
 {
-    //Common View Used for Index and Edit
-    public function returnView($viewPath, $data)
-    {
-        return view($viewPath, [
-            'data' => $data,
-        ]);
-    }
-
-    ///////////////////////////This is Method Divider///////////////////////////////////////
-    //Common Redirect Used for Store,Update and Destroy
-    public function redirectRoute($routePath, $successMessage)
-    {
-        return to_route($routePath)->with([
-            'message'      => $successMessage,
-            'responseType' => 'success',
-        ]);
-    }
-
-    ///////////////////////////This is Method Divider///////////////////////////////////////
-    //Common Custom Error Exception For User
-    public function redirectBackWithError($repo, $e)
-    {
-        $repo->rollBack();
-        return redirect()->back()->with([
-            'message'      => $e->getMessage(),
-            'responseType' => 'error',
-        ]);
-    }
-
-    ///////////////////////////This is Method Divider///////////////////////////////////////
-
-    public function redirectBackWithCustomError($repo, $e)
-    {
-        $repo->rollBack();
-        return redirect()->back()->with([
-            'message'      => $e->messages(),
-            'responseType' => 'error',
-        ]);
-    }
-
     public function captureMemory(): int
     {
         return memory_get_usage();
@@ -94,45 +54,7 @@ class BaseController extends Controller
         Storage::disk('digitalocean')->delete($directory);
     }
 
-    public function generatePresignedUrl($filePath, $count = 1): array
-    {
-        $links = [];
-
-        for ($i = 0; $i < $count; $i++) {
-            $path = $filePath . '/' . Str::random(15);
-            $url  = Storage::temporaryUploadUrl(
-                $path,
-                now()->addMinutes(20)
-            );
-            $links[] = [
-                'url'  => $url,  // presigned URL
-                'path' => $path, // path to be stored in the database
-            ];
-        }
-
-        return $links;
-    }
-
-    public function sendAjaxError($message): JsonResponse
-    {
-        $response = [
-            'code'    => 500,
-            'status'  => "failed",
-            'message' => $message,
-        ];
-        return response()->json($response, 500);
-    }
-
-    public function sendAjaxSuccess($message, $data = []): JsonResponse
-    {
-        $response = [
-            'code'    => 200,
-            'status'  => "Success",
-            'message' => $message,
-            'data'    => $data,
-        ];
-        return response()->json($response, 200);
-    }
+    
 
     public function reorder(Request $request)
     {

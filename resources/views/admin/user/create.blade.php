@@ -29,12 +29,6 @@
                 <x-form.input-group title='user.phone_number' name='phone_number' id='phone_number' />
                 {{-- phone_number --}}
 
-               
-                {{-- Role Multi Select --}}
-                <x-form.searchable-multi-select title="user.role" name="hello" id="hello" :required="true"
-                    :viewData="$viewRoles" />
-
-
                 {{-- Role Single Select --}}
                 <x-form.searchable-select title="user.role" name="role_marked" id="role_marked" :required="true"
                     :viewData="$viewRoles" />

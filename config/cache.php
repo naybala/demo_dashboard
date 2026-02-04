@@ -106,5 +106,8 @@ return [
     */
 
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
+    'file_system_disk' => env('FILESYSTEM_DISK', 'local'),
+    'default_profile_photo_cloud'=>env( 'DEFAULT_PROFILE_PHOTO_CLOUD','/Default/default_profile_photo.jpg'),
+    'default_profile_photo_local' => env('DEFAULT_PROFILE_PHOTO_LOCAL', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjkl6xIWgTZVvhmTBqgjhZgalgQdakMVMZ7g&s'),
 
 ];

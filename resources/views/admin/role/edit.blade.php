@@ -1,16 +1,17 @@
 <x-master-layout name="Role" headerName="{{ __('sidebar.role') }}">
+
     <x-form.layout>
-        <form action="{{ route('roles.update', $role['id']) }}" method="post">
+        <form action="{{ route('roles.update', $data['role']['id']) }}" method="post">
             @csrf
             @method('PUT')
-            <x-form.input-group title="role.role_name" name="name" id="name" :value="$role['name']" :required="true" />
-            <x-form.checkbox title="role.can_access_panel" name="can_access_panel" checked="{{ $role['can_access_panel'] ? 1:0 }}" />
+            <x-form.input-group title="role.role_name" name="name" id="name" :value="$data['role']['name']" :required="true" />
+            <x-form.checkbox title="role.can_access_panel" name="can_access_panel" checked="{{ $data['role']['can_access_panel'] ? 1:0 }}" />
             <div class="mb-4">
                 <h1 class="font-bold">{{ __('user.all_permissions') }}</h1>
                 <x-form.error field="permissions" />
             </div>
             <div class="grid grid-cols-2 mb-4 gap-2">
-                @foreach($getAllPermissions as $keyName=>$permissions)
+                @foreach($data['getAllPermissions'] as $keyName=>$permissions)
                     @php 
                         //get All Permission for feature "user"
                         $getPermissionsName = array_column($permissions,'name');
@@ -18,7 +19,7 @@
                             return explode(' ',$per)[1]===$keyName;
                         });
                         //get Current Permission for feature "user"
-                        $getCurrentPer = array_filter($getCurrentPermissions,function($per) use($keyName) {
+                        $getCurrentPer = array_filter($data['getCurrentPermissions'],function($per) use($keyName) {
                             return explode(' ',$per)[1]===$keyName;
                         });
                         $checked = count($getAllPer)===count($getCurrentPer);
@@ -38,7 +39,7 @@
                             @foreach($permissions as $permission)
                                 <div class="flex items-center mb-4 text-sm">
                                     <input id="p_{{$permission['id']}}" type="checkbox" name="p_{{$permission['id']}}"  value="{{$keyName}}"
-                                        @if(in_array($permission['name'],$getCurrentPermissions)) checked @endif
+                                        @if(in_array($permission['name'],$data['getCurrentPermissions'])) checked @endif
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 {{ $keyName }}_p permission-title">
                                     <label for="p_{{$permission['id']}}" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 capitalize cursor-pointer">{{ $permission['name'] }}</label>
                                 </div>

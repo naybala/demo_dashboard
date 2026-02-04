@@ -2,11 +2,15 @@
 namespace BasicDashboard\Web\Users\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class UserEditResource extends JsonResource
 {
     public function toArray($request): array
     {
+        $avatarCloudPhoto = $this->avatar ?: config('cache.default_profile_photo_cloud');
+        $avatarLocalPhoto = $this->avatar ?: config('cache.default_profile_photo_local');
+        $avatar = config('cache.file_system_disk') == 'local' ? $avatarLocalPhoto : Storage::url($avatarCloudPhoto);
         return [
             "id"              => customEncoder($this->id),
             'fullname'        => $this->fullname,
@@ -15,7 +19,7 @@ class UserEditResource extends JsonResource
             "email"           => $this->email,
             'password'        => $this->password,
             'phone_number'    => $this->phone_number,
-            "avatar"          => $this->avator,
+            "avatar"          => $avatar,
             "status"          => $this->status,
             "status_text"     => $this->status->label(),
             "country_id"      => $this->country_id,

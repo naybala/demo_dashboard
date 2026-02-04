@@ -7,7 +7,7 @@ use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\Roles\Resources\RoleResource;
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\ResponseFactory;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -30,6 +30,7 @@ class RoleService extends BaseController
 
     public function __construct(
         private RoleRepositoryInterface $roleRepository,
+        private ResponseFactory $responseFactory,
     ) {
     }
 
@@ -37,7 +38,7 @@ class RoleService extends BaseController
     {
         $roleList = $this->roleRepository->getRoleList($request);
         $roleList = RoleResource::collection($roleList)->response()->getData(true);
-        return $this->returnView(self::VIEW . ".index", $roleList);
+        return $this->responseFactory->successView(self::VIEW . '.index', $roleList);
     }
 
     public function create(): View
@@ -58,9 +59,9 @@ class RoleService extends BaseController
             ]);
             $role->givePermissionTo($request['permissions']);
             $this->roleRepository->commit();
-            return $this->redirectRoute(self::ROUTE . ".index", __(self::LANG_PATH . '_created'));
+            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
         } catch (Exception $e) {
-            return $this->redirectBackWithError($this->roleRepository, $e);
+            return $this->responseFactory->redirectBackWithError($this->roleRepository, $e->getMessage());
         }
     }
 
@@ -71,12 +72,12 @@ class RoleService extends BaseController
         $getCurrentPermissions = $role->getAllPermissions()->pluck('name')->toArray(); //get permission of this role
         $role                  = new RoleResource($role);
         $role                  = $role->response()->getData(true)['data'];
-        //dd($getAllPermissions);
-        return view(self::VIEW . ".edit", compact(
-            'role',
-            'getAllPermissions',
-            'getCurrentPermissions'
-        ));
+        $data                  = [
+            'role'                  => $role,
+            'getAllPermissions'     => $getAllPermissions,
+            'getCurrentPermissions' => $getCurrentPermissions,
+        ];
+        return $this->responseFactory->successView(self::VIEW . ".edit", $data);        
     }
 
     public function show(string $id): View | RedirectResponse
@@ -84,7 +85,7 @@ class RoleService extends BaseController
         $role = $this->roleRepository->show($id);
         $role = new RoleResource($role);
         $role = $role->response()->getData(true)['data'];
-        return $this->returnView(self::VIEW . '.show', $role);
+        return $this->responseFactory->successView(self::VIEW . '.show', $role);
     }
 
     public function update($request, string $id): RedirectResponse
@@ -96,9 +97,9 @@ class RoleService extends BaseController
             $role = Role::find($id);                         //get Roles
             $role->syncPermissions($request['permissions']); // this will detach and attach permissions to this role
             $this->roleRepository->commit();
-            return $this->redirectRoute(self::ROUTE . ".index", __(self::LANG_PATH . '_updated'));
+            return $this->responseFactory->redirectRoute(self::ROUTE . ".index", __(self::LANG_PATH . '_updated'));
         } catch (Exception $e) {
-            return $this->redirectBackWithError($this->roleRepository, $e);
+            return $this->responseFactory->redirectBackWithError($this->roleRepository, $e);
         }
     }
 
@@ -110,9 +111,9 @@ class RoleService extends BaseController
             $id = customDecoder($id); // we will need to convert to real ID from encodeId
             $this->roleRepository->delete($id);
             $this->roleRepository->commit();
-            return $this->redirectRoute(self::ROUTE . ".index", __(self::LANG_PATH . '_deleted'));
+            return $this->responseFactory->redirectRoute(self::ROUTE . ".index", __(self::LANG_PATH . '_deleted'));
         } catch (Exception $e) {
-            return $this->redirectBackWithError($this->roleRepository, $e);
+            return $this->responseFactory->redirectBackWithError($this->roleRepository, $e);
         }
     }
 
