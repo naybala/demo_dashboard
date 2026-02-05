@@ -1,8 +1,15 @@
 <x-master-layout name="Product" headerName="{{ __('sidebar.product') }}">
     <x-form.layout>
-        <form action="{{ route('products.update', $data['id']) }}" method="post" enctype="multipart/form-data">
+        <form action="{{ route('products.update', $data['id']) }}" method="post" enctype="multipart/form-data" id="product-form">
             @csrf
             @method('PUT')
+            
+            <x-file.multi-img-upload name='photo' id='photo' apiPath="products" />
+            {{-- Pass existing photos to JS --}}
+            <input type="hidden" id="existing-photos" value="{{ json_encode($data['photos']) }}">
+            <input type="hidden" id="is-update" value="true">
+            <input type="hidden" id="product-id" value="{{ $data['id'] }}">
+
             <x-form.grid>
                 
                 {{-- name --}}
@@ -31,4 +38,5 @@
             {{-- Save And Cancel --}}
         </form>
     </x-form.layout>
+    @vite(['resources/js/admin/product/local-store.js'])
 </x-master-layout>

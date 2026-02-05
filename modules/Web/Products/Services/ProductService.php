@@ -55,13 +55,28 @@ class ProductService extends BaseController
         try {
             \DB::beginTransaction();
             $request['created_by'] = Auth::id();
+            
+            if (isset($request['photos']) && is_array($request['photos'])) {
+                $request['photos'] = $this->uploadPhotos($request['photos']);
+            }
+
             $this->product->create($request);
             \DB::commit();
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
         } catch (Exception $e) {
             \DB::rollBack();
-            return $this->responseFactory->redirectBackWithError(null, $e->getMessage());
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
+    }
+
+    private function uploadPhotos(array $photos): array
+    {
+        $paths = [];
+        foreach ($photos as $photo) {
+            $path = $photo->store('products', 'public');
+            $paths[] = $path;
+        }
+        return $paths;
     }
 
     public function edit(string $id): View | RedirectResponse
@@ -88,6 +103,16 @@ class ProductService extends BaseController
             \DB::beginTransaction();
             $decodedId = customDecoder($id);
             $product = $this->product->findOrFail($decodedId);
+
+            if (isset($request['photos']) && is_array($request['photos'])) {
+                $newPhotos = $this->uploadPhotos($request['photos']);
+                $oldPhotos = $product->photos ?? [];
+                $request['photos'] = array_merge($oldPhotos, $newPhotos);
+            } else {
+                // If photos are not provided in the request, keep the old ones
+                unset($request['photos']);
+            }
+
             $product->update($request);
             \DB::commit();
             return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
@@ -102,7 +127,16 @@ class ProductService extends BaseController
          try {
             \DB::beginTransaction();
             $id = customDecoder($request['id']);
-            $this->product->destroy($id);
+            $product = $this->product->findOrFail($id);
+            
+            // Delete local images
+            if ($product->photos) {
+                foreach ($product->photos as $photo) {
+                    \Storage::disk('public')->delete($photo);
+                }
+            }
+
+            $product->delete();
             \DB::commit();
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
         } catch (Exception $e) {

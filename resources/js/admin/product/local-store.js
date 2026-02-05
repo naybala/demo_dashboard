@@ -10,6 +10,33 @@ $(document).ready(function () {
   let whileUploading = false;
   let imgIndex = 0;
   var apiPath = $("#apiPath").val();
+  const isUpdate = $("#is-update").val() === "true";
+  const productId = $("#product-id").val();
+
+  // Load existing photos if in update mode
+  if (isUpdate) {
+    const existingPhotos = JSON.parse($("#existing-photos").val() || "[]");
+    existingPhotos.forEach((photoUrl) => {
+      imgIndex++;
+      const $wrapper = $("<div>", {
+        imgIndex: imgIndex,
+        class: "relative group existing-photo",
+        "data-url": photoUrl,
+      });
+      const $img = $("<img>", {
+        src: photoUrl,
+        imgIndex: imgIndex,
+        class: "w-24 h-24 object-cover rounded-md",
+      });
+
+      // For existing photos, we don't allow cropping for now, just display.
+      // We also don't have a way to delete specific existing photos yet in this implementation
+      // (as it appends). If you want to delete them, you'd need a more complex sync.
+
+      $wrapper.append($img);
+      $("#previewContainer").append($wrapper);
+    });
+  }
 
   $("#fileInput").on("change", function (event) {
     $.each(event.target.files, function (index, file) {
@@ -39,12 +66,11 @@ $(document).ready(function () {
         // Delete handler
         $deleteBtn.on("click", function (e) {
           e.stopPropagation(); // Prevent image click event
-          deleteImgIndex = $(this).parent().find("img").attr("imgIndex");
+          const indexToDelete = $(this).attr("imgIndex");
           imageFiles = imageFiles.filter(
-            (item) => item.imgIndex != deleteImgIndex,
+            (item) => item.imgIndex != indexToDelete,
           );
-          console.log(imageFiles);
-          $(`div[imgIndex="${deleteImgIndex}"]`).remove();
+          $(`div[imgIndex="${indexToDelete}"]`).remove();
         });
 
         // Image click handler for cropping
@@ -52,7 +78,6 @@ $(document).ready(function () {
           selectedImgElement = $img;
           selectedFileIndex = $(this).attr("imgIndex");
 
-          // console.log(index)
           $("#cropperImage").attr("src", e.target.result);
           $("#cropModal").removeClass("hidden");
 
@@ -92,7 +117,6 @@ $(document).ready(function () {
         reader.onload = function (e) {
           selectedImgElement.attr("src", e.target.result);
           imageFiles = imageFiles.map((img) => {
-            // console.log(selectedFileIndex,img.imgIndex)
             return img.imgIndex == selectedFileIndex
               ? { ...img, file: croppedFile }
               : img;
@@ -100,7 +124,6 @@ $(document).ready(function () {
         };
         reader.readAsDataURL(blob);
       });
-      console.log(imageFiles);
       $("#cropModal").addClass("hidden");
     }
   });
@@ -114,16 +137,83 @@ $(document).ready(function () {
 
   $("#btn-submit").click(function (e) {
     e.preventDefault();
-    if (imageFiles.length == 0) {
+
+    // In update mode, we might not have new images but have existing ones
+    const hasExistingPhotos = $(".existing-photo").length > 0;
+    if (imageFiles.length == 0 && !hasExistingPhotos && !isUpdate) {
       $("#photo_count-error").show();
       return false;
     }
+
     $("#photo_count-error").hide();
     $("#ajax-error-happening").hide();
-    // console.log(imageFiles);
+
     $(".ajax-error-shower").text("");
-    const formData = new FormData($("#product-form")[0]);
-    formData.append("photo_count", imageFiles.length);
-    console.log(formData);
+    const $form = $("#product-form");
+    const formData = new FormData($form[0]);
+
+    // Append each new image file to the photos[] array
+    formData.delete("photos[]");
+    imageFiles.forEach((item) => {
+      formData.append("photos[]", item.file);
+    });
+
+    // If it's an update, Laravel needs _method: PUT for FormData
+    if (isUpdate) {
+      formData.append("_method", "PUT");
+    }
+
+    $("body").addClass("loading-overlay");
+    whileUploading = true;
+
+    const url = isUpdate ? `/${apiPath}/${productId}` : `/${apiPath}`;
+
+    axios
+      .post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        whileUploading = false;
+        $("body").removeClass("loading-overlay");
+        Swal.fire({
+          title: "Success",
+          text: response.data.message || "Product saved successfully",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `/${apiPath}`;
+          }
+        });
+      })
+      .catch((error) => {
+        whileUploading = false;
+        $("body").removeClass("loading-overlay");
+        console.log(error);
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errors
+        ) {
+          const { errors } = error.response.data;
+          $("#ajax-error-happening").show();
+          Object.entries(errors).forEach(([field, messages]) => {
+            let elementId = field.replace(/\./g, "_");
+            $(`#${elementId}-error`).text(messages[0]);
+            if (field.includes(".")) {
+              let baseField = field.split(".")[0];
+              $(`#${baseField}-error`).text(messages[0]);
+            }
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: "Something went wrong. Please try again.",
+            icon: "error",
+          });
+        }
+      });
   });
 });

@@ -16,12 +16,20 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
 {
-    public function toArray($request):array
+    public function toArray($request): array
     {
-         return [
-            "id" =>customEncoder($this->id),
-            "name"=>$this->name,
-            "description"=>$this->description,
+        $photos = $this->photos ?? [];
+        $photoUrls = array_map(fn($photo) => asset('storage/' . $photo), $photos);
+
+        return [
+            "id" => customEncoder($this->id),
+            "name" => $this->name,
+            "name_other" => $this->name_other,
+            "price" => $this->price,
+            "description" => $this->description,
+            "description_other" => $this->description_other,
+            "photos" => $photoUrls,
+            "primary_photo" => !empty($photoUrls) ? $photoUrls[0] : null,
         ];
     }
 }

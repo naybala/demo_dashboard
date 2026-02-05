@@ -6,10 +6,13 @@
                 <x-common.create-button route="products.create" permission="create products" />
             </div>
             <x-table.wrapper>
-                <x-table.header :fields="['name', 'name_other', 'price', 'description', 'description_other']" />
+                <x-table.header :fields="['photo', 'name', 'name_other', 'price', 'description', 'description_other']" />
                 <x-table.body :checkData="count($data['data'])>0">
                     @foreach ($data['data'] as $record)
                         <x-table.body-row>
+                            <td class="px-6 py-4">
+                                <img src="{{ $record['primary_photo'] }}" alt="" class="w-10 h-10 rounded-md object-cover">
+                            </td>
                             <x-table.body-column :field="$record['name']" limit="20" />
                             <x-table.body-column :field="$record['name_other']" limit="20" />
                             <x-table.body-column :field="$record['price']" limit="20" />

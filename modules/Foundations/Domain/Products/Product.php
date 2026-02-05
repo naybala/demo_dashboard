@@ -22,7 +22,10 @@ class Product extends Model
     use HasFactory, SoftDeletes;
       //protected $table = 'table_name';
     protected $guarded = [
+    ];
 
+    protected $casts = [
+        'photos' => 'array',
     ];
 
     // ==========================================

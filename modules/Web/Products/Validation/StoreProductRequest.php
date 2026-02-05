@@ -23,9 +23,14 @@ class StoreProductRequest extends FormRequest
 
     public function rules(): array
     {
-        dd($this->all());
         return [
-            "name"=>"required",
+            "name" => "required|string|max:255",
+            "name_other" => "required|string|max:255",
+            "price" => "required|numeric",
+            "description" => "nullable|string",
+            "description_other" => "nullable|string",
+            "photos" => "required|array",
+            "photos.*" => "image|mimes:jpeg,png,jpg,gif,svg|max:2048",
         ];
     }
 }

@@ -22,6 +22,10 @@
                 {{-- description_other --}}
                 <x-show.text-group title='product.description_other' :data="$data['description_other']" />
                 {{-- description_other --}}
+
+                {{-- photos --}}
+                <x-show.media title="product.photo" type="photo" :links="$data['photos']" />
+                {{-- photos --}}
  
         </x-form.grid>
     </x-form.layout>
