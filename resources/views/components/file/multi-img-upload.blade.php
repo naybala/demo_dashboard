@@ -1,6 +1,8 @@
-<div>
+@props(['apiPath'])
+<div> 
     <!-- File Input -->
-    <x-form.label title="listing.photo" :required="true" />
+    <x-form.label title="product.photo" :required="true" />
+    <input type="text" id="apiPath" value="{{ $apiPath }}" />
     <input type="hidden" id="photo" />
 
     <input type="file" id="fileInput" multiple accept="image/*" class="hidden">

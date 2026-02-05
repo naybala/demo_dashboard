@@ -22,6 +22,7 @@ return [
     'gender'                        => "Gender",
     'martial_status'                => "Martial Status",
     'occupation'                    => "Occupation",
+    'avatar'=>'Avatar',
 
     //Category
     'categoty_name'                 => "Category Name",

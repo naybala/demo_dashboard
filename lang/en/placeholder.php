@@ -28,4 +28,7 @@ return [
     'placeholder_description'                   => "Please enter description",
     'placeholder_description_other'             => "Please enter description in English Language",
 
+    //Product
+    'placeholder_price'                         => "Please enter price",
+
 ];

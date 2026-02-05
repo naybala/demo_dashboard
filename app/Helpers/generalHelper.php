@@ -28,10 +28,10 @@ if (! function_exists('customEncoder')) {
 if (! function_exists('customDecoder')) {
     function customDecoder($b64Text)
     {
-        return $b64Text;
         // $decryptId = substr($b64Text, 0, "-" . config('numbers.hash_length'));
         // $decryptId = substr($decryptId, config('numbers.hash_length'));
         // return base64_decode(strtr($decryptId, '===', '---'));
+        return $b64Text;
     }
 }
 

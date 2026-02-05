@@ -7,6 +7,7 @@
             <br>
             {{-- Profile Photo --}}
             <x-form.grid>
+
                 {{-- fullname --}}
                 <x-form.input-group title='user.fullname' name='fullname' id='fullname' :required="true" />
                 {{-- fullname --}}

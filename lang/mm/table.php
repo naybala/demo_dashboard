@@ -14,6 +14,7 @@ return [
     'gender' => "ကျား/မ",
     'martial_status' => "အိမ်ထောင်ရေးအခြေအနေ",
     'occupation' => "အလုပ်အကိုင်",
+    'avatar'=>'ပိုးစား',
 
     //Category
     'categoty_name' => "ခေါင်းစဉ်ကြီးအမည်", 

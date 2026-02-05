@@ -23,6 +23,7 @@ class StoreProductRequest extends FormRequest
 
     public function rules(): array
     {
+        dd($this->all());
         return [
             "name"=>"required",
         ];

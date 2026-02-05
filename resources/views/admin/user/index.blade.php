@@ -9,10 +9,13 @@
 
             <x-table.wrapper>
 
-                <x-table.header :fields="['user_name', 'email', 'role', 'status']" />
+                <x-table.header :fields="['avatar','user_name', 'email', 'role', 'status']" />
                 <x-table.body :checkData="count($data['data']) > 0">
                     @foreach ($data['data'] as $record)
                     <x-table.body-row>
+                        <td scope="row" class="px-6 py-4">
+                            <img src="{{ asset($record['avatar']) }}" alt="" class="w-10 h-10 rounded-full">
+                        </td>
                         <td scope="row" class="px-6 py-4">{{ $record['fullname'] }}</td>
                         <td scope="row" class="px-6 py-4">{{ $record['email'] }}</td>
                         <td scope="row" class="px-6 py-4">{{ $record['role_marked'] }}</td>
@@ -20,7 +23,6 @@
                             <button
                                 class="text-white p-1 text-xs rounded-md {{$record['status'] ? 'bg-green-500' : 'bg-red-500'}} ms-4">{{ $record['status'] ? 'Active' : 'Inactive' }}</button>
                         </td>
-                        {{-- <x-table.status :status="$record['status']" /> --}}
                         <x-table.action-new :id="$record['id']" field="users" />
                     </x-table.body-row>
                     @endforeach
