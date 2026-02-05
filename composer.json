@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
-        "davion153808/mini-crud-generator": "dev-main",
+        "davion190510/mini-crud-generator": "dev-main",
         "dedoc/scramble": "^0.12.34",
         "guzzlehttp/guzzle": "^7.2",
         "laravel-notification-channels/onesignal": "^2.8",

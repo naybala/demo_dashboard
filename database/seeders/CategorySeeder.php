@@ -18,7 +18,7 @@ class CategorySeeder extends Seeder
         Category::create([
             'name'=>'Home'
         ]);
-        for ($x = 1; $x <= 100000; $x++) {
+        for ($x = 1; $x <= 1000; $x++) {
             DB::table('categories')->insert([
                 'name' => 'Category ' . $x,
                 'name_other' => 'Category in other lng' . $x,

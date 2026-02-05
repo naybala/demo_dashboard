@@ -1,5 +1,6 @@
 <?php
 
+use BasicDashboard\Web\Products\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Request;
@@ -33,6 +34,7 @@ Route::group(['middleware' => ['auth', 'permission.check']], function (): void {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::resource('categories', CategoryController::class);
     Route::resource('roles', RoleController::class);
+    Route::resource('products' ,ProductController::class);
     require __DIR__ . "/Web/User/userRoute.php";
 });
 

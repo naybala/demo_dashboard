@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7f83ced127cdb3276e86e02845bbc5b",
+    "content-hash": "4068a4f2d4dc9715559f83a08e2bd414",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.26",
+            "version": "3.369.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ad0916c6595d98f9052f60e1d7204f4740369e94"
+                "reference": "f844afab2a74eb3cf881970a9c31de460510eb74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ad0916c6595d98f9052f60e1d7204f4740369e94",
-                "reference": "ad0916c6595d98f9052f60e1d7204f4740369e94",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f844afab2a74eb3cf881970a9c31de460510eb74",
+                "reference": "f844afab2a74eb3cf881970a9c31de460510eb74",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.26"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.27"
             },
-            "time": "2026-02-03T19:16:42+00:00"
+            "time": "2026-02-04T19:07:08+00:00"
         },
         {
             "name": "berkayk/onesignal-laravel",
@@ -227,16 +227,16 @@
         },
         {
             "name": "brick/math",
-            "version": "0.14.5",
+            "version": "0.14.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "618a8077b3c326045e10d5788ed713b341fcfe40"
+                "reference": "32498d5e1897e7642c0b961ace2df6d7dc9a3bc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/618a8077b3c326045e10d5788ed713b341fcfe40",
-                "reference": "618a8077b3c326045e10d5788ed713b341fcfe40",
+                "url": "https://api.github.com/repos/brick/math/zipball/32498d5e1897e7642c0b961ace2df6d7dc9a3bc3",
+                "reference": "32498d5e1897e7642c0b961ace2df6d7dc9a3bc3",
                 "shasum": ""
             },
             "require": {
@@ -275,7 +275,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.14.5"
+                "source": "https://github.com/brick/math/tree/0.14.6"
             },
             "funding": [
                 {
@@ -283,7 +283,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-03T18:06:51+00:00"
+            "time": "2026-02-05T07:59:58+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -355,17 +355,17 @@
             "time": "2024-02-09T16:56:22+00:00"
         },
         {
-            "name": "davion153808/mini-crud-generator",
+            "name": "davion190510/mini-crud-generator",
             "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "https://github.com/naybala/Davion153808.git",
-                "reference": "b531aff4fcc4ce87265de02540ea3d16b32bad98"
+                "url": "https://github.com/naybala/Davion190510.git",
+                "reference": "c058145027e96cb29c778d0f2cbef6de5adea63c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/naybala/Davion153808/zipball/b531aff4fcc4ce87265de02540ea3d16b32bad98",
-                "reference": "b531aff4fcc4ce87265de02540ea3d16b32bad98",
+                "url": "https://api.github.com/repos/naybala/Davion190510/zipball/c058145027e96cb29c778d0f2cbef6de5adea63c",
+                "reference": "c058145027e96cb29c778d0f2cbef6de5adea63c",
                 "shasum": ""
             },
             "require": {
@@ -381,16 +381,16 @@
             "extra": {
                 "laravel": {
                     "aliases": {
-                        "MiniCRUDGenerator": "Davion153808\\MiniCRUDGenerator\\MiniCRUDGeneratorFacade"
+                        "MiniCRUDGenerator": "Davion190510\\MiniCRUDGenerator\\MiniCRUDGeneratorFacade"
                     },
                     "providers": [
-                        "Davion153808\\MiniCRUDGenerator\\MiniCRUDGeneratorServiceProvider"
+                        "Davion190510\\MiniCRUDGenerator\\MiniCRUDGeneratorServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Davion153808\\MiniCRUDGenerator\\": "src/"
+                    "Davion190510\\MiniCRUDGenerator\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -405,10 +405,10 @@
             ],
             "description": "Mini CRUD Generator",
             "support": {
-                "issues": "https://github.com/naybala/Davion153808/issues",
-                "source": "https://github.com/naybala/Davion153808/tree/main"
+                "issues": "https://github.com/naybala/Davion190510/issues",
+                "source": "https://github.com/naybala/Davion190510/tree/main"
             },
-            "time": "2025-05-08T11:07:51+00:00"
+            "time": "2026-02-05T08:34:58+00:00"
         },
         {
             "name": "dedoc/scramble",
@@ -1608,16 +1608,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.49.0",
+            "version": "v12.50.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "4bde4530545111d8bdd1de6f545fa8824039fcb5"
+                "reference": "174ffed91d794a35a541a5eb7c3785a02a34aaba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/4bde4530545111d8bdd1de6f545fa8824039fcb5",
-                "reference": "4bde4530545111d8bdd1de6f545fa8824039fcb5",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/174ffed91d794a35a541a5eb7c3785a02a34aaba",
+                "reference": "174ffed91d794a35a541a5eb7c3785a02a34aaba",
                 "shasum": ""
             },
             "require": {
@@ -1826,34 +1826,34 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-01-28T03:40:49+00:00"
+            "time": "2026-02-04T18:34:13+00:00"
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.3.11",
+            "version": "v0.3.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "dd2a2ed95acacbcccd32fd98dee4c946ae7a7217"
+                "reference": "4861ded9003b7f8a158176a0b7666f74ee761be8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/dd2a2ed95acacbcccd32fd98dee4c946ae7a7217",
-                "reference": "dd2a2ed95acacbcccd32fd98dee4c946ae7a7217",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/4861ded9003b7f8a158176a0b7666f74ee761be8",
+                "reference": "4861ded9003b7f8a158176a0b7666f74ee761be8",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.2",
                 "ext-mbstring": "*",
                 "php": "^8.1",
-                "symfony/console": "^6.2|^7.0"
+                "symfony/console": "^6.2|^7.0|^8.0"
             },
             "conflict": {
                 "illuminate/console": ">=10.17.0 <10.25.0",
                 "laravel/framework": ">=10.17.0 <10.25.0"
             },
             "require-dev": {
-                "illuminate/collections": "^10.0|^11.0|^12.0",
+                "illuminate/collections": "^10.0|^11.0|^12.0|^13.0",
                 "mockery/mockery": "^1.5",
                 "pestphp/pest": "^2.3|^3.4|^4.0",
                 "phpstan/phpstan": "^1.12.28",
@@ -1883,9 +1883,9 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.3.11"
+                "source": "https://github.com/laravel/prompts/tree/v0.3.12"
             },
-            "time": "2026-01-27T02:55:06+00:00"
+            "time": "2026-02-03T06:57:26+00:00"
         },
         {
             "name": "laravel/pulse",
@@ -2039,27 +2039,27 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v2.0.8",
+            "version": "v2.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "7581a4407012f5f53365e11bafc520fd7f36bc9b"
+                "reference": "8f631589ab07b7b52fead814965f5a800459cb3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/7581a4407012f5f53365e11bafc520fd7f36bc9b",
-                "reference": "7581a4407012f5f53365e11bafc520fd7f36bc9b",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/8f631589ab07b7b52fead814965f5a800459cb3e",
+                "reference": "8f631589ab07b7b52fead814965f5a800459cb3e",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.1"
             },
             "require-dev": {
-                "illuminate/support": "^10.0|^11.0|^12.0",
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
                 "nesbot/carbon": "^2.67|^3.0",
                 "pestphp/pest": "^2.36|^3.0|^4.0",
                 "phpstan/phpstan": "^2.0",
-                "symfony/var-dumper": "^6.2.0|^7.0.0"
+                "symfony/var-dumper": "^6.2.0|^7.0.0|^8.0.0"
             },
             "type": "library",
             "extra": {
@@ -2096,7 +2096,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2026-01-08T16:22:46+00:00"
+            "time": "2026-02-03T06:55:34+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -8822,16 +8822,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.50",
+            "version": "11.5.51",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "fdfc727f0fcacfeb8fcb30c7e5da173125b58be3"
+                "reference": "ad14159f92910b0f0e3928c13e9b2077529de091"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fdfc727f0fcacfeb8fcb30c7e5da173125b58be3",
-                "reference": "fdfc727f0fcacfeb8fcb30c7e5da173125b58be3",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ad14159f92910b0f0e3928c13e9b2077529de091",
+                "reference": "ad14159f92910b0f0e3928c13e9b2077529de091",
                 "shasum": ""
             },
             "require": {
@@ -8846,7 +8846,7 @@
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.2",
                 "phpunit/php-code-coverage": "^11.0.12",
-                "phpunit/php-file-iterator": "^5.1.0",
+                "phpunit/php-file-iterator": "^5.1.1",
                 "phpunit/php-invoker": "^5.0.1",
                 "phpunit/php-text-template": "^4.0.1",
                 "phpunit/php-timer": "^7.0.1",
@@ -8858,6 +8858,7 @@
                 "sebastian/exporter": "^6.3.2",
                 "sebastian/global-state": "^7.0.2",
                 "sebastian/object-enumerator": "^6.0.1",
+                "sebastian/recursion-context": "^6.0.3",
                 "sebastian/type": "^5.1.3",
                 "sebastian/version": "^5.0.2",
                 "staabm/side-effects-detector": "^1.0.5"
@@ -8903,7 +8904,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.50"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.51"
             },
             "funding": [
                 {
@@ -8927,7 +8928,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-27T05:59:18+00:00"
+            "time": "2026-02-05T07:59:30+00:00"
         },
         {
             "name": "rector/rector",
@@ -10597,7 +10598,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "davion153808/mini-crud-generator": 20
+        "davion190510/mini-crud-generator": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
