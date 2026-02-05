@@ -54,10 +54,8 @@ class ResponseMacroProvider extends ServiceProvider
             ]);
         });
 
-        Response::macro('redirectBackWithError', function ($repository, $message): RedirectResponse {
-            $repository->rollBack();
+        Response::macro('redirectBackWithError', function ($message): RedirectResponse {
             \Log::info($message);
-
             return redirect()->back()->with([
                 'message'      => $message,
                 'responseType' => ResponseCode::InternalServerError->responseType(),

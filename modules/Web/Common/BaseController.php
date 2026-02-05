@@ -1,12 +1,6 @@
 <?php
 namespace BasicDashboard\Web\Common;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 /**
  *
@@ -43,46 +37,4 @@ class BaseController extends Controller
         $time .= ' sec';
         return $time;
     }
-
-    public function uploadImage($file, $directory, $privacy = 'public'): String
-    {
-        return Storage::disk('digitalocean')->putFile($directory, $file, $privacy);
-    }
-
-    public function deleteImage(string $directory): void
-    {
-        Storage::disk('digitalocean')->delete($directory);
-    }
-
-    
-
-    public function reorder(Request $request)
-    {
-        $order = $request->order;
-
-        if (empty($order)) {
-            return response()->json(['message' => 'No items to reorder.'], 400);
-        }
-
-        $ids = collect($order)->pluck('id')->toArray();
-
-        $cases = '';
-        $model = '';
-        foreach ($order as $item) {
-            $id  = (int) $item['id'];
-            $pos = (int) $item['position'];
-            $cases .= "WHEN {$id} THEN {$pos} ";
-            $model = $item['model'];
-        }
-
-        $idsList = implode(',', $ids);
-
-        $query = "UPDATE {$model} SET sort_id = CASE id {$cases} END WHERE id IN ({$idsList})";
-        \Log::info($query);
-
-        DB::statement($query);
-
-        return response()->json(['message' => 'Order updated successfully']);
-    }
-
 }

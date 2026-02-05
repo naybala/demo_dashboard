@@ -11,8 +11,8 @@ use Illuminate\Routing\ResponseFactory;
 use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\Users\Resources\UserResource;
 use BasicDashboard\Web\Users\Resources\UserEditResource;
-use BasicDashboard\Foundations\Domain\Roles\Repositories\RoleRepositoryInterface;
-use BasicDashboard\Foundations\Domain\Users\Repositories\UserRepositoryInterface;
+use BasicDashboard\Foundations\Domain\Users\User;
+use BasicDashboard\Foundations\Domain\Roles\Role;
 use Illuminate\Filesystem\FilesystemManager;
 
 class UserService extends BaseController
@@ -26,17 +26,20 @@ class UserService extends BaseController
     const COLUMN_KEY = "avatar";
 
     public function __construct(
-        private UserRepositoryInterface $userRepositoryInterface,
-        private RoleRepositoryInterface $roleRepositoryInterface,
+        private User $user,                          
+        private Role $role,                         
         private ResponseFactory $responseFactory,
         private FilesystemManager $fileSystemMananger,
  
     ) {}
 
-
     public function index(array $request): View
     {
-        $userList = $this->userRepositoryInterface->getUserList($request);
+        $userList = $this->user
+            ->withUserRelations()                                    
+            ->filterByKeyword($request['keyword'] ?? null)          
+            ->orderByLatest()                                        
+            ->paginate($request['paginate'] ?? config('numbers.paginate'));
 
         $userList = UserResource::collection($userList)->response()->getData(true);
         return $this->responseFactory->successView(self::VIEW . '.index', $userList);
@@ -51,40 +54,45 @@ class UserService extends BaseController
     {
         try {
             $image = null;
-            $this->userRepositoryInterface->beginTransaction();
+            \DB::beginTransaction();  
+            
             if (isset($request['avatar'])) {
                 $image             = $request['avatar']; 
                 $request['avatar'] = null;               
             }
             $roleName = $this->getRoleName($request['role_marked']);
-            $request  = Arr::except($request, ['role_marked']);           
-            $user     = $this->userRepositoryInterface->insert($request); 
-            $user->assignRole($roleName);                                 
+            $request  = Arr::except($request, ['role_marked']);
+            $request['created_by'] = Auth::id();  
+            $user = $this->user->create($request);
+            $user->assignRole($roleName);
             if(config('cache.file_system_disk') == 'local'){
                 $data = $this->fileSystemMananger->uploadFileToLocal($image,"users","avatar"); 
             }else{
                 $cloudPath = self::ROOT . "/" . $user->id;
                 $data = $this->fileSystemMananger->uploadFileToCloud("digitalocean",$image,$cloudPath,"public","avatar"); 
             }
-            $user->update($data);                            
-            $this->userRepositoryInterface->commit();
+            $user->update($data);
+            \DB::commit();  
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
         } catch (Exception $e) {
-            return $this->responseFactory->redirectBackWithError($this->userRepositoryInterface, $e->getMessage());
+            \DB::rollBack();  
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
     }
 
     public function edit(string $id): View | RedirectResponse
     {
-        $user                 = $this->userRepositoryInterface->edit($id);
-        $user                 = new UserEditResource($user);
-        $user                 = $user->response()->getData(true);
+        $id = customDecoder($id);  
+        $user = $this->user->where('id', $id)->first();
+        $user = new UserEditResource($user);
+        $user = $user->response()->getData(true);
         return $this->responseFactory->successView(self::VIEW . ".edit", $user);
     }
 
     public function show($id): View | RedirectResponse
     {
-        $user = $this->userRepositoryInterface->show($id);
+        $id = customDecoder($id);
+        $user = $this->user->findOrFail($id);
         $user = new UserResource($user);
         $user = $user->response()->getData(true)['data'];
         return $this->responseFactory->successView(self::VIEW . '.show', $user);
@@ -94,8 +102,9 @@ class UserService extends BaseController
     {
         $image = null;
         try {
-            $this->userRepositoryInterface->beginTransaction();
-            $user     = $this->userRepositoryInterface->edit($id);
+            \DB::beginTransaction();
+            $decodedId = customDecoder($id);
+            $user = $this->user->find($decodedId);
             $oldImage = $user->avatar;
             if (isset($request['avatar'])) {
                 $image             = $request['avatar']; 
@@ -103,7 +112,7 @@ class UserService extends BaseController
             }
             $roleName = $this->getRoleName($request['role_marked']);
             $request  = Arr::except($request, ['role_marked']);
-            $this->userRepositoryInterface->update($request, $id);
+            $user->update($request);
             $user->syncRoles($roleName);
             if(config('cache.file_system_disk') == 'local'){
                 $data = $this->fileSystemMananger->updateFileFromLocal($oldImage,$image,'avatar','users'); 
@@ -112,46 +121,53 @@ class UserService extends BaseController
                 $data = $this->fileSystemMananger->updateFileFromCloud("digitalocean",$oldImage,$image,$cloudPath,'public','avatar');
             }
             $user->update($data);
-            $this->userRepositoryInterface->commit();
+            
+            \DB::commit();
             return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
         } catch (Exception $e) {
-            return $this->responseFactory->redirectBackWithError($this->userRepositoryInterface, $e->getMessage());
+            \DB::rollBack();
+            return $this->responseFactory->redirectBackWithError(null, $e->getMessage());
         }
     }
 
     public function destroy($request): RedirectResponse
     {
         try {
-            $this->userRepositoryInterface->beginTransaction();
-            $user = $this->userRepositoryInterface->edit($request['id']);
+            \DB::beginTransaction();
+            
+            $id = customDecoder($request['id']);
+            $user = $this->user->where('id', $id)->first();
             $user->roles()->detach();
-            $this->userRepositoryInterface->delete($request['id']);
+            $this->user->destroy($id);
             if(config('cache.file_system_disk') == 'local'){
                 $this->fileSystemMananger->deletFileFromLocal($user->avatar); 
             }else{
                 $this->fileSystemMananger->deleteFileFromCloud("digitalocean",$user->avatar); 
             }
-            $this->userRepositoryInterface->commit();
+            
+            \DB::commit();
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
         } catch (Exception $e) {
-            return $this->responseFactory->redirectBackWithError($this->userRepositoryInterface, $e->getMessage());
+            \DB::rollBack();
+            return $this->responseFactory->redirectBackWithError(null, $e->getMessage());
         }
     }
 
     public function profile()
     {
-        $id   = customEncoder(Auth::id());
-        $user = $this->userRepositoryInterface->show($id);
+        $id = Auth::id();
+        $user = $this->user->findOrFail($id);
         $user = new UserResource($user);
         $user = $user->response()->getData(true)['data'];
         return $this->returnView(self::VIEW . '.profile', $user);
     }
 
-    //Private Section
-
+    // ==========================================
+    // Private Helper Methods
+    // ==========================================
     private function getRoleName(string $roleId)
     {
-        return $this->roleRepositoryInterface->connection(true)->where('id', $roleId)->value('name');
+        return $this->role->where('id', $roleId)->value('name');
     }
 
 

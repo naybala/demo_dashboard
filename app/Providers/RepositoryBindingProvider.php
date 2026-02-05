@@ -2,14 +2,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use BasicDashboard\Foundations\Domain\Roles\Repositories\Eloquent\RoleRepository;
-use BasicDashboard\Foundations\Domain\Roles\Repositories\RoleRepositoryInterface;
-use BasicDashboard\Foundations\Domain\Users\Repositories\Eloquent\UserRepository;
-use BasicDashboard\Foundations\Domain\Users\Repositories\UserRepositoryInterface;
-use BasicDashboard\Foundations\Domain\Audits\Repositories\AuditRepositoryInterface;
-use BasicDashboard\Foundations\Domain\Audits\Repositories\Eloquent\AuditRepository;
-use BasicDashboard\Foundations\Domain\Categories\Repositories\CategoryRepositoryInterface;
-use BasicDashboard\Foundations\Domain\Categories\Repositories\Eloquent\CategoryRepository;
 
 class RepositoryBindingProvider extends ServiceProvider
 {
@@ -20,10 +12,24 @@ class RepositoryBindingProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(AuditRepositoryInterface::class, AuditRepository::class);
-        $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-        $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
+        // ==========================================
+        // Repository Pattern Removed
+        // ==========================================
+        // The application has been refactored to use direct Eloquent queries
+        // instead of the Repository pattern for simplified architecture.
+        // 
+        // Benefits:
+        // - Reduced abstraction layers
+        // - Direct use of Eloquent features (scopes, relationships)
+        // - Simpler codebase and easier maintenance
+        // - Better IDE support and type hinting
+        //
+        // All features (Users, Roles, Categories, Audits) now use:
+        // - Direct model injection in Services
+        // - Query scopes for reusable query logic
+        // - DB::beginTransaction() for transaction management
+        //
+        // This provider is kept for potential future use but currently has no bindings.
     }
 
     /**
