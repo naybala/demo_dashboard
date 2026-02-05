@@ -29,6 +29,7 @@ class ProductResource extends JsonResource
             "description" => $this->description,
             "description_other" => $this->description_other,
             "photos" => $photoUrls,
+            "photo_paths" => $photos,
             "primary_photo" => !empty($photoUrls) ? $photoUrls[0] : null,
         ];
     }

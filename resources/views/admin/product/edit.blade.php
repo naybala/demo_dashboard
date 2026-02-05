@@ -5,8 +5,9 @@
             @method('PUT')
             
             <x-file.multi-img-upload name='photo' id='photo' apiPath="products" />
-            {{-- Pass existing photos to JS --}}
+            {{-- Pass existing photos (URLs and Paths) to JS --}}
             <input type="hidden" id="existing-photos" value="{{ json_encode($data['photos']) }}">
+            <input type="hidden" id="existing-photo-paths" value="{{ json_encode($data['photo_paths']) }}">
             <input type="hidden" id="is-update" value="true">
             <input type="hidden" id="product-id" value="{{ $data['id'] }}">
 

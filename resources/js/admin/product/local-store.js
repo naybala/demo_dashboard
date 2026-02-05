@@ -16,12 +16,17 @@ $(document).ready(function () {
   // Load existing photos if in update mode
   if (isUpdate) {
     const existingPhotos = JSON.parse($("#existing-photos").val() || "[]");
-    existingPhotos.forEach((photoUrl) => {
+    const existingPhotoPaths = JSON.parse(
+      $("#existing-photo-paths").val() || "[]",
+    );
+
+    existingPhotos.forEach((photoUrl, index) => {
+      const photoPath = existingPhotoPaths[index];
       imgIndex++;
       const $wrapper = $("<div>", {
         imgIndex: imgIndex,
         class: "relative group existing-photo",
-        "data-url": photoUrl,
+        "data-path": photoPath,
       });
       const $img = $("<img>", {
         src: photoUrl,
@@ -29,11 +34,21 @@ $(document).ready(function () {
         class: "w-24 h-24 object-cover rounded-md",
       });
 
-      // For existing photos, we don't allow cropping for now, just display.
-      // We also don't have a way to delete specific existing photos yet in this implementation
-      // (as it appends). If you want to delete them, you'd need a more complex sync.
+      // Add delete button for existing photos
+      const $deleteBtn = $("<button>", {
+        type: "button",
+        imgIndex: imgIndex,
+        class:
+          "absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hidden group-hover:block",
+        html: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
+      });
 
-      $wrapper.append($img);
+      $deleteBtn.on("click", function (e) {
+        e.stopPropagation();
+        $wrapper.remove();
+      });
+
+      $wrapper.append($img, $deleteBtn);
       $("#previewContainer").append($wrapper);
     });
   }
@@ -151,6 +166,11 @@ $(document).ready(function () {
     $(".ajax-error-shower").text("");
     const $form = $("#product-form");
     const formData = new FormData($form[0]);
+
+    // Gather existing photos to keep
+    $(".existing-photo").each(function () {
+      formData.append("existing_photos[]", $(this).data("path"));
+    });
 
     // Append each new image file to the photos[] array
     formData.delete("photos[]");

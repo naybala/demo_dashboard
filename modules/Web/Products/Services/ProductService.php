@@ -104,14 +104,24 @@ class ProductService extends BaseController
             $decodedId = customDecoder($id);
             $product = $this->product->findOrFail($decodedId);
 
+            $existingPhotos = $request['existing_photos'] ?? [];
+            $newPhotos = [];
+
             if (isset($request['photos']) && is_array($request['photos'])) {
                 $newPhotos = $this->uploadPhotos($request['photos']);
-                $oldPhotos = $product->photos ?? [];
-                $request['photos'] = array_merge($oldPhotos, $newPhotos);
-            } else {
-                // If photos are not provided in the request, keep the old ones
-                unset($request['photos']);
             }
+
+            // Identify and delete removed photos from storage
+            $oldPhotosInDb = $product->photos ?? [];
+            foreach ($oldPhotosInDb as $photo) {
+                if (!in_array($photo, $existingPhotos)) {
+                    \Storage::disk('public')->delete($photo);
+                }
+            }
+
+            // Final list of photos: kept existing + new uploads
+            $request['photos'] = array_merge($existingPhotos, $newPhotos);
+            unset($request['existing_photos']);
 
             $product->update($request);
             \DB::commit();
