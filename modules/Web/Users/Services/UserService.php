@@ -121,12 +121,11 @@ class UserService extends BaseController
                 $data = $this->fileSystemMananger->updateFileFromCloud("digitalocean",$oldImage,$image,$cloudPath,'public','avatar');
             }
             $user->update($data);
-            
             \DB::commit();
             return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
         } catch (Exception $e) {
             \DB::rollBack();
-            return $this->responseFactory->redirectBackWithError(null, $e->getMessage());
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
     }
 
@@ -149,7 +148,7 @@ class UserService extends BaseController
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
         } catch (Exception $e) {
             \DB::rollBack();
-            return $this->responseFactory->redirectBackWithError(null, $e->getMessage());
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
     }
 

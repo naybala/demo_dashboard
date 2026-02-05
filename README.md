@@ -84,3 +84,5 @@ php artisan add-fields-to-view --model={newFeature(Eg.users)}
 - barryvdh/laravel-ide-helper
 - rector/rector
 - TailwindCss / PrelineUi / Flowbite
+
+php artisan ide-helper:models -RW

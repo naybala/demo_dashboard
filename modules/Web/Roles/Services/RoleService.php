@@ -11,15 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Permission;
 
-/**
- * RoleService - Simplified Architecture
- * 
- * This service demonstrates the refactored pattern:
- * - Uses Eloquent models directly (no Repository pattern)
- * - Leverages query scopes defined in Role model
- * - Maintains business logic separation from controllers
- * - Keeps transaction management
- */
 class RoleService extends BaseController
 {
     const VIEW      = 'admin.role';
@@ -33,17 +24,11 @@ class RoleService extends BaseController
     ) {
     }
 
-    /**
-     * Display paginated list of roles with optional keyword filtering
-     * 
-     * Uses Eloquent scopes: filterByKeyword, orderByLatest
-     */
     public function index(array $request): View
     {
-        // Direct Eloquent query using model scopes (no repository)
         $roleList = $this->role
-            ->filterByKeyword($request['keyword'] ?? null)  // Apply search filter
-            ->orderByLatest()                                // Order by latest activity
+            ->filterByKeyword($request['keyword'] ?? null)
+            ->orderByLatest()
             ->paginate($request['paginate'] ?? 20);
 
         $roleList = RoleResource::collection($roleList)->response()->getData(true);
@@ -56,43 +41,32 @@ class RoleService extends BaseController
         return view(self::VIEW . '.create', compact('getAllPermissions'));
     }
 
-    /**
-     * Create a new role with permissions
-     * 
-     * Uses DB transactions directly instead of repository transaction methods
-     */
     public function store($request): RedirectResponse
     {
         try {
-            \DB::beginTransaction();  // Direct DB transaction instead of repository method
-            
-            // Direct Eloquent create instead of repository insert
+            \DB::beginTransaction();
             $role = $this->role->create([
                 'name'             => $request['name'],
                 'guard_name'       => 'web',
                 'can_access_panel' => $request['can_access_panel'],
-                'created_by'       => Auth::id(),  // Add created_by manually (was in BaseRepository)
+                'created_by'       => Auth::id(),
             ]);
             $role->givePermissionTo($request['permissions']);
-            
-            \DB::commit();  // Direct DB commit
+            \DB::commit(); 
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
         } catch (Exception $e) {
-            \DB::rollBack();  // Direct DB rollback
+            \DB::rollBack();
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
     }
 
-    /**
-     * Edit role - fetch role data for editing
-     */
+
     public function edit(string $id): View | RedirectResponse
     {
-        $id = customDecoder($id);  // Decode ID (was in BaseRepository)
+        $id = customDecoder($id);  
         $role = $this->role->findOrFail($id);
-        
-        $getAllPermissions     = $this->getFormattedPermissions();                     //get all permissions
-        $getCurrentPermissions = $role->getAllPermissions()->pluck('name')->toArray(); //get permission of this role
+        $getAllPermissions     = $this->getFormattedPermissions();                     
+        $getCurrentPermissions = $role->getAllPermissions()->pluck('name')->toArray(); 
         $role                  = new RoleResource($role);
         $role                  = $role->response()->getData(true)['data'];
         $data                  = [
@@ -103,9 +77,7 @@ class RoleService extends BaseController
         return $this->responseFactory->successView(self::VIEW . ".edit", $data);        
     }
 
-    /**
-     * Show role details
-     */
+
     public function show(string $id): View | RedirectResponse
     {
         $id = customDecoder($id);
@@ -115,9 +87,7 @@ class RoleService extends BaseController
         return $this->responseFactory->successView(self::VIEW . '.show', $role);
     }
 
-    /**
-     * Update role with permissions
-     */
+
     public function update($request, string $id): RedirectResponse
     {
         try {
@@ -125,14 +95,11 @@ class RoleService extends BaseController
             
             $decodedId = customDecoder($id);
             $role = $this->role->findOrFail($decodedId);
-            
-            // Direct Eloquent update
             $role->update([
                 'name'             => $request['name'],
                 'can_access_panel' => $request['can_access_panel'],
             ]);
-            $role->syncPermissions($request['permissions']); // this will detach and attach permissions to this role
-            
+            $role->syncPermissions($request['permissions']);
             \DB::commit();
             return $this->responseFactory->redirectRoute(self::ROUTE . ".index", __(self::LANG_PATH . '_updated'));
         } catch (Exception $e) {
@@ -141,19 +108,12 @@ class RoleService extends BaseController
         }
     }
 
-    /**
-     * Delete role
-     */
     public function destroy($request): RedirectResponse
     {
         try {
             \DB::beginTransaction();
-            
-            $id = customDecoder($request['id']); // we will need to convert to real ID from encodeId
-            
-            // Direct Eloquent delete
+            $id = customDecoder($request['id']);
             $this->role->destroy($id);
-            
             \DB::commit();
             return $this->responseFactory->redirectRoute(self::ROUTE . ".index", __(self::LANG_PATH . '_deleted'));
         } catch (Exception $e) {
@@ -180,7 +140,6 @@ class RoleService extends BaseController
         $finalPermissions = [];
         foreach ($features as $feature) {
             $finalPermissions[$feature] = array_filter($permissions, function ($permission) use ($feature) {
-                //get "users" from "manage users","create users",etc
                 $getPermissionFeature = explode(' ', $permission['name'])[1];
                 return $getPermissionFeature == $feature;
             });
