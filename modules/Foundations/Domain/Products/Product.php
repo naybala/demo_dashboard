@@ -2,7 +2,6 @@
 
 namespace BasicDashboard\Foundations\Domain\Products;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use BasicDashboard\Foundations\Domain\Categories\Category;
 

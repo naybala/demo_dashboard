@@ -1,6 +1,7 @@
 <?php
 
 namespace BasicDashboard\Foundations\Domain\Categories;
+use BasicDashboard\Foundations\Domain\Products\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -59,7 +60,7 @@ class Category extends Model
 
     public function products()
     {
-        return $this->belongsToMany(\BasicDashboard\Foundations\Domain\Products\Product::class, 'category_product');
+        return $this->belongsToMany(Product::class, 'category_product');
     }
 
 }

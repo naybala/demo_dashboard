@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.27",
+            "version": "3.369.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "f844afab2a74eb3cf881970a9c31de460510eb74"
+                "reference": "d19d88c4d9d709eb119f2d85a385a9e40b834e33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f844afab2a74eb3cf881970a9c31de460510eb74",
-                "reference": "f844afab2a74eb3cf881970a9c31de460510eb74",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d19d88c4d9d709eb119f2d85a385a9e40b834e33",
+                "reference": "d19d88c4d9d709eb119f2d85a385a9e40b834e33",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.27"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.28"
             },
-            "time": "2026-02-04T19:07:08+00:00"
+            "time": "2026-02-05T19:09:46+00:00"
         },
         {
             "name": "berkayk/onesignal-laravel",
@@ -360,12 +360,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/naybala/Davion190510.git",
-                "reference": "c058145027e96cb29c778d0f2cbef6de5adea63c"
+                "reference": "7bb37d70b43fde4b15b40fdd7ca474844177d9be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/naybala/Davion190510/zipball/c058145027e96cb29c778d0f2cbef6de5adea63c",
-                "reference": "c058145027e96cb29c778d0f2cbef6de5adea63c",
+                "url": "https://api.github.com/repos/naybala/Davion190510/zipball/7bb37d70b43fde4b15b40fdd7ca474844177d9be",
+                "reference": "7bb37d70b43fde4b15b40fdd7ca474844177d9be",
                 "shasum": ""
             },
             "require": {
@@ -408,7 +408,7 @@
                 "issues": "https://github.com/naybala/Davion190510/issues",
                 "source": "https://github.com/naybala/Davion190510/tree/main"
             },
-            "time": "2026-02-05T08:34:58+00:00"
+            "time": "2026-02-06T06:11:28+00:00"
         },
         {
             "name": "dedoc/scramble",
