@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
  * @author Nay Ba la
  * https://github.com/naybala
  * https://naybala.netlify.app/
+ * @tags Spa
  *
  */
 

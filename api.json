@@ -17,9 +17,9 @@
     "paths": {
         "/v1/mobile/users": {
             "get": {
-                "operationId": "basicDashboard.mobile.users.user.index",
+                "operationId": "index",
                 "tags": [
-                    "User"
+                    "Mobile / Users"
                 ],
                 "responses": {
                     "200": {
@@ -37,9 +37,9 @@
         },
         "/v1/mobile/users/{id}": {
             "get": {
-                "operationId": "basicDashboard.mobile.users.user.show",
+                "operationId": "show",
                 "tags": [
-                    "User"
+                    "Mobile / Users"
                 ],
                 "parameters": [
                     {
@@ -67,9 +67,9 @@
         },
         "/v1/spa/users": {
             "get": {
-                "operationId": "basicDashboard.spa.users.user.index",
+                "operationId": "index",
                 "tags": [
-                    "User"
+                    "Spa / Users"
                 ],
                 "responses": {
                     "200": {
@@ -87,9 +87,9 @@
         },
         "/v1/spa/users/{id}": {
             "get": {
-                "operationId": "basicDashboard.spa.users.user.show",
+                "operationId": "show",
                 "tags": [
-                    "User"
+                    "Spa / Users"
                 ],
                 "parameters": [
                     {

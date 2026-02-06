@@ -42,10 +42,33 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Scramble::configure()
-        ->withDocumentTransformers(function (OpenApi $openApi) {
-            $openApi->secure(
-                SecurityScheme::http('bearer')
-            );
+            ->withDocumentTransformers(function (OpenApi $openApi) {
+                $openApi->secure(
+                    SecurityScheme::http('bearer')
+                );
+
+                foreach ($openApi->paths as $path) {
+                    foreach ($path->operations as $operation) {
+                        if ($operationId = $operation->operationId) {
+                            $parts = explode('.', $operationId);
+                            $operation->operationId = end($parts);
+                        }
+                    }
+                }
+            });
+
+        Scramble::resolveTagsUsing(function (\Dedoc\Scramble\Support\RouteInfo $routeInfo) {
+            $uri = $routeInfo->route->uri();
+            
+            if (str_contains($uri, 'mobile')) {
+                return ['Mobile / Users'];
+            }
+            
+            if (str_contains($uri, 'spa')) {
+                return ['Spa / Users'];
+            }
+
+            return null; // Fallback to default
         });
     }
 
