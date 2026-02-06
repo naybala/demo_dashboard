@@ -6,7 +6,7 @@
             
             <x-form.grid>
                 {{-- name --}}
-                <x-form.input-group title='product.name' name='name' id='name'  required="true"/>
+                <x-form.input-group title='product.name' name='name' id='name'  required="true" />
                 {{-- name --}}
 
                 {{-- name_other --}}
@@ -14,7 +14,7 @@
                 {{-- name_other --}}
 
                 {{-- price --}}
-                <x-form.input-group title='product.price' name='price' id='price'  required="true"/>
+                <x-form.input-group title='product.price' name='price' id='price'  required="true" type="number"/>
                 {{-- price --}}
 
                 {{-- categories --}}

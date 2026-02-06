@@ -6,7 +6,6 @@ $(document).ready(function () {
   let selectedImgElement;
   let selectedFileIndex;
   let imageFiles = [];
-  let deleteImgIndex;
   let whileUploading = false;
   let imgIndex = 0;
   var apiPath = $("#apiPath").val();

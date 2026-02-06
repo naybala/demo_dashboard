@@ -11,6 +11,7 @@
     'ajaxError' => null,
     'disabled' => false
 ])
+
 <x-form.control>
     {{-- <x-form.label :title="$title" :required="$required" /> --}}
     <label class="pb-2 pt-2 text-sm text-gray-900 dark:text-white font-mono select-none" 

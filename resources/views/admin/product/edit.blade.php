@@ -22,7 +22,7 @@
                 {{-- name_other --}}
 
                 {{-- price --}}
-                <x-form.input-group title='product.price' name='price' id='price' :value="$data['price']" />
+                <x-form.input-group title='product.price' name='price' id='price' :value="$data['price']" type="number" />
                 {{-- price --}}
 
                 {{-- categories --}}
@@ -41,6 +41,7 @@
                 {{-- description_other --}}
 
             </x-form.grid>
+            <br><br>
             {{-- Save And Cancel --}}
             <x-form.submit :operate="__('messages.save')" :cancel="__('messages.cancel')" url="products.index" />
             {{-- Save And Cancel --}}

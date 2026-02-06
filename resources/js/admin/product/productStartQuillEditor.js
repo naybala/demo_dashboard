@@ -1,4 +1,3 @@
-// resources/js/admin/product/productStartQuillEditor.js
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
@@ -37,6 +36,7 @@ export default function productStartQuillEditor(
 function selectLocalImage(quill, path) {
   const input = document.createElement("input");
   input.setAttribute("type", "file");
+  input.setAttribute("accept", "image/*");
   input.click();
 
   input.onchange = () => {
