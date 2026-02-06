@@ -15,11 +15,12 @@
         }
     ],
     "paths": {
-        "/v1/mobile/categories": {
+        "/v1/mobile/users": {
             "get": {
-                "operationId": "index",
+                "operationId": "basicDashboard.mobile.users.user.index",
+                "summary": "Users.index",
                 "tags": [
-                    "Mobile / Categories"
+                    "Mobile"
                 ],
                 "responses": {
                     "200": {
@@ -35,11 +36,12 @@
                 }
             }
         },
-        "/v1/mobile/categories/{id}": {
+        "/v1/mobile/users/{id}": {
             "get": {
-                "operationId": "show",
+                "operationId": "basicDashboard.mobile.users.user.show",
+                "summary": "Users.show",
                 "tags": [
-                    "Mobile / Categories"
+                    "Mobile"
                 ],
                 "parameters": [
                     {
@@ -65,11 +67,12 @@
                 }
             }
         },
-        "/v1/mobile/users": {
+        "/v1/mobile/categories": {
             "get": {
-                "operationId": "index",
+                "operationId": "basicDashboard.mobile.categories.category.index",
+                "summary": "Categories.index",
                 "tags": [
-                    "Mobile / Users"
+                    "Mobile"
                 ],
                 "responses": {
                     "200": {
@@ -85,11 +88,12 @@
                 }
             }
         },
-        "/v1/mobile/users/{id}": {
+        "/v1/mobile/categories/{id}": {
             "get": {
-                "operationId": "show",
+                "operationId": "basicDashboard.mobile.categories.category.show",
+                "summary": "Categories.show",
                 "tags": [
-                    "Mobile / Users"
+                    "Mobile"
                 ],
                 "parameters": [
                     {
@@ -117,9 +121,10 @@
         },
         "/v1/spa/users": {
             "get": {
-                "operationId": "index",
+                "operationId": "basicDashboard.spa.users.user.index",
+                "summary": "Users.index",
                 "tags": [
-                    "Spa / Users"
+                    "Spa"
                 ],
                 "responses": {
                     "200": {
@@ -137,9 +142,62 @@
         },
         "/v1/spa/users/{id}": {
             "get": {
-                "operationId": "show",
+                "operationId": "basicDashboard.spa.users.user.show",
+                "summary": "Users.show",
                 "tags": [
-                    "Spa / Users"
+                    "Spa"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/spa/categories": {
+            "get": {
+                "operationId": "basicDashboard.spa.categories.category.index",
+                "summary": "Categories.index",
+                "tags": [
+                    "Spa"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/spa/categories/{id}": {
+            "get": {
+                "operationId": "basicDashboard.spa.categories.category.show",
+                "summary": "Categories.show",
+                "tags": [
+                    "Spa"
                 ],
                 "parameters": [
                     {

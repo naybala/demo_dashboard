@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Dedoc\Scramble\Support\RouteInfo;
+
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,41 +46,65 @@ class AppServiceProvider extends ServiceProvider
 
         Scramble::configure()
             ->withDocumentTransformers(function (OpenApi $openApi) {
-                $openApi->secure(
-                    SecurityScheme::http('bearer')
-                );
+                $openApi->secure(SecurityScheme::http('bearer'));
 
                 foreach ($openApi->paths as $path) {
                     foreach ($path->operations as $operation) {
-                        if ($operationId = $operation->operationId) {
-                            $parts = explode('.', $operationId);
-                            $operation->operationId = end($parts);
+
+                        $route = $operation->route ?? null;
+
+                        if ($route) {
+                            $uri = $route->uri();
+                            $segments = explode('/', trim($uri, '/'));
+
+                            foreach ($segments as $i => $segment) {
+                                if (in_array(strtolower($segment), ['mobile', 'spa']) && isset($segments[$i + 1])) {
+
+                                    $module = strtolower($segment);
+                                    $resource = strtolower($segments[$i + 1]);
+                                    $action = strtolower($route->getActionMethod());
+
+                                    //  UNIQUE operationId
+                                    $operation->operationId = "{$module}.{$resource}.{$action}";
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
-            });
+            })
 
-        Scramble::resolveTagsUsing(function (\Dedoc\Scramble\Support\RouteInfo $routeInfo) {
+
+            ->withOperationTransformers(function ($operation, RouteInfo $routeInfo) {
+                $uri = $routeInfo->route->uri();
+                $segments = explode('/', trim($uri, '/'));
+
+                foreach ($segments as $i => $segment) {
+                    if (in_array(strtolower($segment), ['mobile', 'spa']) && isset($segments[$i + 1])) {
+                        $resource = ucfirst($segments[$i + 1]);
+                        $action = strtolower($routeInfo->route->getActionMethod());
+
+                        $operation->summary = "{$resource}.{$action}";
+                        return;
+                    }
+                }
+        });
+
+        Scramble::resolveTagsUsing(function (RouteInfo $routeInfo) {
             $uri = $routeInfo->route->uri();
             $segments = explode('/', trim($uri, '/'));
-            
-            $module = null;
-            $moduleIndex = -1;
-            foreach ($segments as $index => $segment) {
-                if (in_array(strtolower($segment), ['mobile', 'spa'])) {
+
+            foreach ($segments as $i => $segment) {
+                if (in_array(strtolower($segment), ['mobile', 'spa']) && isset($segments[$i + 1])) {
                     $module = ucfirst($segment);
-                    $moduleIndex = $index;
-                    break;
+                    return [$module]; // keep ONLY parent group
                 }
             }
 
-            if ($module && isset($segments[$moduleIndex + 1])) {
-                $resource = ucfirst($segments[$moduleIndex + 1]);
-                return ["$module / $resource"];
-            }
-
-            return $module ? [$module] : null;
+            return null;
         });
+
+
     }
 
 }
