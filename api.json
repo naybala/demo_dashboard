@@ -15,6 +15,56 @@
         }
     ],
     "paths": {
+        "/v1/mobile/categories": {
+            "get": {
+                "operationId": "index",
+                "tags": [
+                    "Mobile / Categories"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/mobile/categories/{id}": {
+            "get": {
+                "operationId": "show",
+                "tags": [
+                    "Mobile / Categories"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/mobile/users": {
             "get": {
                 "operationId": "index",

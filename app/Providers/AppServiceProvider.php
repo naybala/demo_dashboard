@@ -59,16 +59,24 @@ class AppServiceProvider extends ServiceProvider
 
         Scramble::resolveTagsUsing(function (\Dedoc\Scramble\Support\RouteInfo $routeInfo) {
             $uri = $routeInfo->route->uri();
+            $segments = explode('/', trim($uri, '/'));
             
-            if (str_contains($uri, 'mobile')) {
-                return ['Mobile / Users'];
-            }
-            
-            if (str_contains($uri, 'spa')) {
-                return ['Spa / Users'];
+            $module = null;
+            $moduleIndex = -1;
+            foreach ($segments as $index => $segment) {
+                if (in_array(strtolower($segment), ['mobile', 'spa'])) {
+                    $module = ucfirst($segment);
+                    $moduleIndex = $index;
+                    break;
+                }
             }
 
-            return null; // Fallback to default
+            if ($module && isset($segments[$moduleIndex + 1])) {
+                $resource = ucfirst($segments[$moduleIndex + 1]);
+                return ["$module / $resource"];
+            }
+
+            return $module ? [$module] : null;
         });
     }
 
