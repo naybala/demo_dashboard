@@ -3,7 +3,6 @@ namespace BasicDashboard\Spa\Users\Controllers;
 
 use App\Http\Controllers\Controller;
 use BasicDashboard\Spa\Users\Services\UserService;
-use BasicDashboard\Spa\Users\Validation\ShowUserRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
