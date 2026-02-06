@@ -60,6 +60,14 @@ if (! function_exists('uploadImageToDigitalOcean')) {
     }
 }
 
+if (! function_exists('uploadImageToLocal')) {
+    function uploadImageToLocal($file, $directory): String
+    {
+        $path = Storage::disk('public')->putFile($directory, $file);
+        return '/storage/' . $path;
+    }
+}
+
 if (! function_exists('retrievePublicFiles')) {
     function retrievePublicFiles(array | null $array): array
     {

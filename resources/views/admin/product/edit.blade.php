@@ -31,11 +31,13 @@
                 {{-- categories --}}
 
                 {{-- description --}}
-                <x-form.input-group title='product.description' name='description' id='description' :value="$data['description']" />
+                <x-form.quill-editor title="product.description" name="description" id="description"
+                :value="$data['description']" helperText="description" />
                 {{-- description --}}
 
                 {{-- description_other --}}
-                <x-form.input-group title='product.description_other' name='description_other' id='description_other' :value="$data['description_other']" />
+                <x-form.quill-editor title="product.description_other" name="description_other" id="description_other"
+                :value="$data['description_other']" helperText="description" />
                 {{-- description_other --}}
 
             </x-form.grid>
@@ -44,5 +46,5 @@
             {{-- Save And Cancel --}}
         </form>
     </x-form.layout>
-    @vite(['resources/js/admin/product/local-store.js'])
+    @vite(['resources/js/admin/product/local-store.js', 'resources/js/admin/product/product-quill.js'])
 </x-master-layout>

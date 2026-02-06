@@ -51,4 +51,19 @@ Route::post('upload/image', function (Request $request) {
     ]);
 })->name('uploadImage');
 
+Route::post('upload/image/local', function (Illuminate\Http\Request $request) {
+    if (!$request->hasFile('image')) {
+        return response()->json(['error' => 'No image uploaded'], 400);
+    }
+    $path = $request->input('path', 'uploads');
+    $file = $request->file('image');
+    $url  = uploadImageToLocal($file, $path);
+    return response()->json([
+        'data' => 'success',
+        'code' => 200,
+        'url'  => $url,
+    ]);
+})->name('uploadImageLocal');
+
+
 
