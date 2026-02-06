@@ -30,6 +30,8 @@ class ProductResource extends JsonResource
             "description_other" => $this->description_other,
             "photos" => $photoUrls,
             "photo_paths" => $photos,
+            "category_ids" => $this->categories->pluck('id')->toArray(),
+            "category_names" => $this->categories->pluck('name')->toArray(),
             "primary_photo" => !empty($photoUrls) ? $photoUrls[0] : null,
         ];
     }

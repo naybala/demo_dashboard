@@ -2,12 +2,12 @@
 
 namespace BasicDashboard\Mobile\Users\Services;
 
-use Exception;
+use App\Http\Controllers\Controller;
+use BasicDashboard\Foundations\Domain\Users\User;
 use Illuminate\Http\JsonResponse;
-use BasicDashboard\Mobile\Common\BaseMobileController;
 use BasicDashboard\Mobile\Users\Resources\UserResource;
-use BasicDashboard\Foundations\Domain\Users\Repositories\UserRepository;
-use BasicDashboard\Foundations\Domain\Users\Repositories\UserRepositoryInterface;
+use Illuminate\Routing\ResponseFactory;
+
 
 /**
  *
@@ -19,32 +19,35 @@ use BasicDashboard\Foundations\Domain\Users\Repositories\UserRepositoryInterface
  *
  */
 
-class UserService extends BaseMobileController
+class UserService extends Controller
 {
 
     public function __construct(
-        private UserRepositoryInterface $userRepositoryInterface,
+        private User $user,
+        private ResponseFactory $responseFactory
     )
     {
     }
 
-    ///////////////////////////This is Method Divider///////////////////////////////////////
-
-    public function index(string $search): JsonResponse
+    public function index($request): JsonResponse
     {
-        $data = $this->userRepositoryInterface->getUsersByFullNameOrPhoneNumber($search,30)->toArray();
-        return $this->sendResponse("Index success", $data);
+        $userList = $this->user
+            ->withUserRelations()                                    
+            ->filterByKeyword($request['keyword'] ?? null)          
+            ->orderByLatest()                                        
+            ->paginate($request['paginate'] ?? config('numbers.paginate'));
+        $userList = UserResource::collection($userList)->response()->getData(true);
+        return $this->responseFactory->sendSuccessResponse('Index Success', $userList);
+
     }
 
-    ///////////////////////////This is Method Divider///////////////////////////////////////
 
     public function show(string $id): JsonResponse
     {
-        $data = $this->userRepositoryInterface->edit($id);
-        $data= new UserResource($data);
-        $data= $data->response()->getData(true)['data'];
-        return $this->sendResponse('Show success',$data);
+        $user = $this->user->findOrFail($id);
+        $user = new UserResource($user);
+        $user = $user->response()->getData(true)['data'];
+        return $this->responseFactory->sendSuccessResponse('Show success',$user);
     }
 
-    ///////////////////////////This is Method Divider///////////////////////////////////////
 }

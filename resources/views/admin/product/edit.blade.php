@@ -25,6 +25,11 @@
                 <x-form.input-group title='product.price' name='price' id='price' :value="$data['price']" />
                 {{-- price --}}
 
+                {{-- categories --}}
+                <x-form.searchable-multi-select title="product.category" name="categories" id="categories" :required="true"
+                    :viewData="$viewCategories" :selected-value="$data['category_ids']" />
+                {{-- categories --}}
+
                 {{-- description --}}
                 <x-form.input-group title='product.description' name='description' id='description' :value="$data['description']" />
                 {{-- description --}}

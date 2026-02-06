@@ -1,12 +1,11 @@
 <?php
 
 namespace BasicDashboard\Mobile\Users\Controllers;
-
-use BasicDashboard\Mobile\Common\BaseMobileController;
 use BasicDashboard\Mobile\Users\Services\UserService;
-use BasicDashboard\Mobile\Users\Validation\SearchUserRequest;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 
 
 
@@ -20,28 +19,23 @@ use Illuminate\Http\Request;
  *
  */
 
-class UserController extends BaseMobileController
+class UserController extends Controller
 {
     public function __construct(
         private UserService $userService
     ) {
     }
 
-    ///////////////////////////This is Method Divider///////////////////////////////////////
 
-    public function index(SearchUserRequest $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return $this->userService->index($request->search);
+        return $this->userService->index($request);
     }
-
-    ///////////////////////////This is Method Divider///////////////////////////////////////
 
 
     public function show(string $id): JsonResponse
     {
         return $this->userService->show($id);
     }
-
-    ///////////////////////////This is Method Divider///////////////////////////////////////
 
 }

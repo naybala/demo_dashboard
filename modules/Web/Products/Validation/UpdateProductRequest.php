@@ -3,6 +3,7 @@
 namespace BasicDashboard\Web\Products\Validation;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 /**
  *
@@ -21,6 +22,12 @@ class UpdateProductRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'updated_by' => Auth::id(),
+        ]);
+    }
     public function rules(): array
     {
         return [
@@ -33,6 +40,11 @@ class UpdateProductRequest extends FormRequest
             "photos.*" => "image|mimes:jpeg,png,jpg,gif,svg|max:2048",
             "existing_photos" => "nullable|array",
             "existing_photos.*" => "string",
+            "updated_by" => "nullable",
+            "categories" => "required|array",
+            "categories.*" => "exists:categories,id",
         ];
     }
+
+   
 }

@@ -91,7 +91,6 @@ class UserService extends BaseController
 
     public function show($id): View | RedirectResponse
     {
-        $id = customDecoder($id);
         $user = $this->user->findOrFail($id);
         $user = new UserResource($user);
         $user = $user->response()->getData(true)['data'];

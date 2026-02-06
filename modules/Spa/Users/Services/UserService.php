@@ -1,9 +1,9 @@
 <?php
 namespace BasicDashboard\Spa\Users\Services;
 
-use BasicDashboard\Foundations\Domain\Users\Repositories\UserRepositoryInterface;
-use BasicDashboard\Mobile\Users\Resources\UserResource;
-use BasicDashboard\Spa\Common\BaseSpaController;
+use App\Http\Controllers\Controller;
+use BasicDashboard\Foundations\Domain\Users\User;
+use BasicDashboard\Spa\Users\Resources\UserResource;
 use Illuminate\Routing\ResponseFactory;
 
 
@@ -17,24 +17,32 @@ use Illuminate\Routing\ResponseFactory;
  *
  */
 
-class UserService extends BaseSpaController
+class UserService extends Controller
 {
     public function __construct(
-        private UserRepositoryInterface $userRepositoryInterface,
+        private User $user,
         private ResponseFactory $responseFactory,
 
     ) {
     }
 
-
-    public function showUser(array $request): mixed
+    public function index($request): mixed
     {
-        $data = $this->userRepositoryInterface->edit($request['user_id']);
+        $userList = $this->user
+            ->withUserRelations()
+            ->filterByKeyword($request['keyword'] ?? null)
+            ->orderByLatest()
+            ->paginate($request['paginate'] ?? config('numbers.paginate'));
+        $userList = UserResource::collection($userList)->response()->getData(true);
+        return $this->responseFactory->sendSuccessResponse('Index Success', $userList);
+    }
+
+
+    public function show(string $id): mixed
+    {
+        $data = $this->user->findOrFail($id);
         $data = new UserResource($data);
         $data = $data->response()->getData(true)['data'];
         return $this->responseFactory->sendSuccessResponse("Show success", $data);
-
     }
-
-    
 }

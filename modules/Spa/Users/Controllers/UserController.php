@@ -1,10 +1,11 @@
 <?php
 namespace BasicDashboard\Spa\Users\Controllers;
 
-use BasicDashboard\Spa\Common\BaseSpaController;
+use App\Http\Controllers\Controller;
 use BasicDashboard\Spa\Users\Services\UserService;
 use BasicDashboard\Spa\Users\Validation\ShowUserRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  *
@@ -16,15 +17,21 @@ use Illuminate\Http\JsonResponse;
  *
  */
 
-class UserController extends BaseSpaController
+class UserController extends Controller
 {
     public function __construct(
         private UserService $userService
     ) {
     }
-    public function showUser(ShowUserRequest $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return $this->userService->showUser($request->validated());
+        return $this->userService->index($request->all());
+    }
+
+
+    public function show(string $id): JsonResponse
+    {
+        return $this->userService->show($id);
     }
 
 }

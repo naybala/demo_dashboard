@@ -15,6 +15,10 @@
                 <x-show.text-group title='product.price' :data="$data['price']" />
                 {{-- price --}}
 
+                {{-- categories --}}
+                <x-show.badge-group title="product.category" :data="$data['category_names']" />
+                {{-- categories --}}
+
                 {{-- description --}}
                 <x-show.text-group title='product.description' :data="$data['description']" />
                 {{-- description --}}

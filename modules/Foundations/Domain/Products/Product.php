@@ -4,6 +4,7 @@ namespace BasicDashboard\Foundations\Domain\Products;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use BasicDashboard\Foundations\Domain\Categories\Category;
 
 
 /**
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 //#[ObservedBy([AuditObserver::class])]
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
       //protected $table = 'table_name';
     protected $guarded = [
     ];
@@ -53,6 +54,11 @@ class Product extends Model
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
             ->orderBy('id', 'desc');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_product');
     }
 
 }

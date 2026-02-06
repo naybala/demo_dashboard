@@ -3,6 +3,7 @@
 namespace BasicDashboard\Web\Products\Validation;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 /**
  *
@@ -21,6 +22,13 @@ class StoreProductRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'created_by' => Auth::id(),
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -31,6 +39,9 @@ class StoreProductRequest extends FormRequest
             "description_other" => "nullable|string",
             "photos" => "required|array",
             "photos.*" => "image|mimes:jpeg,png,jpg,gif,svg|max:2048",
+            "categories" => "required|array",
+            "categories.*" => "exists:categories,id",
+            "created_by"=> "nullable",
         ];
-    }
+    }   
 }

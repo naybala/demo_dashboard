@@ -7,7 +7,6 @@ use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\Products\Resources\ProductResource;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Exception;
 
@@ -53,14 +52,20 @@ class ProductService extends BaseController
     public function store($request): RedirectResponse
     {
         try {
-            \DB::beginTransaction();
-            $request['created_by'] = Auth::id();
-            
+            \DB::beginTransaction();            
             if (isset($request['photos']) && is_array($request['photos'])) {
                 $request['photos'] = $this->uploadPhotos($request['photos']);
             }
 
-            $this->product->create($request);
+            $categories = $request['categories'] ?? [];
+            unset($request['categories']);
+
+            $product = $this->product->create($request);
+            
+            if (!empty($categories)) {
+                $product->categories()->sync($categories);
+            }
+
             \DB::commit();
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
         } catch (Exception $e) {
@@ -123,7 +128,15 @@ class ProductService extends BaseController
             $request['photos'] = array_merge($existingPhotos, $newPhotos);
             unset($request['existing_photos']);
 
+            $categories = $request['categories'] ?? [];
+            unset($request['categories']);
+
             $product->update($request);
+
+            if (!empty($categories)) {
+                $product->categories()->sync($categories);
+            }
+
             \DB::commit();
             return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
         } catch (Exception $e) {
@@ -136,16 +149,13 @@ class ProductService extends BaseController
     {
          try {
             \DB::beginTransaction();
-            $id = customDecoder($request['id']);
-            $product = $this->product->findOrFail($id);
-            
+            $product = $this->product->findOrFail($request['id']);
             // Delete local images
             if ($product->photos) {
                 foreach ($product->photos as $photo) {
                     \Storage::disk('public')->delete($photo);
                 }
             }
-
             $product->delete();
             \DB::commit();
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));

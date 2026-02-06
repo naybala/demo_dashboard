@@ -57,4 +57,9 @@ class Category extends Model
             ->orderBy('id', 'desc');
     }
 
+    public function products()
+    {
+        return $this->belongsToMany(\BasicDashboard\Foundations\Domain\Products\Product::class, 'category_product');
+    }
+
 }

@@ -17,6 +17,11 @@
                 <x-form.input-group title='product.price' name='price' id='price'  required="true"/>
                 {{-- price --}}
 
+                {{-- categories --}}
+                <x-form.searchable-multi-select title="product.category" name="categories" id="categories" :required="true"
+                    :viewData="$viewCategories" />
+                {{-- categories --}}
+
                 {{-- description --}}
                 <x-form.input-group title='product.description' name='description' id='description' />
                 {{-- description --}}

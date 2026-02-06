@@ -11,4 +11,5 @@ return [
     'product_updated' => "???? was successfully updated",
     'product_deleted' => "???? was successfully deleted",
     'photo'=>'Photo',
+    'category'=>'Categories',
 ];
