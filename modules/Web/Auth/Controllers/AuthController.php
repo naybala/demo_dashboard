@@ -6,6 +6,8 @@ use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Foundations\Domain\Users\User;
 use BasicDashboard\Web\Auth\Services\AuthService;
 use BasicDashboard\Web\Auth\Validation\AuthLoginRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends BaseController
 {
@@ -18,16 +20,28 @@ class AuthController extends BaseController
      */
     public function login()
     {
-        return $this->authService->login();
+        if (Auth::user() == null) {
+            return view('auth.login');
+        } else {
+            $permissionArr = $this->authService->getAuthPermissions();
+            if ($permissionArr) {
+                Session::put('permission_key', implode(',', $permissionArr));
+            }
+            return redirect("/");
+        }
     }
 
     public function authorizeOperator(AuthLoginRequest $request)
     {
-        return $this->authService->authorizeOperator($request->validated());
+        if ($this->authService->authorizeOperator($request->validated())) {
+            return redirect("/login");
+        }
+        return redirect()->back()->with("message", 'Invalid credentials');
     }
 
     public function logout()
     {
-        return $this->authService->logout();
+        $this->authService->logout();
+        return redirect('/login');
     }
 }

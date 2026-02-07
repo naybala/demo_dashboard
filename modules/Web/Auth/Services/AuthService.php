@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
-class AuthService extends BaseController
+class AuthService
 {
     const LOGIN  = "Login Event";
     const LOGOUT = "Logout Event";
@@ -23,33 +23,26 @@ class AuthService extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function login()
+    public function getAuthPermissions(): ?array
     {
-        if (Auth::user() == null) {
-            return view('auth.login');
-        } else {
-            $permissionArr = User::find(Auth::id())->getAllPermissions()->pluck('name')->toArray(); // get auth user and give permission to Session
-            Session::put('permission_key', implode(',', $permissionArr));
+        if (Auth::check()) {
+            return User::find(Auth::id())->getAllPermissions()->pluck('name')->toArray();
+        }
+        return null;
+    }
+
+    public function authorizeOperator(array $request): bool
+    {
+        if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']], true)) {
             $this->authObserver->AuthDetection(self::LOGIN);
-            return redirect("/");
+            return true;
         }
+        return false;
     }
 
-    public function authorizeOperator(array $request)
-    {
-        $user = User::where('email', $request['email'])->first();
-        if ($user) {
-            if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']],true)) {
-                return redirect("/login");
-            }
-        }
-        return redirect()->back()->with("message", 'Invalid credentials');
-    }
-
-    public function logout()
+    public function logout(): void
     {
         $this->authObserver->AuthDetection(self::LOGOUT);
         Auth::logout();
-        return redirect('/login');
     }
 }

@@ -27,4 +27,11 @@ class DeleteRoleRequest extends FormRequest
           "id"=>"required",
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            "id.required" => "Role ID is required",
+        ];
+    }
 }

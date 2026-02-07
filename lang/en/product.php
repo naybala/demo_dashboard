@@ -7,9 +7,9 @@ return [
     'description'=> 'Description',
     'description_other'=> 'Description Other',
     'name_validation' => "Name is required",
-    'product_created' => "???? was successfully created",
-    'product_updated' => "???? was successfully updated",
-    'product_deleted' => "???? was successfully deleted",
+    'product_created' => "Product was successfully created",
+    'product_updated' => "Product was successfully updated",
+    'product_deleted' => "Product was successfully deleted",
     'photo'=>'Photo',
     'category'=>'Categories',
 ];

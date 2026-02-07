@@ -43,5 +43,16 @@ class StoreProductRequest extends FormRequest
             "categories.*" => "exists:categories,id",
             "created_by"=> "nullable",
         ];
-    }   
+    }
+
+    public function messages(): array
+    {
+        return [
+            "name.required" => "Product Name is required",
+            "name_other.required" => "Product Name (Other) is required",
+            "price.required" => "Product Price is required",
+            "photos.required" => "At least one product photo is required",
+            "categories.required" => "At least one category is required",
+        ];
+    }
 }

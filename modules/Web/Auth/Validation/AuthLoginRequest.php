@@ -26,9 +26,16 @@ class AuthLoginRequest extends FormRequest
     public function rules(Request $request)
     {
         return [
-            //
             'email' => 'required',
             'password' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Email is required',
+            'password.required' => 'Password is required',
         ];
     }
 }

@@ -3,12 +3,6 @@
 namespace BasicDashboard\Web\Products\Services;
 
 use BasicDashboard\Foundations\Domain\Products\Product;
-use BasicDashboard\Web\Common\BaseController;
-use BasicDashboard\Web\Products\Resources\ProductResource;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
-use Illuminate\View\View;
-use Exception;
 use Illuminate\Filesystem\FilesystemManager;
 
 
@@ -22,40 +16,26 @@ use Illuminate\Filesystem\FilesystemManager;
  *
  */
 
-class ProductService extends BaseController
+class ProductService
 {
-    const VIEW = 'admin.product';
-    const ROUTE = 'products';
-    const LANG_PATH = "product.product";
-
     public function __construct(
         private Product $product,
-        private ResponseFactory $responseFactory,
         private FilesystemManager $filesystemManager
     )
     {
     }
 
-    public function index(array $request): View
+    public function paginate(array $request)
     {
-        $productList = $this->product
+        return $this->product
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
-
-        $productList = ProductResource::collection($productList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW.".index", $productList);
     }
 
-    public function create(): View
+    public function store(array $request): Product
     {
-        return view(self::VIEW.'.create');
-    }
-
-    public function store($request): RedirectResponse | \Illuminate\Http\JsonResponse
-    {
-        try {
-            \DB::beginTransaction();            
+        return \DB::transaction(function () use ($request) {
             if (isset($request['photos']) && is_array($request['photos'])) {
                 $request['photos'] = $this->filesystemManager->uploadFilesToLocal($request['photos'], 'products', 'photos');
             }
@@ -69,47 +49,19 @@ class ProductService extends BaseController
                 $product->categories()->sync($categories);
             }
 
-            \DB::commit();
-            $message = __(self::LANG_PATH . '_created');
-            if (request()->ajax()) {
-                return $this->responseFactory->successAjaxResponse($message, $product);
-            }
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, $message);
-        } catch (\Throwable $e) {
-            \DB::rollBack();
-            \Log::error("Product store failed: " . $e->getMessage(), ['exception' => $e]);
-            if (request()->ajax()) {
-                return $this->responseFactory->failAjaxResponse($e->getMessage());
-            }
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+            return $product;
+        });
     }
 
-
-    public function edit(string $id): View | RedirectResponse
+    public function findOrFail(string $id): Product
     {
-        $id = customDecoder($id);
-        $product = $this->product->findOrFail($id);
-        $product = new ProductResource($product);
-        $product = $product->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".edit", $product);
+        return $this->product->findOrFail($id);
     }
 
-    public function show(string $id): View | RedirectResponse
+    public function update(array $request, string $id): Product
     {
-        $id = customDecoder($id);
-        $product = $this->product->findOrFail($id);
-        $product = new ProductResource($product);
-        $product = $product->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . '.show', $product);
-    }
-
-    public function update($request, string $id): RedirectResponse | \Illuminate\Http\JsonResponse
-    {
-         try {
-            \DB::beginTransaction();
-            $decodedId = customDecoder($id);
-            $product = $this->product->findOrFail($decodedId);
+        return \DB::transaction(function () use ($request, $id) {
+            $product = $this->product->findOrFail($id);
 
             $existingPhotos = $request['existing_photos'] ?? [];
             $newPhotos = [];
@@ -117,10 +69,10 @@ class ProductService extends BaseController
             if (isset($request['photos']) && is_array($request['photos'])) {
                 $newPhotos = $this->filesystemManager->uploadFilesToLocal($request['photos'], 'products', 'photos');
             }
-            // Identify and delete removed photos from storage
+            
             $oldPhotosInDb = $product->photos ?? [];
             $this->filesystemManager->deleteFilesFromLocal($oldPhotosInDb, $existingPhotos);
-            // Final list of photos: kept existing + new uploads
+            
             $request['photos'] = array_merge($existingPhotos, $newPhotos);
             unset($request['existing_photos']);
 
@@ -133,46 +85,19 @@ class ProductService extends BaseController
                 $product->categories()->sync($categories);
             }
 
-            \DB::commit();
-            $message = __(self::LANG_PATH . '_updated');
-            if (request()->ajax()) {
-                return $this->responseFactory->successAjaxResponse($message, $product);
-            }
-            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, $message);
-        } catch (\Throwable $e) {
-            \DB::rollBack();
-            \Log::error("Product update failed: " . $e->getMessage(), ['exception' => $e]);
-            if (request()->ajax()) {
-                return $this->responseFactory->failAjaxResponse($e->getMessage());
-            }
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+            return $product;
+        });
     }
 
-    public function destroy($request): RedirectResponse | \Illuminate\Http\JsonResponse
+    public function delete(string $id): void
     {
-         try {
-            \DB::beginTransaction();
-            $product = $this->product->findOrFail($request['id']);
-            // Delete local images
+        \DB::transaction(function () use ($id) {
+            $product = $this->product->findOrFail($id);
             if ($product->photos) {
-               $this->filesystemManager->forceDeleteFilesFromLocal($product->photos);
+                $this->filesystemManager->forceDeleteFilesFromLocal($product->photos);
             }
             $product->delete();
-            \DB::commit();
-            $message = __(self::LANG_PATH . '_deleted');
-            if (request()->ajax()) {
-                return $this->responseFactory->successAjaxResponse($message, null);
-            }
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, $message);
-        } catch (\Throwable $e) {
-            \DB::rollBack();
-            \Log::error("Product destroy failed: " . $e->getMessage(), ['exception' => $e]);
-            if (request()->ajax()) {
-                return $this->responseFactory->failAjaxResponse($e->getMessage());
-            }
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        });
     }
 
 }

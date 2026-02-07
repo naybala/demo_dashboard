@@ -15,14 +15,13 @@ class DeleteUserRequest extends FormRequest
     {
         return [
             "id" => "required",
-            // "role_name" => "required",
         ];
     }
 
     public function messages(): array
     {
         return [
-            // 'role_name.required' => __('user.role_id_validation'),
+            'id.required' => 'User ID is required',
         ];
     }
 }

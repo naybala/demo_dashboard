@@ -27,4 +27,11 @@ class DeleteProductRequest extends FormRequest
           "id"=>"required",
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            "id.required" => "Product ID is required",
+        ];
+    }
 }

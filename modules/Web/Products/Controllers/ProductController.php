@@ -10,6 +10,8 @@ use BasicDashboard\Web\Products\Validation\DeleteProductRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\ResponseFactory;
+use BasicDashboard\Web\Products\Resources\ProductResource;
 
 /**
  *
@@ -23,44 +25,98 @@ use Illuminate\Http\RedirectResponse;
 
 class ProductController extends Controller
 {
+    const VIEW = 'admin.product';
+    const ROUTE = 'products';
+    const LANG_PATH = "product.product";
+
     public function __construct(
-        private ProductService $productService
+        private ProductService $productService,
+        private ResponseFactory $responseFactory
     ) {
     }
 
     public function index(Request $request): View
     {
-        return $this->productService->index($request->all());
+        $productList = $this->productService->paginate($request->all());
+        $productList = ProductResource::collection($productList)->response()->getData(true);
+        return $this->responseFactory->successView(self::VIEW.".index", $productList);
     }
 
     public function create(): View
     {
-        return $this->productService->create();
+        return view(self::VIEW.'.create');
     }
 
     public function store(StoreProductRequest $request)
     {
-        return $this->productService->store($request->validated());
+        try {
+            $product = $this->productService->store($request->validated());
+            $message = __(self::LANG_PATH . '_created');
+            if (request()->ajax()) {
+                return $this->responseFactory->successAjaxResponse($message, $product);
+            }
+            return $this->responseFactory->successIndexRedirect(self::ROUTE, $message);
+        } catch (\Throwable $e) {
+            $this->LogError("Product store failed", $e);
+            if (request()->ajax()) {
+                return $this->responseFactory->failAjaxResponse($e->getMessage());
+            }
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
+        }
     }
 
     public function edit(string $id): View | RedirectResponse
     {
-        return $this->productService->edit($id);
+        $decodedId = customDecoder($id);
+        $product = $this->productService->findOrFail($decodedId);
+        $product = new ProductResource($product);
+        $product = $product->response()->getData(true)['data'];
+        return $this->responseFactory->successView(self::VIEW . ".edit", $product);
     }
 
     public function show(string $id): View | RedirectResponse
     {
-        return $this->productService->show($id);
+        $decodedId = customDecoder($id);
+        $product = $this->productService->findOrFail($decodedId);
+        $product = new ProductResource($product);
+        $product = $product->response()->getData(true)['data'];
+        return $this->responseFactory->successView(self::VIEW . '.show', $product);
     }
 
     public function update(UpdateProductRequest $request, string $id)
     {
-        return $this->productService->update($request->validated(), $id);
+        try {
+            $product = $this->productService->update($request->validated(), customDecoder($id));
+            $message = __(self::LANG_PATH . '_updated');
+            if (request()->ajax()) {
+                return $this->responseFactory->successAjaxResponse($message, $product);
+            }
+            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, $message);
+        } catch (\Throwable $e) {
+            $this->LogError("Product update failed", $e);
+            if (request()->ajax()) {
+                return $this->responseFactory->failAjaxResponse($e->getMessage());
+            }
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
+        }
     }
 
     public function destroy(DeleteProductRequest $request)
     {
-        return $this->productService->destroy($request->validated());
+        try {
+            $this->productService->delete($request->validated()['id']);
+            $message = __(self::LANG_PATH . '_deleted');
+            if (request()->ajax()) {
+                return $this->responseFactory->successAjaxResponse($message, null);
+            }
+            return $this->responseFactory->successIndexRedirect(self::ROUTE, $message);
+        } catch (\Throwable $e) {
+            $this->LogError("Product destroy failed", $e);
+            if (request()->ajax()) {
+                return $this->responseFactory->failAjaxResponse($e->getMessage());
+            }
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
+        }
     }
 
 }

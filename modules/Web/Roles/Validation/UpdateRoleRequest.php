@@ -52,4 +52,12 @@ class UpdateRoleRequest extends FormRequest
           "can_access_panel" => ""
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            "name.required" => "Role Name is required",
+            "permissions.required" => "At least one permission is required",
+        ];
+    }
 }
