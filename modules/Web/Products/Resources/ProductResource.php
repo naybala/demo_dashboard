@@ -1,7 +1,6 @@
 <?php
 
 namespace BasicDashboard\Web\Products\Resources;
-
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -19,7 +18,7 @@ class ProductResource extends JsonResource
     public function toArray($request): array
     {
         $photos = $this->photos ?? [];
-        $photoUrls = array_map(fn($photo) => asset('storage/' . $photo), $photos);
+        $photoUrls = array_map(fn($photo) => asset($photo), $photos);
 
         return [
             "id" => customEncoder($this->id),

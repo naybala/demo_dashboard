@@ -63,12 +63,12 @@ class StorageMacroProvider extends ServiceProvider
         });
 
         Storage::macro('uploadFilesToLocal',function(array $files,$path,$columnKey):array{
-            $columnKey = [];
+            $paths = [];
             foreach ($files as $file) {
-                $path = $file->store($path, 'public');
-                $columnKey[] = "/storage/" . $path;
+                $storedPath = $file->store($path, 'public');
+                $paths[] = "/storage/" . $storedPath;
             }
-            return $columnKey;
+            return $paths;
         });
 
         Storage::macro('updateFileFromCloud',function($disk,$oldFileUrl,$newFile,$path,$privacy,$columnKey):array{
@@ -96,21 +96,21 @@ class StorageMacroProvider extends ServiceProvider
             return $data;
         });
 
-        Storage::macro('deletFileFromLocal',function($fileUrl):void{
-            Storage::disk('public')->delete(str_replace('storage/', '', $fileUrl));
+        Storage::macro('deleteFileFromLocal',function($fileUrl):void{
+            Storage::disk('public')->delete(str_replace('/storage/', '', $fileUrl));
         });
 
         Storage::macro('deleteFilesFromLocal',function(array $oldFiles,$existingFiles):void{
             foreach ($oldFiles as $oldFile) {
                 if (!in_array($oldFile, $existingFiles)) {
-                    Storage::disk('public')->delete($oldFile);
+                    Storage::disk('public')->delete(str_replace('/storage/', '', $oldFile));
                 }
             }
         });
 
         Storage::macro('forceDeleteFilesFromLocal',function(array $oldFiles):void{
             foreach ($oldFiles as $oldFile) {
-                Storage::disk('public')->delete($oldFile);
+                Storage::disk('public')->delete(str_replace('/storage/', '', $oldFile));
             }
         });
 

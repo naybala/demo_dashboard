@@ -52,7 +52,7 @@ class ProductService extends BaseController
         return view(self::VIEW.'.create');
     }
 
-    public function store($request): RedirectResponse
+    public function store($request): RedirectResponse | \Illuminate\Http\JsonResponse
     {
         try {
             \DB::beginTransaction();            
@@ -70,9 +70,17 @@ class ProductService extends BaseController
             }
 
             \DB::commit();
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
-        } catch (Exception $e) {
+            $message = __(self::LANG_PATH . '_created');
+            if (request()->ajax()) {
+                return $this->responseFactory->successAjaxResponse($message, $product);
+            }
+            return $this->responseFactory->successIndexRedirect(self::ROUTE, $message);
+        } catch (\Throwable $e) {
             \DB::rollBack();
+            \Log::error("Product store failed: " . $e->getMessage(), ['exception' => $e]);
+            if (request()->ajax()) {
+                return $this->responseFactory->failAjaxResponse($e->getMessage());
+            }
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
     }
@@ -96,7 +104,7 @@ class ProductService extends BaseController
         return $this->responseFactory->successView(self::VIEW . '.show', $product);
     }
 
-    public function update($request, string $id): RedirectResponse
+    public function update($request, string $id): RedirectResponse | \Illuminate\Http\JsonResponse
     {
          try {
             \DB::beginTransaction();
@@ -126,14 +134,22 @@ class ProductService extends BaseController
             }
 
             \DB::commit();
-            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
-        } catch (Exception $e) {
+            $message = __(self::LANG_PATH . '_updated');
+            if (request()->ajax()) {
+                return $this->responseFactory->successAjaxResponse($message, $product);
+            }
+            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, $message);
+        } catch (\Throwable $e) {
             \DB::rollBack();
+            \Log::error("Product update failed: " . $e->getMessage(), ['exception' => $e]);
+            if (request()->ajax()) {
+                return $this->responseFactory->failAjaxResponse($e->getMessage());
+            }
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
     }
 
-    public function destroy($request): RedirectResponse
+    public function destroy($request): RedirectResponse | \Illuminate\Http\JsonResponse
     {
          try {
             \DB::beginTransaction();
@@ -144,9 +160,17 @@ class ProductService extends BaseController
             }
             $product->delete();
             \DB::commit();
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
-        } catch (Exception $e) {
+            $message = __(self::LANG_PATH . '_deleted');
+            if (request()->ajax()) {
+                return $this->responseFactory->successAjaxResponse($message, null);
+            }
+            return $this->responseFactory->successIndexRedirect(self::ROUTE, $message);
+        } catch (\Throwable $e) {
             \DB::rollBack();
+            \Log::error("Product destroy failed: " . $e->getMessage(), ['exception' => $e]);
+            if (request()->ajax()) {
+                return $this->responseFactory->failAjaxResponse($e->getMessage());
+            }
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
     }

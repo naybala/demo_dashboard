@@ -13,6 +13,8 @@
 
     <!-- Preview Images -->
     <div id="previewContainer" class="flex flex-wrap gap-2 mt-3"></div>
+    <p class="text-xs ps-2 italic text-red-700 ajax-error-shower" id="photos-error"></p>
+    <p class="text-xs ps-2 italic text-red-700 ajax-error-shower" id="photo-error"></p>
 
     <!-- Cropping Modal -->
     <div id="cropModal"

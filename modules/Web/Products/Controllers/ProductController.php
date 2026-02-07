@@ -2,7 +2,7 @@
 
 namespace BasicDashboard\Web\Products\Controllers;
 
-use BasicDashboard\Web\Common\BaseController;
+use App\Http\Controllers\Controller;
 use BasicDashboard\Web\Products\Services\ProductService;
 use BasicDashboard\Web\Products\Validation\StoreProductRequest;
 use BasicDashboard\Web\Products\Validation\UpdateProductRequest;
@@ -21,7 +21,7 @@ use Illuminate\Http\RedirectResponse;
  *
  */
 
-class ProductController extends BaseController
+class ProductController extends Controller
 {
     public function __construct(
         private ProductService $productService
@@ -38,7 +38,7 @@ class ProductController extends BaseController
         return $this->productService->create();
     }
 
-    public function store(StoreProductRequest $request): RedirectResponse
+    public function store(StoreProductRequest $request)
     {
         return $this->productService->store($request->validated());
     }
@@ -53,12 +53,12 @@ class ProductController extends BaseController
         return $this->productService->show($id);
     }
 
-    public function update(UpdateProductRequest $request, string $id): RedirectResponse
+    public function update(UpdateProductRequest $request, string $id)
     {
         return $this->productService->update($request->validated(), $id);
     }
 
-    public function destroy(DeleteProductRequest $request): RedirectResponse
+    public function destroy(DeleteProductRequest $request)
     {
         return $this->productService->destroy($request->validated());
     }
