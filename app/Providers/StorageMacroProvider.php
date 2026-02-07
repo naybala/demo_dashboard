@@ -62,6 +62,15 @@ class StorageMacroProvider extends ServiceProvider
             return $data;
         });
 
+        Storage::macro('uploadFilesToLocal',function(array $files,$path,$columnKey):array{
+            $columnKey = [];
+            foreach ($files as $file) {
+                $path = $file->store($path, 'public');
+                $columnKey[] = "/storage/" . $path;
+            }
+            return $columnKey;
+        });
+
         Storage::macro('updateFileFromCloud',function($disk,$oldFileUrl,$newFile,$path,$privacy,$columnKey):array{
              $fileUrl = null;
             if ($newFile) {
@@ -89,6 +98,20 @@ class StorageMacroProvider extends ServiceProvider
 
         Storage::macro('deletFileFromLocal',function($fileUrl):void{
             Storage::disk('public')->delete(str_replace('storage/', '', $fileUrl));
+        });
+
+        Storage::macro('deleteFilesFromLocal',function(array $oldFiles,$existingFiles):void{
+            foreach ($oldFiles as $oldFile) {
+                if (!in_array($oldFile, $existingFiles)) {
+                    Storage::disk('public')->delete($oldFile);
+                }
+            }
+        });
+
+        Storage::macro('forceDeleteFilesFromLocal',function(array $oldFiles):void{
+            foreach ($oldFiles as $oldFile) {
+                Storage::disk('public')->delete($oldFile);
+            }
         });
 
         Storage::macro('deleteFileFromCloud',function($disk,$fileUrl):void{

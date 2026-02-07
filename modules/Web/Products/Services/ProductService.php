@@ -9,6 +9,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\View\View;
 use Exception;
+use Illuminate\Filesystem\FilesystemManager;
+
 
 /**
  *
@@ -28,7 +30,8 @@ class ProductService extends BaseController
 
     public function __construct(
         private Product $product,
-        private ResponseFactory $responseFactory
+        private ResponseFactory $responseFactory,
+        private FilesystemManager $filesystemManager
     )
     {
     }
@@ -54,7 +57,7 @@ class ProductService extends BaseController
         try {
             \DB::beginTransaction();            
             if (isset($request['photos']) && is_array($request['photos'])) {
-                $request['photos'] = $this->uploadPhotos($request['photos']);
+                $request['photos'] = $this->filesystemManager->uploadFilesToLocal($request['photos'], 'products', 'photos');
             }
 
             $categories = $request['categories'] ?? [];
@@ -74,15 +77,6 @@ class ProductService extends BaseController
         }
     }
 
-    private function uploadPhotos(array $photos): array
-    {
-        $paths = [];
-        foreach ($photos as $photo) {
-            $path = $photo->store('products', 'public');
-            $paths[] = $path;
-        }
-        return $paths;
-    }
 
     public function edit(string $id): View | RedirectResponse
     {
@@ -113,17 +107,11 @@ class ProductService extends BaseController
             $newPhotos = [];
 
             if (isset($request['photos']) && is_array($request['photos'])) {
-                $newPhotos = $this->uploadPhotos($request['photos']);
+                $newPhotos = $this->filesystemManager->uploadFilesToLocal($request['photos'], 'products', 'photos');
             }
-
             // Identify and delete removed photos from storage
             $oldPhotosInDb = $product->photos ?? [];
-            foreach ($oldPhotosInDb as $photo) {
-                if (!in_array($photo, $existingPhotos)) {
-                    \Storage::disk('public')->delete($photo);
-                }
-            }
-
+            $this->filesystemManager->deleteFilesFromLocal($oldPhotosInDb, $existingPhotos);
             // Final list of photos: kept existing + new uploads
             $request['photos'] = array_merge($existingPhotos, $newPhotos);
             unset($request['existing_photos']);
@@ -152,9 +140,7 @@ class ProductService extends BaseController
             $product = $this->product->findOrFail($request['id']);
             // Delete local images
             if ($product->photos) {
-                foreach ($product->photos as $photo) {
-                    \Storage::disk('public')->delete($photo);
-                }
+               $this->filesystemManager->forceDeleteFilesFromLocal($product->photos);
             }
             $product->delete();
             \DB::commit();
