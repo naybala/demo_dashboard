@@ -27,4 +27,11 @@ class DeleteCategoryRequest extends FormRequest
           "id"=>"required",
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            "id.required" => "Id is required",
+        ];
+    }
 }

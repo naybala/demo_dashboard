@@ -25,6 +25,17 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
           "name"=>"required",
+          "name_other"=>"required",
+          "description"=>"nullable",
+          "description_other"=>"nullable",
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            "name.required" => "Name is required",
+            "name_other.required" => "Name Other is required",
         ];
     }
 }
