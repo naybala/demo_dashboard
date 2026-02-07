@@ -22,6 +22,9 @@ Route::post('upload/image/local', function (Illuminate\Http\Request $request) {
     $path = $request->input('path', 'uploads');
     $file = $request->file('image');
     $url  = uploadImageToLocal($file, $path);
+    if (!$url) {
+        return response()->json(['error' => 'Failed to save image locally'], 500);
+    }
     return response()->json([
         'data' => 'success',
         'code' => 200,

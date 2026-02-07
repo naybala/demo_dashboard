@@ -55,15 +55,25 @@ if (! function_exists('permissionCheck')) {
 if (! function_exists('uploadImageToDigitalOcean')) {
     function uploadImageToDigitalOcean($file, $directory, $privacy = 'public'): String
     {
+        \Illuminate\Support\Facades\Log::info("uploadImageToDigitalOcean path: " . $directory);
         $uploadMedia = Storage::disk('digitalocean')->putFile($directory, $file, $privacy);
+        \Illuminate\Support\Facades\Log::info("uploadImageToDigitalOcean saved path: " . $uploadMedia);
         return $uploadMedia ?: null;
     }
 }
 
 if (! function_exists('uploadImageToLocal')) {
-    function uploadImageToLocal($file, $directory): String
+    function uploadImageToLocal($file, $directory): ?String
     {
+        \Illuminate\Support\Facades\Log::info("uploadImageToLocal path: " . $directory);
         $path = Storage::disk('public')->putFile($directory, $file);
+        
+        if (!$path) {
+            \Illuminate\Support\Facades\Log::error("uploadImageToLocal FAILED for path: " . $directory);
+            return null;
+        }
+        
+        \Illuminate\Support\Facades\Log::info("uploadImageToLocal saved path: " . $path);
         return '/storage/' . $path;
     }
 }

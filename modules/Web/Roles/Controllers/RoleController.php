@@ -78,7 +78,8 @@ class RoleController extends BaseController
         $data = $this->roleService->findOrFail($decodedId);
         $role = new RoleResource($data['role']);
         $role = $role->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . '.show', $role);
+        $data['role'] = $role;
+        return $this->responseFactory->successView(self::VIEW . '.show', $data);
     }
 
     public function update(UpdateRoleRequest $request, string $id): RedirectResponse
