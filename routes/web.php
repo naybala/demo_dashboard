@@ -1,5 +1,6 @@
 <?php
 
+use BasicDashboard\Web\DailyIncomes\Controllers\DailyIncomeController;
 use BasicDashboard\Web\Products\Controllers\ProductController;
 use BasicDashboard\Web\Units\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,7 @@ Route::group(['middleware' => ['auth', 'permission.check']], function (): void {
     Route::resource('products' ,ProductController::class);
     Route::resource('audits', AuditController::class)->only(['index', 'show']);
     Route::resource('units' ,UnitController::class);
+    Route::resource('daily-incomes' ,DailyIncomeController::class);
     require __DIR__ . "/Web/User/userRoute.php";
 });
 

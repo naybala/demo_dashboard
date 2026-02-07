@@ -9,4 +9,5 @@ return [
     'product'            => "Product",
     'audit'              => "Audit",
     'unit' => 'Unit',
+    'daily_income' => 'Daily Income',
 ];
