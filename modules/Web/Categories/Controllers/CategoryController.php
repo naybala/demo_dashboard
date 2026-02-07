@@ -56,7 +56,8 @@ class CategoryController extends BaseController
 
     public function edit(string $id): View 
     {
-        $category = $this->categoryService->findOrFail($id);
+        $decodedId = customDecoder($id);
+        $category = $this->categoryService->findOrFail($decodedId);
         $category = new CategoryResource($category);
         $category = $category->response()->getData(true)['data'];
         return $this->responseFactory->successView(self::VIEW . ".edit", $category);
@@ -64,7 +65,8 @@ class CategoryController extends BaseController
 
     public function show(string $id): View
     {
-        $category = $this->categoryService->findOrFail($id);
+        $decodedId = customDecoder($id);
+        $category = $this->categoryService->findOrFail($decodedId);
         $category = new CategoryResource($category);
         $category = $category->response()->getData(true)['data'];
         return $this->responseFactory->successView(self::VIEW . ".show", $category);
@@ -72,8 +74,9 @@ class CategoryController extends BaseController
 
     public function update(UpdateCategoryRequest $request, string $id): RedirectResponse
     {
-         $this->categoryService->update($request->validated(), $id);
-         return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));    
+        $decodedId = customDecoder($id);
+        $this->categoryService->update($request->validated(), $decodedId);
+        return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));    
     }
 
     public function destroy(DeleteCategoryRequest $request): RedirectResponse
