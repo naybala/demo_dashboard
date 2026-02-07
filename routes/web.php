@@ -1,6 +1,7 @@
 <?php
 
 use BasicDashboard\Web\Products\Controllers\ProductController;
+use BasicDashboard\Web\Units\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use BasicDashboard\Web\Auth\Controllers\AuthController;
@@ -36,6 +37,7 @@ Route::group(['middleware' => ['auth', 'permission.check']], function (): void {
     Route::resource('roles', RoleController::class);
     Route::resource('products' ,ProductController::class);
     Route::resource('audits', AuditController::class)->only(['index', 'show']);
+    Route::resource('units' ,UnitController::class);
     require __DIR__ . "/Web/User/userRoute.php";
 });
 

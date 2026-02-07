@@ -8,4 +8,5 @@ return [
     'category'           => "Category",
     'product'            => "Product",
     'audit'              => "Audit",
+    'unit' => 'Unit',
 ];

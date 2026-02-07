@@ -90,7 +90,7 @@
                 <x-sidebar.list title="sidebar.category" icon="fa-solid fa-book" model="categories" />
                 <x-sidebar.list title="sidebar.product" icon="fa-solid fa-book" model="products" />
                 <x-sidebar.list title="sidebar.audit" icon="fa-solid fa-book" model="audits" />
-               
+                <x-sidebar.list title="sidebar.unit" icon="fa-solid fa-book" model="units" />
                 <!-- <x-sidebar.multi-menu dropdownName="sidebar_article" menuName="sidebar.article"
                     :menuLists="['categories']" menuIcon="fa-solid fa-book">
                                     <x-sidebar.list title="sidebar.category" model="categories" />

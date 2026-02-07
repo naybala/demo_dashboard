@@ -16,9 +16,12 @@ return new class extends Migration
         Schema::create('daily_incomes', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->string('name');
+            $table->string('name')->nullable();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete()->nullable();
             $table->decimal('amount', 10, 2);
             $table->integer('price');
+            $table->integer('investment');
+            $table->integer('profit');
             $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
             $table->string('note')->nullable();
             $table->unsignedInteger('created_by')->nullable();
