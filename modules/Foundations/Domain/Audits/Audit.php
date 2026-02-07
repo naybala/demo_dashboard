@@ -40,4 +40,33 @@ class Audit extends Model
         ]);
     }
 
+    // ==========================================
+    // Query Scopes for Simplified Architecture
+    // ==========================================
+    
+    /**
+     * Scope to filter audits by keyword search
+     * Searches in: model, event
+     */
+    public function scopeFilterByKeyword($query, ?string $keyword)
+    {
+        if (empty($keyword)) {
+            return $query;
+        }
+
+        return $query->where(function($q) use ($keyword) {
+            $q->where('model', 'LIKE', '%' . $keyword . '%')
+              ->orWhere('event', 'LIKE', '%' . $keyword . '%');
+        });
+    }
+
+    /**
+     * Scope to order by latest activity
+     */
+    public function scopeOrderByLatest($query)
+    {
+        return $query->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc');
+    }
+
 }

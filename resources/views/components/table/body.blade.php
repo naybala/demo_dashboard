@@ -1,4 +1,5 @@
 @props(['checkData'=>false,'id'=>null])
+
 @if($checkData)
 <tbody id="{{ $id }}">
     {{ $slot }}
