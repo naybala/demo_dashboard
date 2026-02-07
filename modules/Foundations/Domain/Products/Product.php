@@ -21,7 +21,19 @@ class Product extends Model
 {
     use HasFactory;
       //protected $table = 'table_name';
-    protected $guarded = [
+    protected $fillable = [
+        'name',
+        'name_other',
+        'price',
+        'photos',
+        'description',
+        'description_other',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [

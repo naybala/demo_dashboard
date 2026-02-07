@@ -11,8 +11,12 @@ class Role extends SpatieRole
 {
     use HasFactory;
       //protected $table = 'table_name';
-      protected $guarded = [
-
+    protected $fillable = [
+        'name',
+        'guard_name',
+        'can_access_panel',
+        'created_at',
+        'updated_at',
     ];
 
     // ==========================================

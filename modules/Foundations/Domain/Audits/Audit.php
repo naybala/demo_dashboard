@@ -23,7 +23,14 @@ class Audit extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'audits';
     public $timestamps = false;
-    protected $guarded = [
+    protected $fillable = [
+        'model',
+        'event',
+        'old_data',
+        'new_data',
+        'created_by',
+        'created_at',
+        'deleted_at',
     ];
 
     public function user(): BelongsTo
