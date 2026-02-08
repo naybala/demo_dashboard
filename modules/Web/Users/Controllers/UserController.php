@@ -12,6 +12,7 @@ use Illuminate\View\View;
 use Illuminate\Routing\ResponseFactory;
 use BasicDashboard\Web\Users\Resources\UserResource;
 use BasicDashboard\Web\Users\Resources\UserEditResource;
+use Throwable;
 
 class UserController extends BaseController
 {
@@ -41,7 +42,7 @@ class UserController extends BaseController
         try {
             $this->userService->store($request->all());
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("User store failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
@@ -69,7 +70,7 @@ class UserController extends BaseController
         try {
             $this->userService->update($request->all(), $id);
             return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("User update failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
@@ -80,7 +81,7 @@ class UserController extends BaseController
         try {
             $this->userService->delete($request->validated()['id']);
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("User destroy failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }

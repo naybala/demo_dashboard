@@ -3,13 +3,8 @@
 namespace BasicDashboard\Web\Units\Services;
 
 use BasicDashboard\Foundations\Domain\Units\Unit;
-use BasicDashboard\Web\Common\BaseController;
-use BasicDashboard\Web\Units\Resources\UnitResource;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
-use Exception;
+use Illuminate\Support\Facades\DB;
 
 /**
  *
@@ -39,7 +34,7 @@ class UnitService
 
     public function store(array $request): Unit
     {
-        return \DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
             $request['created_by'] = Auth::id();
             return $this->unit->create($request);
         });
@@ -52,7 +47,7 @@ class UnitService
 
     public function update(array $request, string $id): Unit
     {
-        return \DB::transaction(function () use ($request, $id) {
+        return DB::transaction(function () use ($request, $id) {
             $decodedId = customDecoder($id);
             $unit = $this->unit->findOrFail($decodedId);
             $unit->update($request);
@@ -62,7 +57,7 @@ class UnitService
 
     public function delete(string $id): void
     {
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
             $decodedId = customDecoder($id);
             $this->unit->destroy($decodedId);
         });

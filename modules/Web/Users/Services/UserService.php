@@ -1,19 +1,12 @@
 <?php
 
 namespace BasicDashboard\Web\Users\Services;
-
-use Exception;
-use Illuminate\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
-use BasicDashboard\Web\Common\BaseController;
-use BasicDashboard\Web\Users\Resources\UserResource;
-use BasicDashboard\Web\Users\Resources\UserEditResource;
 use BasicDashboard\Foundations\Domain\Users\User;
 use BasicDashboard\Foundations\Domain\Roles\Role;
 use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Facades\DB;
 
 class UserService
 {
@@ -36,7 +29,7 @@ class UserService
 
     public function store(array $request): User
     {
-        return \DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
             $image = null;
             if (isset($request['avatar'])) {
                 $image             = $request['avatar']; 
@@ -70,7 +63,7 @@ class UserService
 
     public function update(array $request, string $id): User
     {
-        return \DB::transaction(function () use ($request, $id) {
+        return DB::transaction(function () use ($request, $id) {
             $image = null;
             $decodedId = customDecoder($id);
             $user = $this->user->find($decodedId);
@@ -96,7 +89,7 @@ class UserService
 
     public function delete(string $id): void
     {
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
             $decodedId = customDecoder($id);
             $user = $this->user->where('id', $decodedId)->first();
             $user->roles()->detach();
