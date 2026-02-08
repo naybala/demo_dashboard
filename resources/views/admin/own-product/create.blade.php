@@ -19,16 +19,19 @@
                 {{-- category --}}
 
                 {{-- price --}}
-                <x-form.input-group title='ownProduct.price' name='price' id='price'  />
+                <x-form.input-group title='ownProduct.price' name='price' id='price' class="comma-format"  />
                 {{-- price --}}
 
+
                 {{-- investment --}}
-                <x-form.input-group title='ownProduct.investment' name='investment' id='investment'  />
+                <x-form.input-group title='ownProduct.investment' name='investment' id='investment' class="comma-format"  />
                 {{-- investment --}}
 
+
                 {{-- profit --}}
-                <x-form.input-group title='ownProduct.profit' name='profit' id='profit'  />
+                <x-form.input-group title='ownProduct.profit' name='profit' id='profit' class="comma-format"  />
                 {{-- profit --}}
+
 
             </x-form.grid>
             {{-- Save And Cancel --}}

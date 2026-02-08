@@ -10,6 +10,7 @@
             </div>
             <x-loading.loading-two></x-loading.loading-two>
         </div>
-        @vite(['resources/js/common/navShowHide.js'])
+        @vite(['resources/js/common/navShowHide.js', 'resources/js/common/comma-formatter.js'])
+
     </div>
 </x-app-layout>

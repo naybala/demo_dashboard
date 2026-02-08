@@ -1,6 +1,6 @@
 <x-master-layout name="Ownproduct" headerName="{{ __('sidebar.ownproduct') }}">
     <x-form.layout>
-        <x-show.go-to-edit model="ownproducts" :id="$data['id']" />
+        <x-show.go-to-edit model="own-products" :id="$data['id']" />
         <x-form.grid>
             
                 {{-- name --}}

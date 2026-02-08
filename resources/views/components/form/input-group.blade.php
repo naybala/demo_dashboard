@@ -31,9 +31,10 @@
             :customAttributes="$customAttributes"
             :placeholder="$placeholder" 
             :disabled="$disabled" 
-            class="{{ $errors->has($name) ? 'border-red-500' : '' }}"
+            {{ $attributes->merge(['class' => $errors->has($name) ? 'border-red-500' : '']) }}
         />
     </div>
+
     
     @if($helperText)
         <p class="mt-1 text-xs text-gray-400 italic" id="file_input_help">{{ __('form_helper.'.$helperText) }}</p>

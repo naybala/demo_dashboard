@@ -24,7 +24,8 @@ class ProductResource extends JsonResource
             "id" => customEncoder($this->id),
             "name" => $this->name,
             "name_other" => $this->name_other,
-            "price" => $this->price,
+            "price" => number_format($this->price, 0, '.', ','),
+
             "description" => $this->description,
             "description_other" => $this->description_other,
             "photos" => $photoUrls,

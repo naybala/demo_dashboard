@@ -22,7 +22,8 @@
 
 
                 {{-- amount --}}
-                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' :value="$data['amount']" />
+                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' :value="$data['amount']" class="comma-format" />
+
 
                 {{-- amount --}}
 
@@ -33,18 +34,21 @@
 
 
                 {{-- price --}}
-                <x-form.input-group title='dailyIncome.price' name='price' id='price' :value="$data['price']" :customAttributes="['readonly' => 'readonly']" />
+                <x-form.input-group title='dailyIncome.price' name='price' id='price' :value="$data['price']" :customAttributes="['readonly' => 'readonly']" class="comma-format" />
                 {{-- price --}}
 
 
+
                 {{-- investment --}}
-                <x-form.input-group title='dailyIncome.investment' name='investment' id='investment' :value="$data['investment']" :customAttributes="['readonly' => 'readonly']" />
+                <x-form.input-group title='dailyIncome.investment' name='investment' id='investment' :value="$data['investment']" :customAttributes="['readonly' => 'readonly']" class="comma-format" />
                 {{-- investment --}}
 
 
+
                 {{-- profit --}}
-                <x-form.input-group title='dailyIncome.profit' name='profit' id='profit' :value="$data['profit']" :customAttributes="['readonly' => 'readonly']" />
+                <x-form.input-group title='dailyIncome.profit' name='profit' id='profit' :value="$data['profit']" :customAttributes="['readonly' => 'readonly']" class="comma-format" />
                 {{-- profit --}}
+
 
 
                 <!-- is_instant -->

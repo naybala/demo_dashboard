@@ -25,9 +25,10 @@ class OwnProductResource extends JsonResource
             "category_id"=>$this->category_id,
             "unit"=>$this->unit?->name,
             "category"=>$this->category?->name,
-            "price"=>$this->price,
-            "investment"=>$this->investment,
-            "profit"=>$this->profit,
+            "price" => number_format($this->price, 0, '.', ','),
+            "investment" => number_format($this->investment, 0, '.', ','),
+            "profit" => number_format($this->profit, 0, '.', ','),
+
         ];
     }
 }

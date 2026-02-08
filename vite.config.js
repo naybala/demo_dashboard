@@ -46,6 +46,7 @@ export default defineConfig({
         "resources/js/common/startQuillEditor.js",
         "resources/js/common/uploadErrorHandle.js",
         "resources/js/common/uploadToDigitalOcean.js",
+        "resources/js/common/comma-formatter.js",
         "resources/js/common/validateDisappear.js",
 
         //dashboard total (1)

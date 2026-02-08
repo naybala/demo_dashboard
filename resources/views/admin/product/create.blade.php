@@ -14,8 +14,9 @@
                 {{-- name_other --}}
 
                 {{-- price --}}
-                <x-form.input-group title='product.price' name='price' id='price'  required="true" type="number"/>
+                <x-form.input-group title='product.price' name='price' id='price'  required="true" class="comma-format" />
                 {{-- price --}}
+
 
                 {{-- categories --}}
                 <x-form.searchable-multi-select title="product.category" name="categories" id="categories" :required="true"

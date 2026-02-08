@@ -22,7 +22,8 @@
                 {{-- name --}}
 
                 {{-- amount --}}
-                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' value="1" />
+                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' value="1" class="comma-format" />
+
 
 
                 {{-- amount --}}
@@ -33,18 +34,21 @@
                 {{-- unit_id --}}
 
                 {{-- price --}}
-                <x-form.input-group title='dailyIncome.price' name='price' id='price' :customAttributes="['readonly' => 'readonly']" />
+                <x-form.input-group title='dailyIncome.price' name='price' id='price' :customAttributes="['readonly' => 'readonly']" class="comma-format" />
                 {{-- price --}}
 
 
+
                 {{-- investment --}}
-                <x-form.input-group title='dailyIncome.investment' name='investment' id='investment' :customAttributes="['readonly' => 'readonly']" />
+                <x-form.input-group title='dailyIncome.investment' name='investment' id='investment' :customAttributes="['readonly' => 'readonly']" class="comma-format" />
                 {{-- investment --}}
 
 
+
                 {{-- profit --}}
-                <x-form.input-group title='dailyIncome.profit' name='profit' id='profit' :customAttributes="['readonly' => 'readonly']" />
+                <x-form.input-group title='dailyIncome.profit' name='profit' id='profit' :customAttributes="['readonly' => 'readonly']" class="comma-format" />
                 {{-- profit --}}
+
 
 
                 <!-- is_instant -->

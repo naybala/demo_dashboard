@@ -15,21 +15,19 @@ $(document).ready(function () {
   let baseInvestment = 0;
   let baseProfit = 0;
 
-  function formatNumber(num) {
-    if (num === null || num === undefined || isNaN(num)) return "0";
-    return new Intl.NumberFormat("en-US").format(num);
-  }
-
-  function unformatNumber(str) {
-    if (typeof str !== "string") return str;
-    return parseFloat(str.replace(/,/g, "")) || 0;
-  }
-
   function calculate() {
-    const qty = unformatNumber($amount.val());
-    $price.val(formatNumber((basePrice * qty).toFixed(2)));
-    $investment.val(formatNumber((baseInvestment * qty).toFixed(2)));
-    $profit.val(formatNumber((baseProfit * qty).toFixed(2)));
+    // Rely on global unformatNumber if possible, or just strip here for calculation
+    const qty = parseFloat($amount.val().replace(/,/g, "")) || 0;
+
+    // We update values; comma-formatter.js will handle the visual formatting if they have the class
+    // But since we are setting .val() programmatically, we might need to trigger 'input' or format manually
+    const p = (basePrice * qty).toFixed(2);
+    const i = (baseInvestment * qty).toFixed(2);
+    const pr = (baseProfit * qty).toFixed(2);
+
+    $price.val(p).trigger("input");
+    $investment.val(i).trigger("input");
+    $profit.val(pr).trigger("input");
   }
 
   function updateProduct(id) {
@@ -58,12 +56,6 @@ $(document).ready(function () {
   });
 
   $amount.on("input", function () {
-    let val = $(this)
-      .val()
-      .replace(/[^0-9.]/g, "");
-    if (val) {
-      $(this).val(formatNumber(val));
-    }
     calculate();
   });
 
@@ -71,17 +63,7 @@ $(document).ready(function () {
   const initialProductId = $form.find('input[name="own_product_id"]').val();
   if (initialProductId) {
     updateProduct(initialProductId);
-    // Format amount if it has a value
-    if ($amount.val()) {
-      $amount.val(formatNumber($amount.val()));
-    }
   }
 
-  // Before form submit, strip commas
-  $form.on("submit", function () {
-    $price.val(unformatNumber($price.val()));
-    $investment.val(unformatNumber($investment.val()));
-    $profit.val(unformatNumber($profit.val()));
-    $amount.val(unformatNumber($amount.val()));
-  });
+  // Comma formatting and final stripping is handled by common/comma-formatter.js
 });

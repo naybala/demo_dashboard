@@ -7,12 +7,8 @@
                 <x-show.text-group title='dailyincome.date' :data="$data['date']" />
                 {{-- date --}}
 
-                {{-- name --}}
-                <x-show.text-group title='dailyincome.name' :data="$data['name']" />
-                {{-- name --}}
-
                 {{-- product_id --}}
-                <x-show.text-group title='dailyincome.product_id' :data="$data['product_id']" />
+                <x-show.text-group title='dailyincome.own_product' :data="$data['own_product']" />
                 {{-- product_id --}}
 
                 {{-- amount --}}
