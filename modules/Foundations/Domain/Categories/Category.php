@@ -1,7 +1,9 @@
 <?php
 
 namespace BasicDashboard\Foundations\Domain\Categories;
+use App\Observers\AuditObserver;
 use BasicDashboard\Foundations\Domain\Products\Product;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  */
 //if you want to audit this model uncomment below code and import
-//#[ObservedBy([AuditObserver::class])]
+#[ObservedBy([AuditObserver::class])]
 class Category extends Model
 {
     use HasFactory, SoftDeletes;

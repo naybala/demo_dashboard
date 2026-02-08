@@ -1,6 +1,8 @@
 <?php
 
 namespace BasicDashboard\Foundations\Domain\Products;
+use App\Observers\AuditObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use BasicDashboard\Foundations\Domain\Categories\Category;
@@ -16,7 +18,7 @@ use BasicDashboard\Foundations\Domain\Categories\Category;
  *
  */
 //if you want to audit this model uncomment below code and import
-//#[ObservedBy([AuditObserver::class])]
+#[ObservedBy([AuditObserver::class])]
 class Product extends Model
 {
     use HasFactory;

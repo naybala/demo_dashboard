@@ -28,7 +28,7 @@ class DailyIncomeService
     public function paginate(array $request)
     {
         return $this->dailyIncome
-            ->with(['ownProduct'])
+            ->with(['ownProduct.unit'])
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
