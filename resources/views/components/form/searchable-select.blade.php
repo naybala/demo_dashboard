@@ -41,6 +41,7 @@
             this.selectedLabel = value;
             this.isOpen = false;
             this.search = '';
+            this.$dispatch('change', key);
         },
 
         toggle() {

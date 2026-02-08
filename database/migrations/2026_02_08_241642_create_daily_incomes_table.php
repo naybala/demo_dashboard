@@ -19,7 +19,9 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->decimal('amount', 10, 2);
             $table->foreignId('own_product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('unit_id')->nullable()->constrained()->nullOnDelete();
             $table->integer('price');
+
             $table->integer('investment');
             $table->integer('profit');
             $table->boolean('is_instant')->default(true);

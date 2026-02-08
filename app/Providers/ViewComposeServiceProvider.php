@@ -1,6 +1,7 @@
 <?php
 namespace App\Providers;
 use App\View\Composers\CategoryComposer;
+use App\View\Composers\OwnProductComposer;
 use App\View\Composers\RoleComposer;
 use App\View\Composers\UnitComposer;
 use Illuminate\Support\Facades\View;
@@ -40,6 +41,12 @@ class ViewComposeServiceProvider extends ServiceProvider
         //Unit
         View::composer('admin.own-product.create', UnitComposer::class);
         View::composer('admin.own-product.edit', UnitComposer::class);
+
+        //Daily Income
+        View::composer('admin.daily-income.create', OwnProductComposer::class);
+        View::composer('admin.daily-income.edit', OwnProductComposer::class);
+        View::composer('admin.daily-income.create', UnitComposer::class);
+        View::composer('admin.daily-income.edit', UnitComposer::class);
 
 
     }

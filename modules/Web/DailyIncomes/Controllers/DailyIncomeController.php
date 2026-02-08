@@ -51,7 +51,7 @@ class DailyIncomeController extends BaseController
     public function store(StoreDailyIncomeRequest $request): RedirectResponse
     {
         try {
-            $this->dailyIncomeService->store($request->validated());
+            $this->dailyIncomeService->store($request->all());
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
         } catch (\Throwable $e) {
             $this->LogError("DailyIncome store failed", $e);
@@ -66,6 +66,7 @@ class DailyIncomeController extends BaseController
         $dailyIncome = new DailyIncomeResource($dailyIncome);
         $dailyIncome = $dailyIncome->response()->getData(true)['data'];
         return $this->responseFactory->successView(self::VIEW . ".edit", $dailyIncome);
+
     }
 
     public function show(string $id): View | RedirectResponse
@@ -79,8 +80,9 @@ class DailyIncomeController extends BaseController
     public function update(UpdateDailyIncomeRequest $request, string $id): RedirectResponse
     {
         try {
-            $this->dailyIncomeService->update($request->validated(), $id);
+            $this->dailyIncomeService->update($request->validated(), customDecoder($id));
             return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
+
         } catch (\Throwable $e) {
             $this->LogError("DailyIncome update failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());

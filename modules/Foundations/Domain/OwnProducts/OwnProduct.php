@@ -1,6 +1,8 @@
 <?php
 
 namespace BasicDashboard\Foundations\Domain\OwnProducts;
+use BasicDashboard\Foundations\Domain\Categories\Category;
+use BasicDashboard\Foundations\Domain\Units\Unit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,12 +37,12 @@ class OwnProduct extends Model
 
     public function unit()
     {
-        return $this->belongsTo(\BasicDashboard\Foundations\Domain\Units\Unit::class);
+        return $this->belongsTo(Unit::class);
     }
 
     public function category()
     {
-        return $this->belongsTo(\BasicDashboard\Foundations\Domain\Categories\Category::class);
+        return $this->belongsTo(Category::class);
     }
 
 

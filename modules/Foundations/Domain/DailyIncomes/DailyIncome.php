@@ -1,9 +1,12 @@
 <?php
 
 namespace BasicDashboard\Foundations\Domain\DailyIncomes;
+use BasicDashboard\Foundations\Domain\Units\Unit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
+
 
 
 /**
@@ -21,9 +24,27 @@ class DailyIncome extends Model
 {
     use HasFactory, SoftDeletes;
       //protected $table = 'table_name';
-    protected $guarded = [
-
+    protected $fillable = [
+        'date',
+        'name',
+        'amount',
+        'own_product_id',
+        'price',
+        'investment',
+        'profit',
+        'is_instant',
+        'note',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
+
+    public function ownProduct()
+    {
+        return $this->belongsTo(OwnProduct::class);
+    }
+
+
 
     // ==========================================
     // Query Scopes for Simplified Architecture

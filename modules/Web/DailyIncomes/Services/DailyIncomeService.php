@@ -32,14 +32,17 @@ class DailyIncomeService
     public function paginate(array $request)
     {
         return $this->dailyIncome
+            ->with(['ownProduct'])
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
+
     }
 
     public function store(array $request): DailyIncome
     {
         return \DB::transaction(function () use ($request) {
+            $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
             $request['created_by'] = Auth::id();
             return $this->dailyIncome->create($request);
         });
@@ -53,18 +56,21 @@ class DailyIncomeService
     public function update(array $request, string $id): DailyIncome
     {
         return \DB::transaction(function () use ($request, $id) {
-            $decodedId = customDecoder($id);
-            $dailyIncome = $this->dailyIncome->findOrFail($decodedId);
+            $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
+            $dailyIncome = $this->dailyIncome->findOrFail($id);
             $dailyIncome->update($request);
             return $dailyIncome;
         });
     }
 
+
+
     public function delete(string $id): void
     {
         \DB::transaction(function () use ($id) {
-            $decodedId = customDecoder($id);
-            $this->dailyIncome->destroy($decodedId);
+            $dailyIncome = $this->dailyIncome->findOrFail($id);
+            $dailyIncome->delete();
         });
     }
+
 }

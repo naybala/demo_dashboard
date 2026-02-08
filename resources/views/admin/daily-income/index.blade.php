@@ -6,18 +6,18 @@
                 <x-common.create-button route="daily-incomes.create" permission="create daily-incomes" />
             </div>
             <x-table.wrapper>
-                <x-table.header :fields="['date', 'name', 'product_id', 'amount', 'price', 'investment', 'profit', 'unit_id']" />
+                <x-table.header :fields="['date',  'own_product', 'amount', 'price', 'investment', 'profit', 'unit']" />
                 <x-table.body :checkData="count($data['data'])>0">
                     @foreach ($data['data'] as $record)
                         <x-table.body-row>
                             <x-table.body-column :field="$record['date']" limit="20" />
-                            <x-table.body-column :field="$record['name']" limit="20" />
-                            <x-table.body-column :field="$record['product_id']" limit="20" />
+                            <x-table.body-column :field="$record['own_product']" limit="20" />
                             <x-table.body-column :field="$record['amount']" limit="20" />
                             <x-table.body-column :field="$record['price']" limit="20" />
                             <x-table.body-column :field="$record['investment']" limit="20" />
                             <x-table.body-column :field="$record['profit']" limit="20" />
-                            <x-table.body-column :field="$record['unit_id']" limit="20" />
+                            <x-table.body-column :field="$record['unit']" limit="20" />
+
                             <x-table.action-new :id="$record['id']" field="daily-incomes" />
                         </x-table.body-row>
                     @endforeach

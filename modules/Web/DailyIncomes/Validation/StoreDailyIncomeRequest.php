@@ -21,10 +21,26 @@ class StoreDailyIncomeRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_instant' => $this->has('is_instant') ? 1 : 0,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
-            "name"=>"required",
+            "date" => "required|date",
+            "own_product_id" => "required|exists:own_products,id",
+            "amount" => "required|numeric",
+            "unit_id" => "required|exists:units,id",
+            "price" => "required|numeric",
+            "investment" => "required|numeric",
+            "profit" => "required|numeric",
+            "is_instant" => "nullable|boolean",
+            "note" => "nullable|string",
+
         ];
     }
 }

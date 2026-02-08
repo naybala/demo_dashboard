@@ -20,8 +20,19 @@ class DailyIncomeResource extends JsonResource
     {
          return [
             "id" =>customEncoder($this->id),
+            "date"=>$this->date,
             "name"=>$this->name,
-            "description"=>$this->description,
+            "own_product_id"=>$this->own_product_id,
+            "own_product"=>$this->ownProduct?->name,
+            "amount"=>$this->amount,
+            "price"=>$this->price,
+            "investment"=>$this->investment,
+            "profit"=>$this->profit,
+            "unit"=>$this->ownProduct?->Unit?->name,
+            "unit_id"=>$this->ownProduct?->Unit?->id,
+            "is_instant"=>$this->is_instant,
+            "note"=>$this->note,
+
         ];
     }
 }

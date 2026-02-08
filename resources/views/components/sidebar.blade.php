@@ -92,7 +92,7 @@
                 <x-sidebar.list title="sidebar.own_product" icon="fa-brands fa-product-hunt" model="own-products" />
                 <x-sidebar.list title="sidebar.audit" icon="fa-brands fa-audible" model="audits" />
                 <x-sidebar.list title="sidebar.unit" icon="fa-brands fa-unity" model="units" />
-                <x-sidebar.list title="sidebar.daily_income" icon="fa-brands fa-unity" model="daily-incomes" />
+                <x-sidebar.list title="sidebar.daily_income" icon="fa-solid fa-money-bill" model="daily-incomes" />
                 <!-- <x-sidebar.multi-menu dropdownName="sidebar_article" menuName="sidebar.article"
                     :menuLists="['categories']" menuIcon="fa-solid fa-book">
                                     <x-sidebar.list title="sidebar.category" model="categories" />

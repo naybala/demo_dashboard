@@ -37,13 +37,15 @@ return [
 
     //Own Products
     "unit"                          => "Unit",
-    "category"                      => "Category",
     "unit_id"                       => "Unit",
     "category_id"                   => "Category",
 
+    //Daily Income
     "price"                         => "Price",
     "investment"                    => "Investment",
     "profit"                        => "Profit",
+    "date"                          =>"Date",
+    "own_product"                   =>"Own Product",
 
     "product_name"                  =>"Produt Name",
     "amount"                        =>"Amount"
