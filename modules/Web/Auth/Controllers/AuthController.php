@@ -3,7 +3,6 @@
 namespace BasicDashboard\Web\Auth\Controllers;
 
 use BasicDashboard\Web\Common\BaseController;
-use BasicDashboard\Foundations\Domain\Users\User;
 use BasicDashboard\Web\Auth\Services\AuthService;
 use BasicDashboard\Web\Auth\Validation\AuthLoginRequest;
 use Illuminate\Support\Facades\Auth;

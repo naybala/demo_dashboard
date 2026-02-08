@@ -79,7 +79,7 @@ class RoleService
 
     public function delete(string $id): void
     {
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
             $this->role->destroy($id);
         });
     }

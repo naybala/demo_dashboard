@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
+use Throwable;
 
 
 /**
@@ -53,7 +54,7 @@ class DailyIncomeController extends BaseController
         try {
             $this->dailyIncomeService->store($request->all());
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("DailyIncome store failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
@@ -83,7 +84,7 @@ class DailyIncomeController extends BaseController
             $this->dailyIncomeService->update($request->validated(), customDecoder($id));
             return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("DailyIncome update failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }
@@ -94,7 +95,7 @@ class DailyIncomeController extends BaseController
         try {
             $this->dailyIncomeService->delete($request->validated()['id']);
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("DailyIncome destroy failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());
         }

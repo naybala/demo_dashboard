@@ -20,6 +20,11 @@ use BasicDashboard\Foundations\Domain\Categories\Category;
 class Product extends Model
 {
     use HasFactory;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ProductFactory::new();
+    }
       //protected $table = 'table_name';
     protected $fillable = [
         'name',

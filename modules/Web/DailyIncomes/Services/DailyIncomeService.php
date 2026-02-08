@@ -3,13 +3,9 @@
 namespace BasicDashboard\Web\DailyIncomes\Services;
 
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
-use BasicDashboard\Web\Common\BaseController;
-use BasicDashboard\Web\DailyIncomes\Resources\DailyIncomeResource;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
-use Exception;
+use Illuminate\Support\Facades\DB;
+
 
 /**
  *
@@ -41,7 +37,7 @@ class DailyIncomeService
 
     public function store(array $request): DailyIncome
     {
-        return \DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
             $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
             $request['created_by'] = Auth::id();
             return $this->dailyIncome->create($request);
@@ -55,7 +51,7 @@ class DailyIncomeService
 
     public function update(array $request, string $id): DailyIncome
     {
-        return \DB::transaction(function () use ($request, $id) {
+        return DB::transaction(function () use ($request, $id) {
             $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
             $dailyIncome = $this->dailyIncome->findOrFail($id);
             $dailyIncome->update($request);
@@ -67,7 +63,7 @@ class DailyIncomeService
 
     public function delete(string $id): void
     {
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
             $dailyIncome = $this->dailyIncome->findOrFail($id);
             $dailyIncome->delete();
         });

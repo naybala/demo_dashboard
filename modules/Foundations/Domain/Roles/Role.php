@@ -10,6 +10,11 @@ use Spatie\Permission\Models\Role as SpatieRole;
 class Role extends SpatieRole
 {
     use HasFactory;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\RoleFactory::new();
+    }
       //protected $table = 'table_name';
     protected $fillable = [
         'name',

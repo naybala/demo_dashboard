@@ -12,6 +12,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
 use BasicDashboard\Web\Products\Resources\ProductResource;
+use Throwable;
 
 /**
  *
@@ -56,7 +57,7 @@ class ProductController extends Controller
                 return $this->responseFactory->successAjaxResponse($message, $product);
             }
             return $this->responseFactory->successIndexRedirect(self::ROUTE, $message);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("Product store failed", $e);
             if (request()->ajax()) {
                 return $this->responseFactory->failAjaxResponse($e->getMessage());
@@ -92,7 +93,7 @@ class ProductController extends Controller
                 return $this->responseFactory->successAjaxResponse($message, $product);
             }
             return $this->responseFactory->successShowRedirect(self::ROUTE, $id, $message);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("Product update failed", $e);
             if (request()->ajax()) {
                 return $this->responseFactory->failAjaxResponse($e->getMessage());
@@ -110,7 +111,7 @@ class ProductController extends Controller
                 return $this->responseFactory->successAjaxResponse($message, null);
             }
             return $this->responseFactory->successIndexRedirect(self::ROUTE, $message);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->LogError("Product destroy failed", $e);
             if (request()->ajax()) {
                 return $this->responseFactory->failAjaxResponse($e->getMessage());

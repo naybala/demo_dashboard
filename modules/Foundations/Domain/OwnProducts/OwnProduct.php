@@ -22,6 +22,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class OwnProduct extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\OwnProductFactory::new();
+    }
+
       //protected $table = 'table_name';
     protected $fillable = [
         'name',

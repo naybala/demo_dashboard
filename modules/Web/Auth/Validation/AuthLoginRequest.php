@@ -4,7 +4,6 @@ namespace BasicDashboard\Web\Auth\Validation;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class AuthLoginRequest extends FormRequest
 {

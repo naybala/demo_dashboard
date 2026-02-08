@@ -1,11 +1,9 @@
 <?php
 namespace BasicDashboard\Web\Dashboard\Services;
 
-use BasicDashboard\Foundations\Domain\Users\User;
 use BasicDashboard\Web\Common\BaseController;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService extends BaseController

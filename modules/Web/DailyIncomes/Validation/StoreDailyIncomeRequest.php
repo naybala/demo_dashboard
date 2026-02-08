@@ -24,7 +24,7 @@ class StoreDailyIncomeRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'is_instant' => $this->has('is_instant') ? 1 : 0,
+            'is_instant' => $this->boolean('is_instant') ? 1 : 0,
         ]);
     }
 
@@ -32,6 +32,7 @@ class StoreDailyIncomeRequest extends FormRequest
     {
         return [
             "date" => "required|date",
+            "name" => "required|string",
             "own_product_id" => "required|exists:own_products,id",
             "amount" => "required|numeric",
             "unit_id" => "required|exists:units,id",

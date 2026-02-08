@@ -21,6 +21,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Category extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\CategoryFactory::new();
+    }
+
       //protected $table = 'table_name';
     protected $fillable = [
         'name',

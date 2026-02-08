@@ -3,13 +3,8 @@
 namespace BasicDashboard\Web\OwnProducts\Services;
 
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
-use BasicDashboard\Web\Common\BaseController;
-use BasicDashboard\Web\OwnProducts\Resources\OwnProductResource;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
-use Exception;
+use Illuminate\Support\Facades\DB;
 
 /**
  *
@@ -41,7 +36,7 @@ class OwnProductService
 
     public function store(array $request): OwnProduct
     {
-        return \DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
             $request['created_by'] = Auth::id();
             return $this->ownProduct->create($request);
         });
@@ -54,7 +49,7 @@ class OwnProductService
 
     public function update(array $request, string $id): OwnProduct
     {
-        return \DB::transaction(function () use ($request, $id) {
+        return DB::transaction(function () use ($request, $id) {
             $ownProduct = $this->ownProduct->findOrFail($id);
             $request['updated_by'] = Auth::id();
             $ownProduct->update($request);
@@ -64,7 +59,7 @@ class OwnProductService
 
     public function delete(string $id): void
     {
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
             $ownProduct = $this->ownProduct->findOrFail($id);
             $ownProduct->delete();
         });

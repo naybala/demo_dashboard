@@ -23,6 +23,12 @@ use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 class DailyIncome extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\DailyIncomeFactory::new();
+    }
+
       //protected $table = 'table_name';
     protected $fillable = [
         'date',

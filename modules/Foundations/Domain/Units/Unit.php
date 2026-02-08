@@ -20,6 +20,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Unit extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\UnitFactory::new();
+    }
+
       //protected $table = 'table_name';
     protected $guarded = [
 

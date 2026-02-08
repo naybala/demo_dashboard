@@ -4,6 +4,7 @@ namespace BasicDashboard\Web\Products\Services;
 
 use BasicDashboard\Foundations\Domain\Products\Product;
 use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Facades\DB;
 
 
 /**
@@ -35,7 +36,7 @@ class ProductService
 
     public function store(array $request): Product
     {
-        return \DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
             if (isset($request['photos']) && is_array($request['photos'])) {
                 $request['photos'] = $this->filesystemManager->uploadFilesToLocal($request['photos'], 'products', 'photos');
             }
@@ -60,7 +61,7 @@ class ProductService
 
     public function update(array $request, string $id): Product
     {
-        return \DB::transaction(function () use ($request, $id) {
+        return DB::transaction(function () use ($request, $id) {
             $product = $this->product->findOrFail($id);
 
             $existingPhotos = $request['existing_photos'] ?? [];
@@ -91,7 +92,7 @@ class ProductService
 
     public function delete(string $id): void
     {
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
             $product = $this->product->findOrFail($id);
             if ($product->photos) {
                 $this->filesystemManager->forceDeleteFilesFromLocal($product->photos);

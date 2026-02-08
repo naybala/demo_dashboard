@@ -2,16 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Enums\Status;
-use App\Enums\UserType;
+use App\Enums\Common\Status;
+use App\Enums\Users\UserType;
 use BasicDashboard\Foundations\Domain\Users\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\BasicDashboard\Foundations\Domain\Users\User>
  */
 class UserFactory extends Factory
+
 {
     protected $model = User::class;
     /**
