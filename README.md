@@ -1,88 +1,445 @@
-# Custom Mini CRUD directions
+# Demo Dashboard
 
-## For overall short-note for mini crud features
+A modular **Laravel-based admin dashboard** with scalable architecture, feature scaffolding, and clean separation between Domain, Application, and Web layers.
 
 ---
 
-- first you need to run
+## ✨ Features
+
+- Modular architecture (`modules/` structure)
+- CRUD scaffolding via custom Artisan commands
+- Service layer separation for business logic
+- Form Request validation
+- API Resources for response formatting
+- TailwindCSS + modern UI components
+- Ready for scaling into multi-feature admin systems
+
+---
+
+## 🏗️ Architecture Overview
+
+Each feature/module is organized into clear layers:
 
 ```
+modules/
+  FeatureName/
+    Domain/        → Models, repositories, core logic
+    Application/   → Services / Actions (business rules)
+    Web/           → Controllers, Requests, Resources, Views
+    Routes.php     → Module routes
+```
+
+### Principles
+
+- **Skinny Controllers**
+- **Fat Services / Actions**
+- **Validated input only**
+- **No HTTP logic inside services**
+- **Reusable modular features**
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/naybala/demo_dashboard.git
+cd demo_dashboard
+```
+
+### 2. Install dependencies
+
+```bash
+composer install
+npm install
+```
+
+### 3. Environment setup
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Configure your database inside `.env`.
+
+---
+
+### 4. Run migrations & seeders
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+---
+
+### 5. Start the development server
+
+```bash
+php artisan serve
+npm run dev
+```
+
+Visit:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## 🧰 Custom Artisan Generators
+
+This project includes **feature scaffolding commands**.
+
+### Generate full feature
+
+```bash
 php artisan make:coreFeature--all
 ```
 
-### This cmd was success another step are as follow
+### Generate logic only
 
----
-
-- in ( routes/web.php ) u need to register for your new routes
-- in lang folder , u need to add new lang for ur new feature
-  #### ===============For Detail ==================
-  - add ( newFeature.php ) in en folder
-  - add ( newFeature.php ) in mm folder
-  - register new feature name in ( sidebar.php ) in en and mm folder;
-- in ( resources/views/components/sidebar.blade.php) u need to register for ur new feature of Ui and necessary
-
----
-
-### Permission Step
-
-- in (config/numbers.php) u need to add this new Feature(users) in the permissons key (Hint. You can check in PermissionSeeder)
-  #### ===============For Detail ==================
-  - After Generating this feature, You need to run following command to add permissions for this feature in Permission tables
-  ```
-  php artisan migrate:fresh --seed
-  ```
-
----
-
-### Service Container Repository Binding Step
-
-- in RepositoryBindingProvider ( We have to bind newFeature RepositoryInerface to Repository Class to be resolved by Laravel Service Container)
-
----
-
-# Optional
-
-- if you want to create only Logics(mean Controller , Resource , Service and Validation) , Run
-  `php artisan make:coreFeature--logic`
-- if you want to create only views ( C , R , U , D) and show pages, Run
-  ` php artisan make:coreFeature--view`
-
----
-
-#### Add Field To View
-
-##### The Above Features will generate resources/view/admin/newFeature.php (Field will only include name(Default) in create,edit,show Blade Files)
-
-#### If you want to add fields(in Migration Field) and update index,create,show Blade files , you can run
-
-```
-php artisan add-fields-to-view --model={newFeature(Eg.users)}
+```bash
+php artisan make:coreFeature--logic
 ```
 
-<em> This will search all Fields in Migration Files and will add Add Fields in create,show and edit Files </em>
+# Demo Dashboard
+
+A modular **Laravel-based admin dashboard** with scalable architecture, feature scaffolding, and clean separation between Domain, Application, and Web layers.
 
 ---
 
+## ✨ Features
+
+- Modular architecture (`modules/` structure)
+- CRUD scaffolding via custom Artisan commands
+- Service layer separation for business logic
+- Form Request validation
+- API Resources for response formatting
+- TailwindCSS + modern UI components
+- Ready for scaling into multi-feature admin systems
+
 ---
 
-# Tips that Need to know to use Our Core System
+## 🏗️ Architecture Overview
 
-- Form Request and Resources (Laraval has these pattern already)
-- Repository and Service Layer
-- Laravel Component For Reusable In View Files
-- Laravel View Composer (To Send data to Views With View::compose)
-- Repository Interface Binding
-- Laravel Macro (To extend custom methods to Laravel's Facedes Class like Storage and Response)
+Each feature/module is organized into clear layers:
+
+```
+modules/
+  FeatureName/
+    Domain/        → Models, repositories, core logic
+    Application/   → Services / Actions (business rules)
+    Web/           → Controllers, Requests, Resources, Views
+    Routes.php     → Module routes
+```
+
+### Principles
+
+- **Skinny Controllers**
+- **Fat Services / Actions**
+- **Validated input only**
+- **No HTTP logic inside services**
+- **Reusable modular features**
 
 ---
 
-# Packages that we use
+## 🚀 Getting Started
 
-- spatie/laravel-permission
-- barryvdh/laravel-debugbar
-- barryvdh/laravel-ide-helper
-- rector/rector
-- TailwindCss / PrelineUi / Flowbite
+### 1. Clone the repository
 
-php artisan ide-helper:models -RW
+```bash
+git clone https://github.com/naybala/demo_dashboard.git
+cd demo_dashboard
+```
+
+### 2. Install dependencies
+
+```bash
+composer install
+npm install
+```
+
+### 3. Environment setup
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Configure your database inside `.env`.
+
+---
+
+### 4. Run migrations & seeders
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+---
+
+### 5. Start the development server
+
+```bash
+php artisan serve
+npm run dev
+```
+
+Visit:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## 🧰 Custom Artisan Generators
+
+This project includes **feature scaffolding commands**.
+
+### Generate full feature
+
+```bash
+php artisan make:coreFeature--all FeatureName
+```
+
+### Generate logic only
+
+```bash
+php artisan make:coreFeature--logic FeatureName
+```
+
+### Generate views only
+
+```bash
+php artisan make:coreFeature--view FeatureName
+```
+
+### Add fields to generated views
+
+```bash
+php artisan add-fields-to-view FeatureName
+```
+
+These commands speed up CRUD module creation and enforce consistent structure.
+
+---
+
+## 🧪 Testing
+
+Run tests with:
+
+```bash
+php artisan test
+```
+
+> Future improvements will expand **unit and feature test coverage**.
+
+---
+
+## 📦 Tech Stack
+
+- **Laravel** (v10+ compatible)
+- **MySQL**
+- **TailwindCSS**
+- **Flowbite UI**
+- **Spatie Permission**
+- **Debugbar / IDE Helper**
+- **Docker support**
+
+---
+
+## 📐 Coding Guidelines
+
+### Controllers
+
+- Handle **HTTP only**
+- Call **services/actions**
+- Return **views or JSON**
+
+### Services / Actions
+
+- Contain **business logic**
+- Use **DB transactions**
+- Receive **validated data only**
+- Must **not return views**
+
+### Validation
+
+- Use **FormRequest classes**
+- Never validate inside services
+
+### Resources
+
+- Format **API / view response data**
+- Avoid heavy logic
+
+---
+
+## 🔐 Security Notes
+
+- Always use `$request->validated()`
+- Never trust raw request input
+- Use authorization policies where needed
+
+---
+
+## 🛣️ Roadmap
+
+- [ ] Full automated test coverage
+- [ ] CI/CD with GitHub Actions
+- [ ] Repository pattern integration
+- [ ] Multi-tenant support
+- [ ] API authentication layer
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome.
+
+Suggested flow:
+
+1. Fork the repository
+2. Create a feature branch
+3. Follow coding guidelines
+4. Add tests if applicable
+5. Submit PR
+
+---
+
+## 📄 License
+
+Open-source under the **MIT License**.
+
+---
+
+## 👤 Author
+
+**Nay Ba La**
+
+- GitHub: [https://github.com/naybala](https://github.com/naybala)
+- Portfolio: [https://naybala.netlify.app](https://naybala.netlify.app)
+
+---
+
+## ⭐ Support
+
+If you find this project useful, please consider giving it a **star** on GitHub.
+
+### Add fields to generated views
+
+```bash
+php artisan add-fields-to-view --model={FeatureName}
+```
+
+These commands speed up CRUD module creation and enforce consistent structure.
+
+---
+
+## 🧪 Testing
+
+Run tests with:
+
+```bash
+php artisan test
+```
+
+> Future improvements will expand **unit and feature test coverage**.
+
+---
+
+## 📦 Tech Stack
+
+- **Laravel** (v10+ compatible)
+- **MySQL**
+- **TailwindCSS**
+- **Flowbite UI**
+- **Spatie Permission**
+- **Debugbar / IDE Helper**
+- **Docker support**
+
+---
+
+## 📐 Coding Guidelines
+
+### Controllers
+
+- Handle **HTTP only**
+- Call **services/actions**
+- Return **views or JSON**
+
+### Services / Actions
+
+- Contain **business logic**
+- Use **DB transactions**
+- Receive **validated data only**
+- Must **not return views**
+
+### Validation
+
+- Use **FormRequest classes**
+- Never validate inside services
+
+### Resources
+
+- Format **API / view response data**
+- Avoid heavy logic
+
+---
+
+## 🔐 Security Notes
+
+- Always use `$request->validated()`
+- Never trust raw request input
+- Use authorization policies where needed
+
+---
+
+## 🛣️ Roadmap
+
+- [ ] Full automated test coverage
+- [ ] CI/CD with GitHub Actions
+- [ ] Repository pattern integration
+- [ ] Multi-tenant support
+- [ ] API authentication layer
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome.
+
+Suggested flow:
+
+1. Fork the repository
+2. Create a feature branch
+3. Follow coding guidelines
+4. Add tests if applicable
+5. Submit PR
+
+---
+
+## 📄 License
+
+Open-source under the **MIT License**.
+
+---
+
+## 👤 Author
+
+**Nay Ba La**
+
+- GitHub: [https://github.com/naybala](https://github.com/naybala)
+- Portfolio: [https://naybala.netlify.app](https://naybala.netlify.app)
+
+---
+
+## ⭐ Support
+
+If you find this project useful, please consider giving it a **star** on GitHub.
