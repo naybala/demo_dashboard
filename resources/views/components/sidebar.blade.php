@@ -89,6 +89,7 @@
                 <x-sidebar.list title="sidebar.role" model="roles" icon="fa-solid fa-lock" />
                 <x-sidebar.list title="sidebar.category" icon="fa-solid fa-icons" model="categories" />
                 <x-sidebar.list title="sidebar.product" icon="fa-brands fa-product-hunt" model="products" />
+                <x-sidebar.list title="sidebar.own_product" icon="fa-brands fa-product-hunt" model="own-products" />
                 <x-sidebar.list title="sidebar.audit" icon="fa-brands fa-audible" model="audits" />
                 <x-sidebar.list title="sidebar.unit" icon="fa-brands fa-unity" model="units" />
                 <x-sidebar.list title="sidebar.daily_income" icon="fa-brands fa-unity" model="daily-incomes" />

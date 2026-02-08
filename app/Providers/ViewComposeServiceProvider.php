@@ -2,6 +2,7 @@
 namespace App\Providers;
 use App\View\Composers\CategoryComposer;
 use App\View\Composers\RoleComposer;
+use App\View\Composers\UnitComposer;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +32,14 @@ class ViewComposeServiceProvider extends ServiceProvider
         //Product
         View::composer('admin.product.create', CategoryComposer::class);
         View::composer('admin.product.edit', CategoryComposer::class);
+        View::composer('admin.own-product.create', CategoryComposer::class);
+        View::composer('admin.own-product.edit', CategoryComposer::class);
+
+
+
+        //Unit
+        View::composer('admin.own-product.create', UnitComposer::class);
+        View::composer('admin.own-product.edit', UnitComposer::class);
 
 
     }

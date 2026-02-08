@@ -35,5 +35,6 @@ return [
     'placeholder_profit'                        => "Please enter profit",
     'placeholder_note'                          => "Please enter note",
     'placeholder_unit_id'                       => "Please enter unit",
+    'placeholder_category_id'                   => "Please enter category",
 
 ];

@@ -35,4 +35,17 @@ return [
     //Role
     'role_name'                     => "Role Name",
 
+    //Own Products
+    "unit"                          => "Unit",
+    "category"                      => "Category",
+    "unit_id"                       => "Unit",
+    "category_id"                   => "Category",
+
+    "price"                         => "Price",
+    "investment"                    => "Investment",
+    "profit"                        => "Profit",
+
+    "product_name"                  =>"Produt Name",
+    "amount"                        =>"Amount"
+
 ];
