@@ -437,6 +437,7 @@ Open-source under the **MIT License**.
 
 - GitHub: [https://github.com/naybala](https://github.com/naybala)
 - Portfolio: [https://naybala.netlify.app](https://naybala.netlify.app)
+- my composer pkg : [https://packagist.org/packages/davion190510/mini-crud-generator](https://packagist.org/packages/davion190510/mini-crud-generator)
 
 ---
 
