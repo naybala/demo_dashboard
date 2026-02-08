@@ -8,6 +8,6 @@ return [
     'category'           => "Category",
     'product'            => "Product",
     'audit'              => "Audit",
-    'unit' => 'Unit',
-    'daily_income' => 'Daily Income',
+    'unit'               => "Unit",
+    'daily_income'       => "Daily Income",
 ];

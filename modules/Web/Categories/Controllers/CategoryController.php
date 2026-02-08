@@ -50,7 +50,7 @@ class CategoryController extends BaseController
 
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        $this->categoryService->store($request->validated());
+        $this->categoryService->store($request->all());
         return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
     }
 

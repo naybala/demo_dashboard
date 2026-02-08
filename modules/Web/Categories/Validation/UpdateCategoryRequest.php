@@ -21,11 +21,19 @@ class UpdateCategoryRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_show' => $this->has('is_show') ? 1 : 0,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
           "name"=>"required",
           "name_other"=>"required",
+          "is_show"=>"nullable|boolean",
           "description"=>"nullable",
           "description_other"=>"nullable",
         ];

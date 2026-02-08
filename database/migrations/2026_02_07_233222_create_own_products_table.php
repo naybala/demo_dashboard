@@ -13,22 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('daily_incomes', function (Blueprint $table) {
+        Schema::create('own_products', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
-            $table->string('name')->nullable();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete()->nullable();
-            $table->decimal('amount', 10, 2);
+            $table->string('name');
+            $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->integer('price');
             $table->integer('investment');
             $table->integer('profit');
-            $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
-            $table->string('note')->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->unsignedInteger('deleted_by')->nullable();
             $table->timestamps();
-            $table->softDeletes();        
+            $table->softDeletes();
         });
     }
 
@@ -39,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('daily_incomes');
+        Schema::dropIfExists('own_products');
     }
 };

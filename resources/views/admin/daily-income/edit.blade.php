@@ -1,4 +1,4 @@
-<x-master-layout name="Dailyincome" headerName="{{ __('sidebar.dailyincome') }}">
+<x-master-layout name="Dailyincome" headerName="{{ __('sidebar.daily_income') }}">
     <x-form.layout>
         <form action="{{ route('daily-incomes.update', $data['id']) }}" method="post" enctype="multipart/form-data">
             @csrf

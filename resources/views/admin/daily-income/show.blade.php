@@ -1,4 +1,4 @@
-<x-master-layout name="Dailyincome" headerName="{{ __('sidebar.dailyincome') }}">
+<x-master-layout name="Dailyincome" headerName="{{ __('sidebar.daily_income') }}">
     <x-form.layout>
         <x-show.go-to-edit model="daily-incomes" :id="$data['id']" />
         <x-form.grid>

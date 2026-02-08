@@ -27,6 +27,7 @@ class Category extends Model
         'name_other',
         'description',
         'description_other',
+        'is_show',
         'created_at',
         'updated_at',
         'deleted_at',

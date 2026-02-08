@@ -21,6 +21,11 @@
                 <x-form.input-group title='category.description_other' name='description_other' id='description_other'  />
                 {{-- description_other --}}
 
+                <!-- Showing Category Or Not -->
+                <x-form.checkbox title="category.is_show" name="is_show" id="is-show" />
+                <!-- Showing Category Or Not -->
+
+
             </x-form.grid>
             {{-- Save And Cancel --}}
             <x-form.submit :operate="__('messages.save')" :cancel="__('messages.cancel')" url="categories.index" />

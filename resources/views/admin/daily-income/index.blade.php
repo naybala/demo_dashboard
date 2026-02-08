@@ -1,4 +1,4 @@
-<x-master-layout name="Dailyincome" headerName="{{ __('sidebar.dailyincome') }}">
+<x-master-layout name="Dailyincome" headerName="{{ __('sidebar.daily_income') }}">
    <main class="h-full overflow-y-auto">
         <div class="container px-1 md:px-6 mx-auto grid">
             <div class="container md:flex justify-start md:justify-between items-start mx-auto mt-5">

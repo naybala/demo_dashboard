@@ -3,6 +3,7 @@
 return [
     'name' => 'Name',
     'name_other'=>"Other Name",
+    'is_show'=>"Showing Category",
     'description'=>"Description",
     'description_other'=>"Other Description",
     'name_validation' => "Name is required",
