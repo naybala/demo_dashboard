@@ -22,7 +22,8 @@
                 {{-- name --}}
 
                 {{-- amount --}}
-                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' value="1" type="number"/>
+                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' value="1" />
+
 
                 {{-- amount --}}
 

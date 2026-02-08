@@ -22,7 +22,8 @@
 
 
                 {{-- amount --}}
-                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' :value="$data['amount']" type="number" />
+                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' :value="$data['amount']" />
+
                 {{-- amount --}}
 
                 {{-- unit_id --}}
