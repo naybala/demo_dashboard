@@ -2,6 +2,7 @@
 
 namespace BasicDashboard\Web\OwnProducts\Services;
 
+use BasicDashboard\Foundations\Actions\WebFileStoreAction;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Web\OwnProducts\Services\OwnProductImageAction;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,7 @@ class OwnProductService
     public function __construct(
         private OwnProduct $ownProduct,
         private FilesystemManager $fileSystemManager,
-        private OwnProductImageAction $ownProductImageAction,
+        private WebFileStoreAction $webFileStoreAction,
     ){}
 
     public function paginate(array $request)
@@ -47,7 +48,7 @@ class OwnProductService
             $payload['created_by'] = Auth::id();
             $ownProduct = $this->ownProduct->create($payload);
             if ($image) {
-                $fileData = $this->ownProductImageAction->store($ownProduct, $image);
+                $fileData = $this->webFileStoreAction->store($ownProduct, $image,self::ROOT,'image');
                 $ownProduct->forceFill($fileData)->save();
             }
             return $ownProduct;
@@ -70,7 +71,7 @@ class OwnProductService
             unset($payload['image']);
             $payload['updated_by'] = Auth::id();
             if ($image) {
-                $fileData = $this->ownProductImageAction->update($ownProduct, $image,config('cache.file_system_disk'));
+                $fileData = $this->webFileStoreAction->update($ownProduct, $image,config('cache.file_system_disk'),'image',self::ROOT);
                 $payload  = array_merge($payload, $fileData);
             }
             $ownProduct->update($payload);
@@ -83,7 +84,7 @@ class OwnProductService
     {
         DB::transaction(function () use ($id) {
             $ownProduct = $this->ownProduct->findOrFail($id);
-            $this->ownProductImageAction->delete($ownProduct, config('cache.file_system_disk'));
+            $this->webFileStoreAction->delete($ownProduct, config('cache.file_system_disk'),'image');
             $ownProduct->update([
                 'deleted_by' => auth()->id(),
             ]);

@@ -2,7 +2,7 @@
 
 namespace BasicDashboard\Web\Users\Services;
 
-use BasicDashboard\Web\Users\Services\UserImageAction;
+use BasicDashboard\Foundations\Actions\WebFileStoreAction;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use BasicDashboard\Foundations\Domain\Users\User;
@@ -18,7 +18,7 @@ class UserService
         private User $user,
         private Role $role,
         private FilesystemManager $fileSystemManager,
-        private UserImageAction $userImageAction,
+        private WebFileStoreAction $webFileStoreAction,
     ) {}
 
     public function paginate(array $request)
@@ -41,7 +41,7 @@ class UserService
             $user->assignRole($roleName);
 
             if ($image) {
-                $fileData = $this->userImageAction->store($user, $image);
+                $fileData = $this->webFileStoreAction->store($user, $image,self::ROOT,'avatar');
                 $user->forceFill($fileData)->save();
             }
 
@@ -69,7 +69,7 @@ class UserService
             $roleName  = $this->getRoleName($request['role_marked'] ?? null);
 
             if ($image) {
-                $fileData = $this->userImageAction->update($user, $image, config('cache.file_system_disk'));
+                $fileData = $this->webFileStoreAction->update($user, $image,config('cache.file_system_disk'),'avatar',self::ROOT);
                 $payload  = array_merge($payload, $fileData);
             }
 
@@ -90,7 +90,7 @@ class UserService
             $decodedId = customDecoder($id);
             $user = $this->user->findOrFail($decodedId);
             $user->roles()->detach();
-            $this->userImageAction->delete($user, config('cache.file_system_disk'));
+            $this->webFileStoreAction->delete($user, config('cache.file_system_disk'),'avatar');
             $user->delete();
         });
     }
