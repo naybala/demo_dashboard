@@ -9,4 +9,5 @@ return [
     'category_created' => "Category ကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ။",
     'category_updated' => "Category ကို အောင်မြင်စွာ အပ်ဒိတ်လုပ်ခဲ့သည်။",
     'category_deleted' => "Category ကို အောင်မြင်စွာ ဖျက်လိုက်ပါပြီ။",
+    'category_in_use' => "ဤ Category ကို အခြားပစ္စည်းများတွင် အသုံးပြုထားသောကြောင့် ဖျက်၍မရပါ။",
 ];

@@ -2,6 +2,7 @@
 
 namespace BasicDashboard\Web\Roles\Controllers;
 
+use App\Exceptions\WarningException;
 use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\Roles\Services\RoleService;
 use BasicDashboard\Web\Roles\Validation\StoreRoleRequest;
@@ -98,6 +99,8 @@ class RoleController extends BaseController
         try {
             $this->roleService->delete(customDecoder($request->validated()['id']));
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
+        } catch (WarningException $e) {
+            return $this->responseFactory->redirectBackWithWarning(__($e->getMessage()));
         } catch (Throwable $e) {
             $this->LogError("Role destroy failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());

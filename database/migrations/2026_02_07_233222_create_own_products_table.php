@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('own_products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('unit_id')->constrained()->restrictOnDelete();
+            $table->foreignId('category_id')->constrained()->restrictOnDelete();
             $table->integer('price');
             $table->integer('investment');
             $table->integer('profit');

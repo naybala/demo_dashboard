@@ -2,6 +2,7 @@
 
 namespace BasicDashboard\Web\Units\Services;
 
+use App\Exceptions\WarningException;
 use BasicDashboard\Foundations\Domain\Units\Unit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -58,8 +59,14 @@ class UnitService
     public function delete(string $id): void
     {
         DB::transaction(function () use ($id) {
-            $decodedId = customDecoder($id);
-            $this->unit->destroy($decodedId);
+            $unit = $this->unit->findOrFail($id);
+            if ($unit->hasOwnProducts()) {
+                throw new WarningException('unit.unit_in_use');
+            }
+            $unit->update([
+                'deleted_by' => auth()->id(),
+            ]);
+            $unit->delete();
         });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace BasicDashboard\Web\Units\Controllers;
 
+use App\Exceptions\WarningException;
 use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\Units\Resources\UnitResource;
 use BasicDashboard\Web\Units\Services\UnitService;
@@ -93,6 +94,8 @@ class UnitController extends BaseController
         try {
             $this->unitService->delete($request->validated()['id']);
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
+        }catch (WarningException $e) {
+            return $this->responseFactory->redirectBackWithWarning(__($e->getMessage()));
         } catch (Throwable $e) {
             $this->LogError("Unit destroy failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());

@@ -10,4 +10,5 @@ return [
     'category_created' => "Category was successfully created",
     'category_updated' => "Category was successfully updated",
     'category_deleted' => "Category was successfully deleted",
+    'category_in_use' => "This category cannot be deleted because it is already used by products.",
 ];

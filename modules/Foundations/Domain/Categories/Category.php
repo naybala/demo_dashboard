@@ -2,6 +2,7 @@
 
 namespace BasicDashboard\Foundations\Domain\Categories;
 use App\Observers\AuditObserver;
+use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Foundations\Domain\Products\Product;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
@@ -80,5 +81,16 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class, 'category_product');
     }
+
+    public function ownProducts()
+    {
+        return $this->hasMany(OwnProduct::class);
+    }
+
+    public function hasOwnProducts(): bool
+    {
+        return $this->ownProducts()->exists();
+    }
+
 
 }

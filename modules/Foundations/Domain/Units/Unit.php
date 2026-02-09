@@ -2,6 +2,7 @@
 
 namespace BasicDashboard\Foundations\Domain\Units;
 use App\Observers\AuditObserver;
+use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -58,6 +59,16 @@ class Unit extends Model
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
             ->orderBy('id', 'desc');
+    }
+
+    public function ownProducts()
+    {
+        return $this->hasMany(OwnProduct::class);
+    }
+
+    public function hasOwnProducts(): bool
+    {
+        return $this->ownProducts()->exists();
     }
 
 }

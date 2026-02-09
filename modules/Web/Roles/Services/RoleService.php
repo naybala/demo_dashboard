@@ -1,6 +1,7 @@
 <?php
 namespace BasicDashboard\Web\Roles\Services;
 
+use App\Exceptions\WarningException;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use BasicDashboard\Foundations\Domain\Roles\Role;
@@ -79,8 +80,12 @@ class RoleService
 
     public function delete(string $id): void
     {
-        DB::transaction(function () use ($id) {
-            $this->role->destroy($id);
+         DB::transaction(function () use ($id) {
+            $role = $this->role->findOrFail($id);
+            if($role->hasUsers()){
+                throw new WarningException('role.role_in_use');
+            }
+            $role->delete();
         });
     }
 

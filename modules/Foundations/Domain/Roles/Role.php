@@ -56,4 +56,9 @@ class Role extends SpatieRole
             ->orderBy('id', 'desc');
     }
 
+    public function hasUsers(): bool
+    {
+        return $this->users()->exists();
+    }
+
 }

@@ -10,4 +10,7 @@ return [
     'role_updated' => 'Role Updated Successfully',
     'role_deleted' => 'Role Deleted Successfully',
     'can_access_panel' => 'Allow this role to access admin panel',
+
+    'role_in_use' => "This role cannot be deleted because it is already used by users.",
+
 ];

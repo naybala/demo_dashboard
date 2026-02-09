@@ -12,6 +12,7 @@ enum ResponseCode: int {
     case NotFound            = 404;
     case MethodNotAllowed    = 405;
     case ValidationError     = 422; // Added for validation errors
+    case Warning             = 409; 
     case InternalServerError = 500;
     case ServiceUnavailable  = 503;
 
@@ -31,6 +32,7 @@ enum ResponseCode: int {
             self::NotFound => 'Not Found',
             self::MethodNotAllowed => 'Method Not Allowed',
             self::ValidationError => 'Validation Error', // Description for 422
+            self::Warning => 'Warning Message',
             self::InternalServerError => 'Internal Server Error',
             self::ServiceUnavailable => 'Service Unavailable',
         };
@@ -41,6 +43,7 @@ enum ResponseCode: int {
         return match ($this) {
             self::Success => 200,
             self::InternalServerError => 500,
+            self::Warning => 409,
             self::Unauthorized => 401,
         };
     }
@@ -58,6 +61,7 @@ enum ResponseCode: int {
             self::NotFound => 'Not Found',
             self::MethodNotAllowed => 'Method Not Allowed',
             self::ValidationError => 'Validation Error', // Description for 422
+            self::Warning => 'warning',
             self::InternalServerError => 'error',
             self::ServiceUnavailable => 'Service Unavailable',
         };

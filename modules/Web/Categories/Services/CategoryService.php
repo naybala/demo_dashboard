@@ -5,6 +5,7 @@ namespace BasicDashboard\Web\Categories\Services;
 use BasicDashboard\Foundations\Domain\Categories\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Exceptions\WarningException;
 
 class CategoryService 
 {
@@ -51,10 +52,13 @@ class CategoryService
         });
     }
 
-    public function delete(string $id): void
+    public function delete(string $id)
     {
         DB::transaction(function () use ($id) {
             $category = $this->category->findOrFail($id);
+            if ($category->hasOwnProducts()) {
+                throw new WarningException('category.category_in_use');
+            }
             $category->update([
                 'deleted_by' => auth()->id(),
             ]);

@@ -44,4 +44,18 @@ class StoreDailyIncomeRequest extends FormRequest
 
         ];
     }
+
+    public function messages():array{
+        return [
+            "date.required" => "Date is required",
+            "name.required" => "Name is required",
+            "own_product_id.required" => "Own Product is required",
+            "amount.required" => "Amount is required",
+            "unit_id.required" => "Unit is required",
+            "price.required" => "Price is required",
+            "investment.required" => "Investment is required",
+            "profit.required" => "Profit is required",
+            "is_instant.required" => "Is Instant is required",
+        ];
+    }
 }

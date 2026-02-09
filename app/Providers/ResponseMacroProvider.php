@@ -62,6 +62,13 @@ class ResponseMacroProvider extends ServiceProvider
             ]);
         });
 
+        Response::macro('redirectBackWithWarning', function ($message): RedirectResponse {
+            return redirect()->back()->with([
+                'message'      => $message,
+                'responseType' => ResponseCode::Warning->responseType(),
+            ]);
+        });
+
         Response::macro('successAjaxResponse', function ($message, $data): JsonResponse {
             // \Log::info('hello world');
             $response = [

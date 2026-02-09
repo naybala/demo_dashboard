@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
+use App\Exceptions\WarningException;
+use Throwable;
 
 
 /**
@@ -81,8 +83,15 @@ class CategoryController extends BaseController
 
     public function destroy(DeleteCategoryRequest $request): RedirectResponse
     {
-        $this->categoryService->delete($request->validated()['id']);
-        return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
+        try {
+            $this->categoryService->delete($request->validated()['id']);
+            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
+        } catch (WarningException $e) {
+            return $this->responseFactory->redirectBackWithWarning(__($e->getMessage()));
+        } catch (Throwable $e) {
+            $this->LogError("Category destroy failed", $e);
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
+        }
     }
 
 }

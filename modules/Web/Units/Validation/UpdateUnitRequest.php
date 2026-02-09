@@ -25,6 +25,13 @@ class UpdateUnitRequest extends FormRequest
     {
         return [
           "name"=>"required",
+          "description" =>"nullable",
+        ];
+    }
+
+    public function messages():array {
+        return [
+            'name.required' => __('unit.name_validation'),
         ];
     }
 }
