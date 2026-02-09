@@ -3,45 +3,48 @@
 namespace BasicDashboard\Web\Users\Services;
 
 use BasicDashboard\Foundations\Actions\WebFileStoreAction;
+use BasicDashboard\Foundations\Domain\Roles\Role;
+use BasicDashboard\Foundations\Domain\Users\User;
+use BasicDashboard\Foundations\Shared\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use BasicDashboard\Foundations\Domain\Users\User;
-use BasicDashboard\Foundations\Domain\Roles\Role;
-use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
 
-class UserService
+class UserService extends BaseCrudService
 {
-    const ROOT      = "Users";
+    const ROOT = "Users";
 
     public function __construct(
-        private User $user,
+        User $user,
         private Role $role,
-        private FilesystemManager $fileSystemManager,
         private WebFileStoreAction $webFileStoreAction,
-    ) {}
+    ) {
+        parent::__construct($user);
+    }
 
-    public function paginate(array $request)
+    public function paginate(array $request): LengthAwarePaginator
     {
-        return $this->user
-            ->withUserRelations()                                    
-            ->filterByKeyword($request['keyword'] ?? null)          
-            ->orderByLatest()                                        
+        return $this->model
+            ->withUserRelations()
+            ->filterByKeyword($request['keyword'] ?? null)
+            ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
     }
 
-    public function store(array $request): User
+    public function store(array $request): Model
     {
         return DB::transaction(function () use ($request) {
             $image    = $request['avatar'] ?? null;
             $roleName = $this->getRoleName($request['role_marked']);
             $payload  = Arr::except($request, ['avatar', 'role_marked']);
-            $payload['created_by'] = Auth::id();
-            $user = $this->user->create($payload);
+            
+            $user = parent::store($payload);
             $user->assignRole($roleName);
 
             if ($image) {
-                $fileData = $this->webFileStoreAction->store($user, $image,self::ROOT,'avatar');
+                $fileData = $this->webFileStoreAction->store($user, $image, self::ROOT, 'avatar');
                 $user->forceFill($fileData)->save();
             }
 
@@ -49,31 +52,24 @@ class UserService
         });
     }
 
-    public function findOrFail(string $id): User
-    {
-        return $this->user->findOrFail($id);
-    }
-
     public function find($id): ?User
     {
-        return $this->user->find($id);
+        return $this->model->find($id);
     }
 
-    public function update(array $request, string $id): User
+    public function update(array $request, string $id): Model
     {
         return DB::transaction(function () use ($request, $id) {
-            $decodedId = customDecoder($id);
-            $user      = $this->user->findOrFail($decodedId);
-            $image     = $request['avatar'] ?? null;
-            $payload   = Arr::except($request, ['avatar', 'role_marked']);
-            $roleName  = $this->getRoleName($request['role_marked'] ?? null);
+            $image    = $request['avatar'] ?? null;
+            $payload  = Arr::except($request, ['avatar', 'role_marked']);
+            $roleName = $this->getRoleName($request['role_marked'] ?? null);
+
+            $user = parent::update($payload, $id);
 
             if ($image) {
-                $fileData = $this->webFileStoreAction->update($user, $image,config('cache.file_system_disk'),'avatar',self::ROOT);
-                $payload  = array_merge($payload, $fileData);
+                $fileData = $this->webFileStoreAction->update($user, $image, config('cache.file_system_disk'), 'avatar', self::ROOT);
+                $user->forceFill($fileData)->save();
             }
-
-            $user->update($payload);
 
             if ($roleName) {
                 $user->syncRoles($roleName);
@@ -83,22 +79,20 @@ class UserService
         });
     }
 
-
     public function delete(string $id): void
     {
         DB::transaction(function () use ($id) {
-            $decodedId = customDecoder($id);
-            $user = $this->user->findOrFail($decodedId);
+            $user = $this->findOrFail($id);
             $user->roles()->detach();
-            $this->webFileStoreAction->delete($user, config('cache.file_system_disk'),'avatar');
-            $user->delete();
+            $this->webFileStoreAction->delete($user, config('cache.file_system_disk'), 'avatar');
+            parent::delete($id);
         });
     }
 
     public function profile(): User
     {
         $id = Auth::id();
-        return $this->user->findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     // ==========================================
@@ -108,6 +102,4 @@ class UserService
     {
         return $this->role->where('id', $roleId)->value('name');
     }
-
-
 }

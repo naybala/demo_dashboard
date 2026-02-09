@@ -65,7 +65,7 @@ class RoleController extends BaseController
     public function edit(string $id): View | RedirectResponse
     {
         $decodedId = customDecoder($id);
-        $data = $this->roleService->findOrFail($decodedId);      
+        $data = $this->roleService->findWithPermissions($decodedId);      
         $role = new RoleResource($data['role']);
         $role = $role->response()->getData(true)['data'];
         $data['role'] = $role;
@@ -75,7 +75,7 @@ class RoleController extends BaseController
     public function show(string $id): View | RedirectResponse
     {
         $decodedId = customDecoder($id);
-        $data = $this->roleService->findOrFail($decodedId);
+        $data = $this->roleService->findWithPermissions($decodedId);
         $role = new RoleResource($data['role']);
         $role = $role->response()->getData(true)['data'];
         $data['role'] = $role;

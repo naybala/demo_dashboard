@@ -3,9 +3,10 @@
 namespace BasicDashboard\Web\DailyIncomes\Services;
 
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
-use Illuminate\Support\Facades\Auth;
+use BasicDashboard\Foundations\Shared\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-
 
 /**
  *
@@ -17,56 +18,37 @@ use Illuminate\Support\Facades\DB;
  *
  */
 
-class DailyIncomeService
+class DailyIncomeService extends BaseCrudService
 {
-    public function __construct(
-        private DailyIncome $dailyIncome,
-    )
+    protected bool $useDecoder = false;
+
+    public function __construct(DailyIncome $dailyIncome)
     {
+        parent::__construct($dailyIncome);
     }
 
-    public function paginate(array $request)
+    public function paginate(array $request): LengthAwarePaginator
     {
-        return $this->dailyIncome
+        return $this->model
             ->with(['ownProduct.unit'])
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
-
     }
 
-    public function store(array $request): DailyIncome
+    public function store(array $request): Model
     {
         return DB::transaction(function () use ($request) {
             $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
-            $request['created_by'] = Auth::id();
-            return $this->dailyIncome->create($request);
+            return parent::store($request);
         });
     }
 
-    public function findOrFail(string $id): DailyIncome
-    {
-        return $this->dailyIncome->findOrFail($id);
-    }
-
-    public function update(array $request, string $id): DailyIncome
+    public function update(array $request, string $id): Model
     {
         return DB::transaction(function () use ($request, $id) {
             $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
-            $dailyIncome = $this->dailyIncome->findOrFail($id);
-            $dailyIncome->update($request);
-            return $dailyIncome;
+            return parent::update($request, $id);
         });
     }
-
-
-
-    public function delete(string $id): void
-    {
-        DB::transaction(function () use ($id) {
-            $dailyIncome = $this->dailyIncome->findOrFail($id);
-            $dailyIncome->delete();
-        });
-    }
-
 }

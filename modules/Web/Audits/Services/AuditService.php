@@ -3,6 +3,10 @@
 namespace BasicDashboard\Web\Audits\Services;
 
 use BasicDashboard\Foundations\Domain\Audits\Audit;
+use BasicDashboard\Foundations\Shared\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 /**
  *
  * A AuditService is the manager of methods.
@@ -13,25 +17,26 @@ use BasicDashboard\Foundations\Domain\Audits\Audit;
  *
  */
 
-class AuditService 
+class AuditService extends BaseCrudService
 {
-    public function __construct(
-        private Audit $audit
-    )
+    protected bool $useDecoder = false;
+
+    public function __construct(Audit $audit)
     {
+        parent::__construct($audit);
     }
 
-    public function paginate(array $request)
+    public function paginate(array $request): LengthAwarePaginator
     {
-        return $this->audit
+        return $this->model
             ->filterByKeyword($request['keyword'] ?? null)
             ->with(['user'])
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
     }
 
-    public function findOrFail(string $decodedId): Audit
+    public function findOrFail(string $id): Model
     {
-        return $this->audit->with(['user'])->findOrFail($decodedId);
+        return $this->model->with(['user'])->findOrFail($id);
     }
 }

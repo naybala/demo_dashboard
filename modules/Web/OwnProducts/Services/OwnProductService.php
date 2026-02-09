@@ -4,10 +4,11 @@ namespace BasicDashboard\Web\OwnProducts\Services;
 
 use BasicDashboard\Foundations\Actions\WebFileStoreAction;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
-use BasicDashboard\Web\OwnProducts\Services\OwnProductImageAction;
-use Illuminate\Support\Facades\Auth;
+use BasicDashboard\Foundations\Shared\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Filesystem\FilesystemManager;
 
 /**
  *
@@ -19,77 +20,66 @@ use Illuminate\Filesystem\FilesystemManager;
  *
  */
 
-class OwnProductService
+class OwnProductService extends BaseCrudService
 {
-    const ROOT      = "OwnProducts";
+    const ROOT = "OwnProducts";
 
     public function __construct(
-        private OwnProduct $ownProduct,
-        private FilesystemManager $fileSystemManager,
+        OwnProduct $ownProduct,
         private WebFileStoreAction $webFileStoreAction,
-    ){}
+    ) {
+        parent::__construct($ownProduct);
+    }
 
-    public function paginate(array $request)
+    public function paginate(array $request): LengthAwarePaginator
     {
-        return $this->ownProduct
+        return $this->model
             ->with(['unit', 'category'])
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
-
     }
 
-    public function store(array $request): OwnProduct
+    public function store(array $request): Model
     {
         return DB::transaction(function () use ($request) {
-            $image = $request['image'] ?? null;
-            $payload = $request;
-            unset($payload['image']);
-            $payload['created_by'] = Auth::id();
-            $ownProduct = $this->ownProduct->create($payload);
+            $image   = $request['image'] ?? null;
+            $payload = Arr::except($request, ['image']);
+            
+            $ownProduct = parent::store($payload);
+
             if ($image) {
-                $fileData = $this->webFileStoreAction->store($ownProduct, $image,self::ROOT,'image');
+                $fileData = $this->webFileStoreAction->store($ownProduct, $image, self::ROOT, 'image');
                 $ownProduct->forceFill($fileData)->save();
             }
+
             return $ownProduct;
         });
     }
 
-
-    public function findOrFail(string $id): OwnProduct
-    {
-        return $this->ownProduct->findOrFail($id);
-    }
-
-    public function update(array $request, string $id): OwnProduct
+    public function update(array $request, string $id): Model
     {
         return DB::transaction(function () use ($request, $id) {
-            $decodedId  = customDecoder($id);
-            $ownProduct = $this->ownProduct->findOrFail($decodedId);
-            $image = $request['image'] ?? null;
-            $payload = $request;
-            unset($payload['image']);
-            $payload['updated_by'] = Auth::id();
+            $image   = $request['image'] ?? null;
+            $payload = Arr::except($request, ['image']);
+
+            $ownProduct = parent::update($payload, $id);
+
             if ($image) {
-                $fileData = $this->webFileStoreAction->update($ownProduct, $image,config('cache.file_system_disk'),'image',self::ROOT);
-                $payload  = array_merge($payload, $fileData);
+                $fileData = $this->webFileStoreAction->update($ownProduct, $image, config('cache.file_system_disk'), 'image', self::ROOT);
+                $ownProduct->forceFill($fileData)->save();
             }
-            $ownProduct->update($payload);
+
             return $ownProduct;
         });
     }
-
 
     public function delete(string $id): void
     {
         DB::transaction(function () use ($id) {
-            $ownProduct = $this->ownProduct->findOrFail($id);
-            $this->webFileStoreAction->delete($ownProduct, config('cache.file_system_disk'),'image');
-            $ownProduct->update([
-                'deleted_by' => auth()->id(),
-            ]);
-            $ownProduct->delete();
+            $ownProduct = $this->findOrFail($id);
+            $this->webFileStoreAction->delete($ownProduct, config('cache.file_system_disk'), 'image');
+            parent::delete($id);
         });
     }
-
 }

@@ -1,32 +1,27 @@
 <?php
 namespace BasicDashboard\Web\Roles\Services;
 
+use BasicDashboard\Foundations\Domain\Roles\Role;
+use BasicDashboard\Foundations\Shared\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
-use BasicDashboard\Foundations\Domain\Roles\Role;
 
-
-
-class RoleService
+class RoleService extends BaseCrudService
 {
+    protected bool $useDecoder = false;
+
     public function __construct(
-        private Role $role,
+        Role $role,
         private Permission $permission,
     ) {
-    }
-
-    public function paginate(array $request)
-    {
-        return $this->role
-            ->filterByKeyword($request['keyword'] ?? null)
-            ->orderByLatest()
-            ->paginate($request['paginate'] ?? 20);
+        parent::__construct($role);
     }
 
     public function getFormattedPermissions(): array
     {
         $features = config('numbers.permissions');
-        $permissions      = $this->permission->orderBy('id', 'asc')->get(['id', 'name'])->toArray(); 
+        $permissions = $this->permission->orderBy('id', 'asc')->get(['id', 'name'])->toArray(); 
         $finalPermissions = [];
         foreach ($features as $feature) {
             $finalPermissions[$feature] = array_filter($permissions, function ($permission) use ($feature) {
@@ -37,23 +32,22 @@ class RoleService
         return $finalPermissions;
     }
 
-    public function store(array $request): Role
+    public function store(array $request): Model
     {
         return DB::transaction(function () use ($request) {
-            $role = $this->role->create([
+            $role = parent::store([
                 'name'             => $request['name'],
                 'guard_name'       => 'web',
                 'can_access_panel' => $request['can_access_panel'],
-                'created_by'       => auth()->id(),
             ]);
             $role->givePermissionTo($request['permissions']);
             return $role;
         });
     }
 
-    public function findOrFail(string $decodedId): array
+    public function findWithPermissions(string $id): array
     {
-        $role = $this->role->findOrFail($decodedId);
+        $role = parent::findOrFail($id);
         $getAllPermissions     = $this->getFormattedPermissions();                     
         $getCurrentPermissions = $role->getAllPermissions()->pluck('name')->toArray(); 
         return [
@@ -63,25 +57,15 @@ class RoleService
         ];
     }
 
-
-    public function update(array $request, string $decodedId): Role
+    public function update(array $request, string $id): Model
     {
-        return DB::transaction(function () use ($request, $decodedId) {
-            $role = $this->role->findOrFail($decodedId);
-            $role->update([
+        return DB::transaction(function () use ($request, $id) {
+            $role = parent::update([
                 'name'             => $request['name'],
                 'can_access_panel' => $request['can_access_panel'] ?? 0,
-            ]);
+            ], $id);
             $role->syncPermissions($request['permissions']); 
             return $role;
         });
     }
-
-    public function delete(string $id): void
-    {
-        DB::transaction(function () use ($id) {
-            $this->role->destroy($id);
-        });
-    }
-
 }

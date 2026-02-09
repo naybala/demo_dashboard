@@ -3,9 +3,10 @@
 namespace BasicDashboard\Web\Products\Services;
 
 use BasicDashboard\Foundations\Domain\Products\Product;
+use BasicDashboard\Foundations\Shared\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
-
 
 /**
  *
@@ -17,24 +18,18 @@ use Illuminate\Support\Facades\DB;
  *
  */
 
-class ProductService
+class ProductService extends BaseCrudService
 {
+    protected bool $useDecoder = false;
+
     public function __construct(
-        private Product $product,
+        Product $product,
         private FilesystemManager $filesystemManager
-    )
-    {
+    ) {
+        parent::__construct($product);
     }
 
-    public function paginate(array $request)
-    {
-        return $this->product
-            ->filterByKeyword($request['keyword'] ?? null)
-            ->orderByLatest()
-            ->paginate($request['paginate'] ?? config('numbers.paginate'));
-    }
-
-    public function store(array $request): Product
+    public function store(array $request): Model
     {
         return DB::transaction(function () use ($request) {
             if (isset($request['photos']) && is_array($request['photos'])) {
@@ -44,7 +39,7 @@ class ProductService
             $categories = $request['categories'] ?? [];
             unset($request['categories']);
 
-            $product = $this->product->create($request);
+            $product = parent::store($request);
             
             if (!empty($categories)) {
                 $product->categories()->sync($categories);
@@ -54,15 +49,10 @@ class ProductService
         });
     }
 
-    public function findOrFail(string $id): Product
-    {
-        return $this->product->findOrFail($id);
-    }
-
-    public function update(array $request, string $id): Product
+    public function update(array $request, string $id): Model
     {
         return DB::transaction(function () use ($request, $id) {
-            $product = $this->product->findOrFail($id);
+            $product = $this->findOrFail($id);
 
             $existingPhotos = $request['existing_photos'] ?? [];
             $newPhotos = [];
@@ -80,7 +70,7 @@ class ProductService
             $categories = $request['categories'] ?? [];
             unset($request['categories']);
 
-            $product->update($request);
+            $product = parent::update($request, $id);
 
             if (!empty($categories)) {
                 $product->categories()->sync($categories);
@@ -93,12 +83,11 @@ class ProductService
     public function delete(string $id): void
     {
         DB::transaction(function () use ($id) {
-            $product = $this->product->findOrFail($id);
+            $product = $this->findOrFail($id);
             if ($product->photos) {
                 $this->filesystemManager->forceDeleteFilesFromLocal($product->photos);
             }
-            $product->delete();
+            parent::delete($id);
         });
     }
-
 }

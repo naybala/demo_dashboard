@@ -3,8 +3,7 @@
 namespace BasicDashboard\Web\Units\Services;
 
 use BasicDashboard\Foundations\Domain\Units\Unit;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use BasicDashboard\Foundations\Shared\BaseCrudService;
 
 /**
  *
@@ -16,50 +15,10 @@ use Illuminate\Support\Facades\DB;
  *
  */
 
-class UnitService
+class UnitService extends BaseCrudService
 {
-    public function __construct(
-        private Unit $unit,
-    )
+    public function __construct(Unit $unit)
     {
-    }
-
-    public function paginate(array $request)
-    {
-        return $this->unit
-            ->filterByKeyword($request['keyword'] ?? null)
-            ->orderByLatest()
-            ->paginate($request['paginate'] ?? config('numbers.paginate'));
-    }
-
-    public function store(array $request): Unit
-    {
-        return DB::transaction(function () use ($request) {
-            $request['created_by'] = Auth::id();
-            return $this->unit->create($request);
-        });
-    }
-
-    public function findOrFail(string $id): Unit
-    {
-        return $this->unit->findOrFail($id);
-    }
-
-    public function update(array $request, string $id): Unit
-    {
-        return DB::transaction(function () use ($request, $id) {
-            $decodedId = customDecoder($id);
-            $unit = $this->unit->findOrFail($decodedId);
-            $unit->update($request);
-            return $unit;
-        });
-    }
-
-    public function delete(string $id): void
-    {
-        DB::transaction(function () use ($id) {
-            $decodedId = customDecoder($id);
-            $this->unit->destroy($decodedId);
-        });
+        parent::__construct($unit);
     }
 }
