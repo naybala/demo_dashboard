@@ -39,5 +39,5 @@
             {{-- Save And Cancel --}}
         </form>
     </x-form.layout>
-         @vite(['resources/js/common/maxFileSize.js'])
+    @vite(['resources/js/common/maxFileSize.js'])
 </x-master-layout>

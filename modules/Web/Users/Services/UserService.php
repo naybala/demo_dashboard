@@ -15,7 +15,7 @@ class UserService
     public function __construct(
         private User $user,                          
         private Role $role,                         
-        private FilesystemManager $fileSystemMananger,
+        private FilesystemManager $fileSystemManager,
     ) {}
 
     public function paginate(array $request)
@@ -40,12 +40,10 @@ class UserService
             $request['created_by'] = Auth::id();  
             $user = $this->user->create($request);
             $user->assignRole($roleName);
-            if(config('cache.file_system_disk') == 'local'){
-                $data = $this->fileSystemMananger->uploadFileToLocal($image,"users","avatar"); 
-            }else{
-                $cloudPath = self::ROOT . "/" . $user->id;
-                $data = $this->fileSystemMananger->uploadFileToCloud("digitalocean",$image,$cloudPath,"public","avatar"); 
-            }
+            $cloudPath = self::ROOT . "/" . $user->id;
+            config('cache.file_system_disk') == 'local' ?
+            $data = $this->fileSystemManager->uploadFileToLocal($image,"users","avatar") :
+            $data = $this->fileSystemManager->uploadFileToCloud("digitalocean",$image,$cloudPath,"public","avatar"); 
             $user->update($data);
             return $user;
         });
@@ -64,28 +62,40 @@ class UserService
     public function update(array $request, string $id): User
     {
         return DB::transaction(function () use ($request, $id) {
-            $image = null;
             $decodedId = customDecoder($id);
-            $user = $this->user->find($decodedId);
+            $user      = $this->user->findOrFail($decodedId);
             $oldImage = $user->avatar;
-            if (isset($request['avatar'])) {
-                $image             = $request['avatar']; 
-                $request['avatar'] = null; 
-            }
-            $roleName = $this->getRoleName($request['role_marked']);
-            $request  = Arr::except($request, ['role_marked']);
-            $user->update($request);
-            $user->syncRoles($roleName);
-            if(config('cache.file_system_disk') == 'local'){
-                $data = $this->fileSystemMananger->updateFileFromLocal($oldImage,$image,'avatar','users'); 
-            }else{
+            $image    = $request['avatar'] ?? null;
+            // Prepare payload (do not mutate original request)
+            $payload = Arr::except($request, ['avatar', 'role_marked']);
+            // Resolve role name
+            $roleName = $this->getRoleName($request['role_marked'] ?? null);
+            // -------- Handle avatar upload first --------
+            if ($image) {
                 $cloudPath = self::ROOT . "/" . $user->id;
-                $data = $this->fileSystemMananger->updateFileFromCloud("digitalocean",$oldImage,$image,$cloudPath,'public','avatar');
+                $fileData = config('cache.file_system_disk') === 'local'
+                    ? $this->fileSystemManager->updateFileFromLocal($oldImage, $image, 'avatar', 'users')
+                    : $this->fileSystemManager->updateFileFromCloud(
+                        "digitalocean",
+                        $oldImage,
+                        $image,
+                        $cloudPath,
+                        'public',
+                        'avatar'
+                    );
+
+                $payload = array_merge($payload, $fileData);
             }
-            $user->update($data);
+            // -------- Single DB update --------
+            $user->update($payload);
+            // -------- Sync roles after update --------
+            if ($roleName) {
+                $user->syncRoles($roleName);
+            }
             return $user;
         });
     }
+
 
     public function delete(string $id): void
     {
@@ -93,11 +103,9 @@ class UserService
             $decodedId = customDecoder($id);
             $user = $this->user->where('id', $decodedId)->first();
             $user->roles()->detach();
-            if(config('cache.file_system_disk') == 'local'){
-                $this->fileSystemMananger->deleteFileFromLocal($user->avatar); 
-            }else{
-                $this->fileSystemMananger->deleteFileFromCloud("digitalocean",$user->avatar); 
-            }
+            config('cache.file_system_disk') == 'local' ?
+                $this->fileSystemManager->deleteFileFromLocal($user->avatar) :
+                $this->fileSystemManager->deleteFileFromCloud("digitalocean",$user->avatar); 
             $user->delete();
         });
     }

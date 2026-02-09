@@ -3,6 +3,7 @@
 namespace BasicDashboard\Web\OwnProducts\Services;
 
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
+use BasicDashboard\Web\OwnProducts\Services\OwnProductImageAction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Filesystem\FilesystemManager;
@@ -23,7 +24,8 @@ class OwnProductService
 
     public function __construct(
         private OwnProduct $ownProduct,
-        private FilesystemManager $fileSystemMananger,
+        private FilesystemManager $fileSystemManager,
+        private OwnProductImageAction $ownProductImageAction,
     ){}
 
     public function paginate(array $request)
@@ -39,21 +41,19 @@ class OwnProductService
     public function store(array $request): OwnProduct
     {
         return DB::transaction(function () use ($request) {
-            $image = null;
-            if (isset($request['image'])) {
-                $image             = $request['image']; 
-                $request['image'] = null;               
+            $image = $request['image'] ?? null;
+            $payload = $request;
+            unset($payload['image']);
+            $payload['created_by'] = Auth::id();
+            $ownProduct = $this->ownProduct->create($payload);
+            if ($image) {
+                $fileData = $this->ownProductImageAction->store($ownProduct, $image);
+                $ownProduct->forceFill($fileData)->save();
             }
-            $request['created_by'] = Auth::id();
-            $ownProduct = $this->ownProduct->create($request);
-            $cloudPath = self::ROOT . "/" . $ownProduct->id;
-            $data = config('cache.file_system_disk') == 'local' ?
-                $this->fileSystemMananger->uploadFileToLocal($image,self::ROOT,"image") : 
-                $this->fileSystemMananger->uploadFileToCloud("digitalocean",$image,$cloudPath,"public","image"); 
-            $ownProduct->update($data);
             return $ownProduct;
         });
     }
+
 
     public function findOrFail(string $id): OwnProduct
     {
@@ -65,18 +65,15 @@ class OwnProductService
         return DB::transaction(function () use ($request, $id) {
             $decodedId  = customDecoder($id);
             $ownProduct = $this->ownProduct->findOrFail($decodedId);
-            $oldImage = $ownProduct->image;
-            $image    = $request['image'] ?? null;
-            unset($request['image']);
-            $request['updated_by'] = Auth::id();
+            $image = $request['image'] ?? null;
+            $payload = $request;
+            unset($payload['image']);
+            $payload['updated_by'] = Auth::id();
             if ($image) {
-                $cloudPath = self::ROOT . "/" . $ownProduct->id;
-                $fileData = (config('cache.file_system_disk') === 'local') ?                 
-                    $this->fileSystemMananger->updateFileFromLocal($oldImage, $image, self::ROOT, "image") : 
-                    $this->fileSystemMananger->updateFileFromCloud("digitalocean", $oldImage, $image, $cloudPath, "public", "image");
-                $request = array_merge($request, $fileData);
+                $fileData = $this->ownProductImageAction->update($ownProduct, $image,config('cache.file_system_disk'));
+                $payload  = array_merge($payload, $fileData);
             }
-            $ownProduct->update($request);
+            $ownProduct->update($payload);
             return $ownProduct;
         });
     }
@@ -86,9 +83,7 @@ class OwnProductService
     {
         DB::transaction(function () use ($id) {
             $ownProduct = $this->ownProduct->findOrFail($id);
-            config('cache.file_system_disk') == 'local' ?
-                $this->fileSystemMananger->deleteFileFromLocal($ownProduct->image) : 
-                $this->fileSystemMananger->deleteFileFromCloud("digitalocean",$ownProduct->image); 
+            $this->ownProductImageAction->delete($ownProduct, config('cache.file_system_disk'));
             $ownProduct->update([
                 'deleted_by' => auth()->id(),
             ]);

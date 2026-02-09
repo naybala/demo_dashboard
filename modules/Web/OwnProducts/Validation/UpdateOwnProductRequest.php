@@ -30,6 +30,21 @@ class UpdateOwnProductRequest extends FormRequest
             "price"=>"required|numeric",
             "investment"=>"required|numeric",
             "profit"=>"required|numeric",
+            "image"=>"nullable|image|mimes:jpeg,png,jpg,gif|max:2048",
+        ];
+    }
+
+    public function messages():array {
+        return [
+            "name.required"=>"Name is required",
+            "unit_id.required"=>"Unit is required",
+            "category_id.required"=>"Category is required",
+            "price.required"=>"Price is required",
+            "investment.required"=>"Investment is required",
+            "profit.required"=>"Profit is required",
+            "image.image"=>"Image must be an image",
+            "image.mimes"=>"Image must be a jpeg, png, jpg, gif",
+            "image.max"=>"Image must be less than 2MB",
         ];
     }
 }
