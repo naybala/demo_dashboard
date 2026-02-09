@@ -2,18 +2,14 @@
 
 namespace BasicDashboard\Web\Units\Controllers;
 
-use BasicDashboard\Web\Common\BaseController;
+use BasicDashboard\Foundations\Shared\BaseCrudController;
 use BasicDashboard\Web\Units\Resources\UnitResource;
 use BasicDashboard\Web\Units\Services\UnitService;
 use BasicDashboard\Web\Units\Validation\StoreUnitRequest;
 use BasicDashboard\Web\Units\Validation\UpdateUnitRequest;
 use BasicDashboard\Web\Units\Validation\DeleteUnitRequest;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
-use Throwable;
-
 
 /**
  *
@@ -25,77 +21,33 @@ use Throwable;
  *
  */
 
-class UnitController extends BaseController
+class UnitController extends BaseCrudController
 {
-    const VIEW = 'admin.unit';
-    const ROUTE = 'units';
-    const LANG_PATH = "unit.unit";
+    protected string $viewPath = 'admin.unit';
+    protected string $routePrefix = 'units';
+    protected string $langPath = "unit.unit";
+    protected string $resourceClass = UnitResource::class;
 
     public function __construct(
-        private UnitService $unitService,
-        private ResponseFactory $responseFactory
+        protected UnitService $unitService,
+        protected ResponseFactory $responseFactory
     ) {
-    }
-
-    public function index(Request $request): View
-    {
-        $unitList = $this->unitService->paginate($request->all());
-        $unitList = UnitResource::collection($unitList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW . '.index', $unitList);
-    }
-
-    public function create(): View
-    {
-        return view(self::VIEW . '.create');
+        parent::__construct($responseFactory);
+        $this->service = $unitService;
     }
 
     public function store(StoreUnitRequest $request): RedirectResponse
     {
-        try {
-            $this->unitService->store($request->validated());
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
-        } catch (Throwable $e) {
-            $this->LogError("Unit store failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
-    }
-
-    public function edit(string $id): View | RedirectResponse
-    {
-        $decodedId = customDecoder($id);
-        $unit = $this->unitService->findOrFail($decodedId);
-        $unit = new UnitResource($unit);
-        $unit = $unit->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".edit", $unit);
-    }
-
-    public function show(string $id): View | RedirectResponse
-    {
-        $unit = $this->unitService->findOrFail($id);
-        $unit = new UnitResource($unit);
-        $unit = $unit->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . '.show', $unit);
+        return parent::performStore($request);
     }
 
     public function update(UpdateUnitRequest $request, string $id): RedirectResponse
     {
-        try {
-            $this->unitService->update($request->validated(), $id);
-            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
-        } catch (Throwable $e) {
-            $this->LogError("Unit update failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performUpdate($request, $id);
     }
 
     public function destroy(DeleteUnitRequest $request): RedirectResponse
     {
-        try {
-            $this->unitService->delete($request->validated()['id']);
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
-        } catch (Throwable $e) {
-            $this->LogError("Unit destroy failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performDestroy($request);
     }
 }

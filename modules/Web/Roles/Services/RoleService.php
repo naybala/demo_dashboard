@@ -9,7 +9,7 @@ use Spatie\Permission\Models\Permission;
 
 class RoleService extends BaseCrudService
 {
-    protected bool $useDecoder = false;
+    protected bool $useDecoder = true;
 
     public function __construct(
         Role $role,

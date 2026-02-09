@@ -2,18 +2,14 @@
 
 namespace BasicDashboard\Web\OwnProducts\Controllers;
 
-use BasicDashboard\Web\Common\BaseController;
+use BasicDashboard\Foundations\Shared\BaseCrudController;
 use BasicDashboard\Web\OwnProducts\Resources\OwnProductResource;
 use BasicDashboard\Web\OwnProducts\Services\OwnProductService;
 use BasicDashboard\Web\OwnProducts\Validation\StoreOwnProductRequest;
 use BasicDashboard\Web\OwnProducts\Validation\UpdateOwnProductRequest;
 use BasicDashboard\Web\OwnProducts\Validation\DeleteOwnProductRequest;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
-use Throwable;
-
 
 /**
  *
@@ -25,77 +21,33 @@ use Throwable;
  *
  */
 
-class OwnProductController extends BaseController
+class OwnProductController extends BaseCrudController
 {
-    const VIEW = 'admin.own-product';
-    const ROUTE = 'own-products';
-    const LANG_PATH = "ownProduct.ownProduct";
+    protected string $viewPath = 'admin.own-product';
+    protected string $routePrefix = 'own-products';
+    protected string $langPath = "ownProduct.ownProduct";
+    protected string $resourceClass = OwnProductResource::class;
 
     public function __construct(
-        private OwnProductService $ownProductService,
-        private ResponseFactory $responseFactory
+        protected OwnProductService $ownProductService,
+        protected ResponseFactory $responseFactory
     ) {
-    }
-
-    public function index(Request $request): View
-    {
-        $ownProductList = $this->ownProductService->paginate($request->all());
-        $ownProductList = OwnProductResource::collection($ownProductList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW . '.index', $ownProductList);
-    }
-
-    public function create(): View
-    {
-        return view(self::VIEW . '.create');
+        parent::__construct($responseFactory);
+        $this->service = $ownProductService;
     }
 
     public function store(StoreOwnProductRequest $request): RedirectResponse
     {
-        try {
-            $this->ownProductService->store($request->validated());
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
-        } catch (Throwable $e) {
-            $this->LogError("OwnProduct store failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
-    }
-
-    public function edit(string $id): View | RedirectResponse
-    {
-        $decodedId = customDecoder($id);
-        $ownProduct = $this->ownProductService->findOrFail($decodedId);
-        $ownProduct = new OwnProductResource($ownProduct);
-        $ownProduct = $ownProduct->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".edit", $ownProduct);
-    }
-
-    public function show(string $id): View | RedirectResponse
-    {
-        $ownProduct = $this->ownProductService->findOrFail($id);
-        $ownProduct = new OwnProductResource($ownProduct);
-        $ownProduct = $ownProduct->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . '.show', $ownProduct);
+        return parent::performStore($request);
     }
 
     public function update(UpdateOwnProductRequest $request, string $id): RedirectResponse
     {
-        try {
-            $this->ownProductService->update($request->validated(), customDecoder($id));
-            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
-        } catch (Throwable $e) {
-            $this->LogError("OwnProduct update failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performUpdate($request, $id);
     }
 
     public function destroy(DeleteOwnProductRequest $request): RedirectResponse
     {
-        try {
-            $this->ownProductService->delete($request->validated()['id']);
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
-        } catch (Throwable $e) {
-            $this->LogError("OwnProduct destroy failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performDestroy($request);
     }
 }

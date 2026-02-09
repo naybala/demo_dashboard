@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 class OwnProductService extends BaseCrudService
 {
     const ROOT = "OwnProducts";
+    protected bool $useDecoder = true;
 
     public function __construct(
         OwnProduct $ownProduct,

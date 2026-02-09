@@ -3,10 +3,7 @@ namespace BasicDashboard\Web\Auth\Services;
 
 use App\Observers\AuthObserver;
 use BasicDashboard\Foundations\Domain\Users\User;
-use BasicDashboard\Web\Common\BaseController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB;
 
 class AuthService
 {

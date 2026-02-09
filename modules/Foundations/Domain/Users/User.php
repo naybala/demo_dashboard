@@ -104,11 +104,6 @@ class User extends Authenticatable
             $q->orWhereHas('roles', function ($roleQuery) use ($keyword) {
                 $roleQuery->where('name', 'like', "%{$keyword}%");
             });
-
-            // Match groups.name (optional, if needed)
-            $q->orWhereHas('groups', function ($groupQuery) use ($keyword) {
-                $groupQuery->where('name', 'like', "%{$keyword}%");
-            });
         });
     }
 

@@ -2,18 +2,14 @@
 
 namespace BasicDashboard\Web\DailyIncomes\Controllers;
 
-use BasicDashboard\Web\Common\BaseController;
+use BasicDashboard\Foundations\Shared\BaseCrudController;
 use BasicDashboard\Web\DailyIncomes\Resources\DailyIncomeResource;
 use BasicDashboard\Web\DailyIncomes\Services\DailyIncomeService;
 use BasicDashboard\Web\DailyIncomes\Validation\StoreDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\UpdateDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\DeleteDailyIncomeRequest;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
-use Throwable;
-
 
 /**
  *
@@ -25,79 +21,33 @@ use Throwable;
  *
  */
 
-class DailyIncomeController extends BaseController
+class DailyIncomeController extends BaseCrudController
 {
-    const VIEW = 'admin.daily-income';
-    const ROUTE = 'daily-incomes';
-    const LANG_PATH = "daily_income.daily_income";
+    protected string $viewPath = 'admin.daily-income';
+    protected string $routePrefix = 'daily-incomes';
+    protected string $langPath = "daily_income.daily_income";
+    protected string $resourceClass = DailyIncomeResource::class;
 
     public function __construct(
-        private DailyIncomeService $dailyIncomeService,
-        private ResponseFactory $responseFactory
+        protected DailyIncomeService $dailyIncomeService,
+        protected ResponseFactory $responseFactory
     ) {
-    }
-
-    public function index(Request $request): View
-    {
-        $dailyIncomeList = $this->dailyIncomeService->paginate($request->all());
-        $dailyIncomeList = DailyIncomeResource::collection($dailyIncomeList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW . '.index', $dailyIncomeList);
-    }
-
-    public function create(): View
-    {
-        return view(self::VIEW . '.create');
+        parent::__construct($responseFactory);
+        $this->service = $dailyIncomeService;
     }
 
     public function store(StoreDailyIncomeRequest $request): RedirectResponse
     {
-        try {
-            $this->dailyIncomeService->store($request->all());
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
-        } catch (Throwable $e) {
-            $this->LogError("DailyIncome store failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
-    }
-
-    public function edit(string $id): View | RedirectResponse
-    {
-        $decodedId = customDecoder($id);
-        $dailyIncome = $this->dailyIncomeService->findOrFail($decodedId);
-        $dailyIncome = new DailyIncomeResource($dailyIncome);
-        $dailyIncome = $dailyIncome->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".edit", $dailyIncome);
-
-    }
-
-    public function show(string $id): View | RedirectResponse
-    {
-        $dailyIncome = $this->dailyIncomeService->findOrFail($id);
-        $dailyIncome = new DailyIncomeResource($dailyIncome);
-        $dailyIncome = $dailyIncome->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . '.show', $dailyIncome);
+        return parent::performStore($request);
     }
 
     public function update(UpdateDailyIncomeRequest $request, string $id): RedirectResponse
     {
-        try {
-            $this->dailyIncomeService->update($request->validated(), customDecoder($id));
-            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
-
-        } catch (Throwable $e) {
-            $this->LogError("DailyIncome update failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performUpdate($request, $id);
     }
 
     public function destroy(DeleteDailyIncomeRequest $request): RedirectResponse
     {
-        try {
-            $this->dailyIncomeService->delete($request->validated()['id']);
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
-        } catch (Throwable $e) {
-            $this->LogError("DailyIncome destroy failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performDestroy($request);
     }
 }

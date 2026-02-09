@@ -7,7 +7,7 @@ use BasicDashboard\Foundations\Shared\BaseCrudService;
 
 class CategoryService extends BaseCrudService
 {
-    protected bool $useDecoder = false;
+    // useDecoder defaults to true in BaseCrudService
 
     public function __construct(Category $category)
     {

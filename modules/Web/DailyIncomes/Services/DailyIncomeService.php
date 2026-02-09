@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class DailyIncomeService extends BaseCrudService
 {
-    protected bool $useDecoder = false;
+    protected bool $useDecoder = true;
 
     public function __construct(DailyIncome $dailyIncome)
     {

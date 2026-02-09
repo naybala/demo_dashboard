@@ -2,12 +2,11 @@
 
 namespace BasicDashboard\Web\Roles\Controllers;
 
-use BasicDashboard\Web\Common\BaseController;
+use BasicDashboard\Foundations\Shared\BaseCrudController;
 use BasicDashboard\Web\Roles\Services\RoleService;
 use BasicDashboard\Web\Roles\Validation\StoreRoleRequest;
 use BasicDashboard\Web\Roles\Validation\UpdateRoleRequest;
 use BasicDashboard\Web\Roles\Validation\DeleteRoleRequest;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
@@ -24,85 +23,61 @@ use Throwable;
  *
  */
 
-class RoleController extends BaseController
+class RoleController extends BaseCrudController
 {
-    const VIEW = 'admin.role';
-    const ROUTE = 'roles';
-    const LANG_PATH = "role.role";
+    protected string $viewPath = 'admin.role';
+    protected string $routePrefix = 'roles';
+    protected string $langPath = "role.role";
+    protected string $resourceClass = RoleResource::class;
 
     public function __construct(
-        private RoleService $roleService,
-        private ResponseFactory $responseFactory
+        protected RoleService $roleService,
+        protected ResponseFactory $responseFactory
     ) {
-    }
-
-    ///////////////////////////This is Method Divider///////////////////////////////////////
-
-    public function index(Request $request): View
-    {
-        $roleList = $this->roleService->paginate($request->all());
-        $roleList = RoleResource::collection($roleList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW . '.index', $roleList);
-    }
-
-    public function create(): View
-    {
-        $getAllPermissions = $this->roleService->getFormattedPermissions();
-        return view(self::VIEW . '.create', compact('getAllPermissions'));
+        parent::__construct($responseFactory);
+        $this->service = $roleService;
     }
 
     public function store(StoreRoleRequest $request): RedirectResponse
     {
-        try {
-            $this->roleService->store($request->validated());
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
-        } catch (Throwable $e) {
-            $this->LogError("Role store failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performStore($request);
     }
 
     public function edit(string $id): View | RedirectResponse
     {
-        $decodedId = customDecoder($id);
-        $data = $this->roleService->findWithPermissions($decodedId);      
-        $role = new RoleResource($data['role']);
-        $role = $role->response()->getData(true)['data'];
-        $data['role'] = $role;
-        return $this->responseFactory->successView(self::VIEW . ".edit", $data);        
+        try {
+            $data = $this->roleService->findWithPermissions($id);      
+            $role = new RoleResource($data['role']);
+            $role = $role->response()->getData(true)['data'];
+            $data['role'] = $role;
+            return $this->responseFactory->successView($this->viewPath . ".edit", $data);
+        } catch (Throwable $e) {
+            $this->LogError(get_class($this) . " edit failed", $e);
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
+        }
     }
 
     public function show(string $id): View | RedirectResponse
     {
-        $decodedId = customDecoder($id);
-        $data = $this->roleService->findWithPermissions($decodedId);
-        $role = new RoleResource($data['role']);
-        $role = $role->response()->getData(true)['data'];
-        $data['role'] = $role;
-        return $this->responseFactory->successView(self::VIEW . '.show', $data);
+        try {
+            $data = $this->roleService->findWithPermissions($id);
+            $role = new RoleResource($data['role']);
+            $role = $role->response()->getData(true)['data'];
+            $data['role'] = $role;
+            return $this->responseFactory->successView($this->viewPath . '.show', $data);
+        } catch (Throwable $e) {
+            $this->LogError(get_class($this) . " show failed", $e);
+            return $this->responseFactory->redirectBackWithError($e->getMessage());
+        }
     }
 
     public function update(UpdateRoleRequest $request, string $id): RedirectResponse
     {
-        try {
-            $this->roleService->update($request->validated(), customDecoder($id));
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_updated'));
-        } catch (Throwable $e) {
-            $this->LogError("Role update failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performUpdate($request, $id);
     }
 
     public function destroy(DeleteRoleRequest $request): RedirectResponse
     {
-        try {
-            $this->roleService->delete(customDecoder($request->validated()['id']));
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
-        } catch (Throwable $e) {
-            $this->LogError("Role destroy failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
-        }
+        return parent::performDestroy($request);
     }
-
-    ///////////////////////////This is Method Divider///////////////////////////////////////
 }

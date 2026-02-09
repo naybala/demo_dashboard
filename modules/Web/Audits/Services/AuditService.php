@@ -19,7 +19,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class AuditService extends BaseCrudService
 {
-    protected bool $useDecoder = false;
+    protected bool $useDecoder = true;
 
     public function __construct(Audit $audit)
     {
@@ -37,6 +37,7 @@ class AuditService extends BaseCrudService
 
     public function findOrFail(string $id): Model
     {
-        return $this->model->with(['user'])->findOrFail($id);
+        $resolvedId = $this->useDecoder ? customDecoder($id) : $id;
+        return $this->model->with(['user'])->findOrFail($resolvedId);
     }
 }

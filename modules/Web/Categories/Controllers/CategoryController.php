@@ -2,17 +2,14 @@
 
 namespace BasicDashboard\Web\Categories\Controllers;
 
+use BasicDashboard\Foundations\Shared\BaseCrudController;
 use BasicDashboard\Web\Categories\Resources\CategoryResource;
-use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\Categories\Services\CategoryService;
 use BasicDashboard\Web\Categories\Validation\StoreCategoryRequest;
 use BasicDashboard\Web\Categories\Validation\UpdateCategoryRequest;
 use BasicDashboard\Web\Categories\Validation\DeleteCategoryRequest;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
-
 
 /**
  *
@@ -24,65 +21,33 @@ use Illuminate\Routing\ResponseFactory;
  *
  */
 
-class CategoryController extends BaseController
+class CategoryController extends BaseCrudController
 {
-    const VIEW = 'admin.category';
-    const ROUTE = 'categories';
-    const LANG_PATH = "category.category";
+    protected string $viewPath = 'admin.category';
+    protected string $routePrefix = 'categories';
+    protected string $langPath = "category.category";
+    protected string $resourceClass = CategoryResource::class;
 
     public function __construct(
-        private CategoryService $categoryService,
-        private ResponseFactory $responseFactory
+        protected CategoryService $categoryService,
+        protected ResponseFactory $responseFactory
     ) {
-    }
-
-    public function index(Request $request): View
-    {
-        $categoryList = $this->categoryService->paginate($request->all() ?? []);
-        $categoryList = CategoryResource::collection($categoryList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW.".index", $categoryList);
-    }
-
-    public function create(): View
-    {
-        return view(self::VIEW.'.create');
+        parent::__construct($responseFactory);
+        $this->service = $categoryService;
     }
 
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        $this->categoryService->store($request->all());
-        return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
-    }
-
-    public function edit(string $id): View 
-    {
-        $decodedId = customDecoder($id);
-        $category = $this->categoryService->findOrFail($decodedId);
-        $category = new CategoryResource($category);
-        $category = $category->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".edit", $category);
-    }
-
-    public function show(string $id): View
-    {
-        $decodedId = customDecoder($id);
-        $category = $this->categoryService->findOrFail($decodedId);
-        $category = new CategoryResource($category);
-        $category = $category->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".show", $category);
+        return parent::performStore($request);
     }
 
     public function update(UpdateCategoryRequest $request, string $id): RedirectResponse
     {
-        $decodedId = customDecoder($id);
-        $this->categoryService->update($request->validated(), $decodedId);
-        return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));    
+        return parent::performUpdate($request, $id);
     }
 
     public function destroy(DeleteCategoryRequest $request): RedirectResponse
     {
-        $this->categoryService->delete($request->validated()['id']);
-        return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
+        return parent::performDestroy($request);
     }
-
 }
