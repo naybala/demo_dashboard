@@ -5,11 +5,12 @@ use App\Observers\AuditObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Spatie\Permission\Models\Role as SpatieRole;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy([AuditObserver::class])]
 class Role extends SpatieRole
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected static function newFactory()
     {
