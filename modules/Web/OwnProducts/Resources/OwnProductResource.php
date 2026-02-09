@@ -3,6 +3,8 @@
 namespace BasicDashboard\Web\OwnProducts\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+
 
 /**
  *
@@ -18,6 +20,9 @@ class OwnProductResource extends JsonResource
 {
     public function toArray($request):array
     {
+        $imageCloudPhoto = $this->image ?: config('cache.default_profile_photo_cloud');
+        $imageLocalPhoto = $this->image ?: config('cache.default_profile_photo_local');
+        $image = config('cache.file_system_disk') == 'local' ? $imageLocalPhoto : Storage::url($imageCloudPhoto);
          return [
             "id" =>customEncoder($this->id),
             "name"=>$this->name,
@@ -28,7 +33,8 @@ class OwnProductResource extends JsonResource
             "price" => number_format($this->price, 0, '.', ','),
             "investment" => number_format($this->investment, 0, '.', ','),
             "profit" => number_format($this->profit, 0, '.', ','),
-
+            "image"=> $image,
+            "created_at" => $this->created_at,
         ];
     }
 }

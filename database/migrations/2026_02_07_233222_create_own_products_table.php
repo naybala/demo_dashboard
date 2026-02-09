@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('price');
             $table->integer('investment');
             $table->integer('profit');
+            $table->string('image')->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->unsignedInteger('deleted_by')->nullable();

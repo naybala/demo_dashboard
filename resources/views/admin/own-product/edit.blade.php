@@ -3,8 +3,8 @@
         <form action="{{ route('own-products.update', $data['id']) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')
-            <x-form.grid>
-             
+            <x-file.simple-img-upload name='image' id='image' title="" photoId="avatar-pic" imageSrc="{{ $data['image'] }}"/>
+            <x-form.grid>             
                 {{-- name --}}
                 <x-form.input-group title='ownProduct.name' name='name' id='name' :value="$data['name']" />
                 {{-- name --}}

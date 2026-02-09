@@ -6,6 +6,7 @@ return [
     'category_id'=>'Category',
     'price'=>'Price',
     'investment'=>'Investment',
+    'image'=>'image',
     'profit'=>'Profit',
     'name_validation' => "Name is required",
     'ownProduct_created' => "Own Product was successfully created",

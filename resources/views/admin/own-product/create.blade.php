@@ -2,7 +2,7 @@
     <x-form.layout>
         <form action="{{ route('own-products.store') }}" method="post" enctype="multipart/form-data">
             @csrf
-            
+            <x-file.simple-img-upload name='image' id='image' title="" photoId="avatar-pic"/>
             <x-form.grid>
                 
                 {{-- name --}}
@@ -39,4 +39,5 @@
             {{-- Save And Cancel --}}
         </form>
     </x-form.layout>
+         @vite(['resources/js/common/maxFileSize.js'])
 </x-master-layout>

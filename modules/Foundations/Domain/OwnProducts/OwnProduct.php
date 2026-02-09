@@ -38,6 +38,7 @@ class OwnProduct extends Model
         'price',
         'investment',
         'profit',
+        'image',
         'created_by',
         'updated_by',
         'deleted_by',
