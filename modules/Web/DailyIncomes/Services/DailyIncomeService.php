@@ -129,4 +129,15 @@ class DailyIncomeService
         });
     }
 
+    public function getByVoucherNo(DailyIncome $dailyIncome)
+    {
+        if (!$dailyIncome->voucher_no) {
+            return collect([$dailyIncome]);
+        }
+
+        $items = $this->dailyIncome->where('voucher_no', $dailyIncome->voucher_no)
+            ->get();
+
+        return $items->isEmpty() ? collect([$dailyIncome]) : $items;
+    }
 }

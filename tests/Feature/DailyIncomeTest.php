@@ -97,7 +97,7 @@ class DailyIncomeTest extends TestCase
         $obfuscatedId = customEncoder($dailyIncome->id);
         $response = $this->put(route('daily-incomes.update', $obfuscatedId), $data);
 
-        $response->assertRedirect(route('daily-incomes.show', $obfuscatedId));
+        $response->assertRedirect(route('daily-incomes.index'));
         $this->assertDatabaseHas('daily_incomes', [
             'voucher_no' => 'VOU-TEST', // It preserves the old voucher number if it existed, or generates a new one. In my service I generate new one if null.
             'amount' => 10,

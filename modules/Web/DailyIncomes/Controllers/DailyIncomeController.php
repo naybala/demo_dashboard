@@ -64,14 +64,7 @@ class DailyIncomeController extends BaseController
     {
         $decodedId = customDecoder($id);
         $dailyIncome = $this->dailyIncomeService->findOrFail($decodedId);
-        
-        $items = \BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome::where('voucher_no', $dailyIncome->voucher_no)
-            ->whereNotNull('voucher_no')
-            ->get();
-            
-        if ($items->isEmpty()) {
-            $items = collect([$dailyIncome]);
-        }
+        $items = $this->dailyIncomeService->getByVoucherNo($dailyIncome);
 
         $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
         $data = [
@@ -89,14 +82,7 @@ class DailyIncomeController extends BaseController
     public function show(string $id): View | RedirectResponse
     {
         $dailyIncome = $this->dailyIncomeService->findOrFail($id);
-        
-        $items = \BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome::where('voucher_no', $dailyIncome->voucher_no)
-            ->whereNotNull('voucher_no')
-            ->get();
-            
-        if ($items->isEmpty()) {
-            $items = collect([$dailyIncome]);
-        }
+        $items = $this->dailyIncomeService->getByVoucherNo($dailyIncome);
 
         $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
         $data = [
