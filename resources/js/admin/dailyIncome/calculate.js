@@ -81,7 +81,27 @@ $(document).ready(function () {
 
     // Re-initialize Alpine.js for the new row
     if (window.Alpine) {
-      window.Alpine.initTree($newRow[0]);
+      $newRow.find("[x-data]").each(function () {
+        // Remove Alpine-generated elements (li from x-for) to avoid duplication/blanks
+        $(this).find("ul li").not("[x-show]").remove();
+
+        // Clear current selection displays in the component
+        $(this).find('[x-text*="selectedLabel"]').text("Select an option");
+
+        // Re-initialize this specific component
+        window.Alpine.initTree(this);
+
+        // Reset internal state if Alpine provides $data access
+        try {
+          const data = window.Alpine.$data(this);
+          if (data) {
+            data.selectedValue = null;
+            data.selectedLabel = null;
+            data.search = "";
+            data.isOpen = false;
+          }
+        } catch (e) {}
+      });
     }
   });
 
