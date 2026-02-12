@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('investment');
             $table->integer('profit');
             $table->boolean('is_instant')->default(true);
+            $table->string('voucher_no')->nullable();
             $table->string('note')->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();

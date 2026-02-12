@@ -39,4 +39,11 @@ return [
 
     'placeholder_unit_name[]'                       => "Please enter unit",
 
+    'placeholder_price'=> 'Please enter price',
+    'placeholder_investment'=> 'Please enter investment',
+    'placeholder_profit'=> 'Please enter profit',
+    'placeholder_note'=> 'Please enter note',
+    'placeholder_unit_id'=> 'Please enter unit',
+    
+
 ];

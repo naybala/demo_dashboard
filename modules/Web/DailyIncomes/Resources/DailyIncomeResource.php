@@ -31,6 +31,7 @@ class DailyIncomeResource extends JsonResource
             "unit"=>$this->ownProduct?->unit?->name,
             "unit_id"=>$this->ownProduct?->unit?->id,
             "is_instant"=>$this->is_instant,
+            "voucher_no"=>$this->voucher_no,
             "note"=>$this->note,
 
         ];

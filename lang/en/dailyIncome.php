@@ -13,7 +13,8 @@ return [
     'note'=>'Note',
 
     'name_validation' => "Name is required",
-    'dailyIncome_created' => "???? was successfully created",
-    'dailyIncome_updated' => "???? was successfully updated",
-    'dailyIncome_deleted' => "???? was successfully deleted",
+    'dailyIncome_created' => "Daily Income was successfully created",
+    'dailyIncome_updated' => "Daily Income was successfully updated",
+    'dailyIncome_deleted' => "Daily Income was successfully deleted",
+    
 ];

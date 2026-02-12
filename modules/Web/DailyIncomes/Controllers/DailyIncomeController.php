@@ -64,26 +64,58 @@ class DailyIncomeController extends BaseController
     {
         $decodedId = customDecoder($id);
         $dailyIncome = $this->dailyIncomeService->findOrFail($decodedId);
-        $dailyIncome = new DailyIncomeResource($dailyIncome);
-        $dailyIncome = $dailyIncome->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".edit", $dailyIncome);
+        
+        $items = \BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome::where('voucher_no', $dailyIncome->voucher_no)
+            ->whereNotNull('voucher_no')
+            ->get();
+            
+        if ($items->isEmpty()) {
+            $items = collect([$dailyIncome]);
+        }
 
+        $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
+        $data = [
+            'id' => $id,
+            'date' => $dailyIncome->date,
+            'is_instant' => $dailyIncome->is_instant,
+            'note' => $dailyIncome->note,
+            'items' => $formattedItems,
+            'voucher_no' => $dailyIncome->voucher_no,
+        ];
+
+        return $this->responseFactory->successView(self::VIEW . ".edit", $data);
     }
 
     public function show(string $id): View | RedirectResponse
     {
         $dailyIncome = $this->dailyIncomeService->findOrFail($id);
-        $dailyIncome = new DailyIncomeResource($dailyIncome);
-        $dailyIncome = $dailyIncome->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . '.show', $dailyIncome);
+        
+        $items = \BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome::where('voucher_no', $dailyIncome->voucher_no)
+            ->whereNotNull('voucher_no')
+            ->get();
+            
+        if ($items->isEmpty()) {
+            $items = collect([$dailyIncome]);
+        }
+
+        $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
+        $data = [
+            'id' => $id,
+            'date' => $dailyIncome->date,
+            'is_instant' => $dailyIncome->is_instant,
+            'note' => $dailyIncome->note,
+            'items' => $formattedItems,
+            'voucher_no' => $dailyIncome->voucher_no,
+        ];
+
+        return $this->responseFactory->successView(self::VIEW . '.show', $data);
     }
 
     public function update(UpdateDailyIncomeRequest $request, string $id): RedirectResponse
     {
         try {
             $this->dailyIncomeService->update($request->validated(), customDecoder($id));
-            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
-
+            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("DailyIncome update failed", $e);
             return $this->responseFactory->redirectBackWithError($e->getMessage());

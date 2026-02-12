@@ -3,6 +3,7 @@
 namespace BasicDashboard\Foundations\Domain\DailyIncomes;
 use App\Observers\AuditObserver;
 use BasicDashboard\Foundations\Domain\Units\Unit;
+use Database\Factories\DailyIncomeFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,7 +29,7 @@ class DailyIncome extends Model
 
     protected static function newFactory()
     {
-        return \Database\Factories\DailyIncomeFactory::new();
+        return DailyIncomeFactory::new();
     }
 
       //protected $table = 'table_name';
@@ -41,6 +42,7 @@ class DailyIncome extends Model
         'investment',
         'profit',
         'is_instant',
+        'voucher_no',
         'note',
         'created_by',
         'updated_by',

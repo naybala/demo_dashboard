@@ -6,12 +6,13 @@
                 <x-common.create-button route="daily-incomes.create" permission="create daily-incomes" />
             </div>
             <x-table.wrapper>
-                <x-table.header :fields="['#', 'date', 'own_product', 'amount', 'price', 'investment', 'profit', 'unit']" />
+                <x-table.header :fields="['#', 'date', 'voucher_no', 'own_product', 'amount', 'price', 'investment', 'profit', 'unit']" />
                 <x-table.body :checkData="count($data['data'])>0">
                     @foreach ($data['data'] as $record)
                         <x-table.body-row>
                             <x-table.body-column :field="$loop->iteration + ($data['meta']['from'] - 1)" />
                             <x-table.body-column :field="$record['date']" limit="20" />
+                            <x-table.body-column :field="$record['voucher_no'] ?? '-'" limit="20" />
                             <x-table.body-column :field="$record['own_product']" limit="20" />
 
                             <x-table.body-column :field="$record['amount']" limit="20" />

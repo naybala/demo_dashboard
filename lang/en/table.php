@@ -49,6 +49,7 @@ return [
     "own_product"                   =>"Own Product",
 
     "product_name"                  =>"Produt Name",
-    "amount"                        =>"Amount"
+    "amount"                        =>"Amount",
+    "voucher_no"                    =>"Voucher No",
 
 ];

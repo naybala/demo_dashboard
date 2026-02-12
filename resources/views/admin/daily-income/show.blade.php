@@ -3,37 +3,29 @@
         <x-show.go-to-edit model="daily-incomes" :id="$data['id']" />
         <x-form.grid>
             
-                {{-- date --}}
-                <x-show.text-group title='dailyincome.date' :data="$data['date']" />
-                {{-- date --}}
-
-                {{-- product_id --}}
-                <x-show.text-group title='dailyincome.own_product' :data="$data['own_product']" />
-                {{-- product_id --}}
-
-                {{-- amount --}}
-                <x-show.text-group title='dailyincome.amount' :data="$data['amount']" />
-                {{-- amount --}}
-
-                {{-- price --}}
-                <x-show.text-group title='dailyincome.price' :data="$data['price']" />
-                {{-- price --}}
-
-                {{-- investment --}}
-                <x-show.text-group title='dailyincome.investment' :data="$data['investment']" />
-                {{-- investment --}}
-
-                {{-- profit --}}
-                <x-show.text-group title='dailyincome.profit' :data="$data['profit']" />
-                {{-- profit --}}
-
-                {{-- unit_id --}}
-                <x-show.text-group title='dailyincome.unit_id' :data="$data['unit_id']" />
-                {{-- unit_id --}}
-
-                {{-- note --}}
-                <x-show.text-group title='dailyincome.note' :data="$data['note']" />
-                {{-- note --}}
+        <x-show.text-group title='dailyincome.date' :data="$data['date']" />
+        <x-show.text-group title='dailyincome.voucher_no' :data="$data['voucher_no'] ?? '-'" />
+        <x-show.text-group title='dailyincome.note' :data="$data['note']" />
+        
+        <div class="col-span-1 md:col-span-2 mt-4">
+            <h3 class="text-lg font-semibold mb-2">Products</h3>
+            <x-table.wrapper>
+                <x-table.header :fields="['#', 'own_product', 'amount', 'price', 'investment', 'profit', 'unit']" />
+                <x-table.body :checkData="count($data['items'])>0">
+                    @foreach ($data['items'] as $index => $item)
+                        <x-table.body-row>
+                            <x-table.body-column :field="$index + 1" />
+                            <x-table.body-column :field="$item['own_product']" />
+                            <x-table.body-column :field="$item['amount']" />
+                            <x-table.body-column :field="$item['price']" />
+                            <x-table.body-column :field="$item['investment']" />
+                            <x-table.body-column :field="$item['profit']" />
+                            <x-table.body-column :field="$item['unit']" />
+                        </x-table.body-row>
+                    @endforeach
+                </x-table.body>
+            </x-table.wrapper>
+        </div>
  
         </x-form.grid>
     </x-form.layout>

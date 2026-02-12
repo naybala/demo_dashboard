@@ -10,52 +10,51 @@
                 <x-form.date-picker title="dailyIncome.date" name="date" id="date" :value="$data['date']" />
                 <div></div>
             </x-form.grid>
-            <br><br>
-            <x-form.grid cols="6" class="shadow-lg rounded-lg p-4">
-                {{-- name --}}
-                <div id="product-select-wrapper">
-                    <x-form.searchable-select title="dailyIncome.name" name="own_product_id" id="own-product-id" :required="true"
-                        :viewData="$viewOwnProducts" :selectedValue="$data['own_product_id']" />
+            <br>
+            <button type="button" id="add-row" class="bg-blue-500 text-white px-3 py-1 rounded">
+                + Add More Product
+            </button>
+            <br>
+            <div id="product-rows">
+                @foreach($data['items'] as $index => $item)
+                <div class="product-row grid grid-cols-7 gap-2 mb-2">
+                    {{-- product --}}
+                    <div class="product-select-wrapper">
+                        <x-form.searchable-select title="dailyIncome.name" name="own_product_id[]"
+                            class="own-product-id" :viewData="$viewOwnProducts" :selectedValue="$item['own_product_id']" />
+                    </div>
+
+                    {{-- amount --}}
+                    <x-form.input-group title='dailyIncome.amount' name='amount[]'
+                        class="amount comma-format" :value="$item['amount']" />
+
+                    {{-- hidden unit --}}
+                    <input type="hidden" name="unit_id[]" class="unit-id-hidden" value="{{ $item['unit_id'] }}">
+
+                    {{-- unit name --}}
+                    <x-form.input-group title='dailyIncome.unit_id' name='unit_name[]'
+                        class="unit-name" :disabled="true" :value="$item['unit']" />
+
+                    {{-- price --}}
+                    <x-form.input-group title='dailyIncome.price' name='price[]'
+                        class="price comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['price']" />
+
+                    {{-- investment --}}
+                    <x-form.input-group title='dailyIncome.investment' name='investment[]'
+                        class="investment comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['investment']" />
+
+                    {{-- profit --}}
+                    <x-form.input-group title='dailyIncome.profit' name='profit[]'
+                        class="profit comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['profit']" />
+                    <div class="flex items-center justify-center">
+                        <button type="button" class="remove-row bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 shadow-sm" title="Remove Item">
+                            <i class="fas fa-trash-alt text-sm"></i>
+                        </button>
+                    </div>
                 </div>
-
-                {{-- name --}}
-
-
-                {{-- amount --}}
-                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' :value="$data['amount']" class="comma-format" />
-
-
-                {{-- amount --}}
-
-                {{-- unit_id --}}
-                <input type="hidden" name="unit_id" id="unit_id_hidden" value="{{ $data['unit_id'] }}">
-                <x-form.input-group title='dailyIncome.unit_id' name='unit_name' id='unit_name' :value="$data['unit']" :disabled="true" />
-                {{-- unit_id --}}
-
-
-                {{-- price --}}
-                <x-form.input-group title='dailyIncome.price' name='price' id='price' :value="$data['price']" :customAttributes="['readonly' => 'readonly']" class="comma-format" />
-                {{-- price --}}
-
-
-
-                {{-- investment --}}
-                <x-form.input-group title='dailyIncome.investment' name='investment' id='investment' :value="$data['investment']" :customAttributes="['readonly' => 'readonly']" class="comma-format" />
-                {{-- investment --}}
-
-
-
-                {{-- profit --}}
-                <x-form.input-group title='dailyIncome.profit' name='profit' id='profit' :value="$data['profit']" :customAttributes="['readonly' => 'readonly']" class="comma-format" />
-                {{-- profit --}}
-
-
-
-                <!-- is_instant -->
-                <x-form.checkbox title="dailyIncome.is_instant" name="is_instant" id="is-instant" :checked="$data['is_instant'] == 1"/>
-                <!-- is_instant -->
-            </x-form.grid>
-
+                @endforeach
+            </div>
+            <x-form.checkbox title="dailyIncome.is_instant" name="is_instant" id="is-instant" :checked="$data['is_instant'] == 1" />
 
             <br><br>
             <x-form.grid cols="1" class="shadow-lg rounded-lg p-4">

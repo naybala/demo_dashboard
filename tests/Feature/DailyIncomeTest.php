@@ -78,17 +78,17 @@ class DailyIncomeTest extends TestCase
         $dailyIncome = DailyIncome::factory()->create([
             'own_product_id' => $this->ownProduct->id,
             'created_by' => $this->user->id,
+            'voucher_no' => 'VOU-TEST',
         ]);
 
         $data = [
             'date' => now()->toDateString(),
-            'name' => 'Updated Sale',
-            'amount' => 10,
-            'own_product_id' => $this->ownProduct->id,
-            'unit_id' => $this->unit->id,
-            'price' => 200,
-            'investment' => 120,
-            'profit' => 80,
+            'own_product_id' => [$this->ownProduct->id],
+            'amount' => [10],
+            'unit_id' => [$this->unit->id],
+            'price' => [200],
+            'investment' => [120],
+            'profit' => [80],
             'is_instant' => 0,
             'note' => 'Updated note',
         ];
@@ -99,8 +99,8 @@ class DailyIncomeTest extends TestCase
 
         $response->assertRedirect(route('daily-incomes.show', $obfuscatedId));
         $this->assertDatabaseHas('daily_incomes', [
-            'id' => $dailyIncome->id,
-            'name' => 'Updated Sale',
+            'voucher_no' => 'VOU-TEST', // It preserves the old voucher number if it existed, or generates a new one. In my service I generate new one if null.
+            'amount' => 10,
             'is_instant' => false,
         ]);
     }

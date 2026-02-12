@@ -3,6 +3,7 @@
 namespace BasicDashboard\Web\DailyIncomes\Services;
 
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
+use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -21,6 +22,7 @@ class DailyIncomeService
 {
     public function __construct(
         private DailyIncome $dailyIncome,
+        private OwnProduct $ownProduct,
     )
     {
     }
@@ -42,23 +44,28 @@ class DailyIncomeService
             $createdBy = Auth::id();
             $date = $request['date'];
             $note = $request['note'] ?? null;
+            $voucherNo = 'VOU-' . date('Ymd') . '-' . strtoupper(uniqid());
+            $now = now();
 
+            $data = [];
             foreach ($request['own_product_id'] as $index => $productId) {
-                $product = \BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct::find($productId);
-                
-                $this->dailyIncome->create([
+                $data[] = [
                     'date' => $date,
-                    'name' => $product->name ?? 'Unknown',
                     'own_product_id' => $productId,
-                    'amount' => $request['amount'][$index],
-                    'price' => $request['price'][$index],
-                    'investment' => $request['investment'][$index],
-                    'profit' => $request['profit'][$index],
+                    'amount' => str_replace(',', '', $request['amount'][$index]),
+                    'price' => str_replace(',', '', $request['price'][$index]),
+                    'investment' => str_replace(',', '', $request['investment'][$index]),
+                    'profit' => str_replace(',', '', $request['profit'][$index]),
                     'is_instant' => $isInstant,
+                    'voucher_no' => $voucherNo,
                     'note' => $note,
                     'created_by' => $createdBy,
-                ]);
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
             }
+
+            $this->dailyIncome->insert($data);
         });
     }
 
@@ -67,23 +74,58 @@ class DailyIncomeService
         return $this->dailyIncome->findOrFail($id);
     }
 
-    public function update(array $request, string $id): DailyIncome
+    public function update(array $request, string $id): void
     {
-        return DB::transaction(function () use ($request, $id) {
+        DB::transaction(function () use ($request, $id) {
             $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
-            $dailyIncome = $this->dailyIncome->findOrFail($id);
-            $dailyIncome->update($request);
-            return $dailyIncome;
+            $currentRecord = $this->dailyIncome->findOrFail($id);
+            $voucherNo = $currentRecord->voucher_no;
+
+            // Delete existing records for this voucher
+            if ($voucherNo) {
+                $this->dailyIncome->where('voucher_no', $voucherNo)->delete();
+            } else {
+                $currentRecord->delete();
+            }
+
+            // Prepare batch data
+            $createdBy = Auth::id();
+            $date = $request['date'];
+            $note = $request['note'] ?? null;
+            $newVoucherNo = $voucherNo ?? ('VOU-' . date('Ymd') . '-' . strtoupper(uniqid()));
+            $now = now();
+
+            $data = [];
+            foreach ($request['own_product_id'] as $index => $productId) {
+                $data[] = [
+                    'date' => $date,
+                    'own_product_id' => $productId,
+                    'amount' => str_replace(',', '', $request['amount'][$index]),
+                    'price' => str_replace(',', '', $request['price'][$index]),
+                    'investment' => str_replace(',', '', $request['investment'][$index]),
+                    'profit' => str_replace(',', '', $request['profit'][$index]),
+                    'is_instant' => $request['is_instant'],
+                    'voucher_no' => $newVoucherNo,
+                    'note' => $note,
+                    'created_by' => $createdBy,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+
+            $this->dailyIncome->insert($data);
         });
     }
-
-
 
     public function delete(string $id): void
     {
         DB::transaction(function () use ($id) {
             $dailyIncome = $this->dailyIncome->findOrFail($id);
-            $dailyIncome->delete();
+            if ($dailyIncome->voucher_no) {
+                $this->dailyIncome->where('voucher_no', $dailyIncome->voucher_no)->delete();
+            } else {
+                $dailyIncome->delete();
+            }
         });
     }
 
