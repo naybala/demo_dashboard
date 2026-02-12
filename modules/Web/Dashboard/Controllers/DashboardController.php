@@ -14,8 +14,8 @@ class DashboardController extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        return $this->dashboardService->index();
+        return $this->dashboardService->index($request->all());
     }
 }

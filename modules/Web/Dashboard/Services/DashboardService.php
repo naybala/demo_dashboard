@@ -1,10 +1,11 @@
 <?php
 namespace BasicDashboard\Web\Dashboard\Services;
 
+use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
+use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Web\Common\BaseController;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+
 
 class DashboardService extends BaseController
 {
@@ -15,70 +16,69 @@ class DashboardService extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(array $filters = [])
     {        
-        return view('admin.dashboard.index');
+        $stats = $this->getDashboardStats($filters);
+        return view('admin.dashboard.index', compact('stats', 'filters'));
     }
 
-    protected function getOnlineUsers($groupId): Collection
+    public function getDashboardStats(array $filters): array
     {
-        $activeUsers = $this->fetchOnlineUsers($groupId);
+        $startDate = $filters['start_date'] ?? null;
+        $endDate = $filters['end_date'] ?? null;
 
-        $formatUsers = $activeUsers->each(function ($user): void {
-            $user->last_activity = $this->formatLastActivity($user->last_activity);
-            $user->user_agent    = $this->formatuserAgent($user->user_agent);
-        });
-        return $formatUsers;
-    }
+        $productCount = OwnProduct::count();
 
-    /**
-     * Fetch online users
-     * @return \Illuminate\Support\Collection
-     */
+        // Product distribution by category (Donut Chart)
+        $productDistribution = OwnProduct::join('categories', 'own_products.category_id', '=', 'categories.id')
+            ->select('categories.name as label', DB::raw('count(*) as value'))
+            ->groupBy('categories.id', 'categories.name')
+            ->get();
 
-    public function fetchOnlineUsers($groupId): Collection
-    {
+        $query = DailyIncome::query();
 
-        // Base query for online users
-        $query = DB::table('sessions')
-            ->join('users', 'sessions.user_id', '=', 'users.id')
-            ->whereNotNull('sessions.user_id')
-            ->select(
-                'users.fullname',
-                'sessions.last_activity',
-                'sessions.user_agent',
-                'sessions.ip_address'
-            )
-            ->distinct();
-
-        // If user has a group, limit the results to users in that group
-        if ($groupId) {
-            $query->join('group_users', 'users.id', '=', 'group_users.user_id')
-                ->where('group_users.group_id', $groupId);
+        if ($startDate) {
+            $query->whereDate('date', '>=', $startDate);
         }
 
-        return $query->limit(5)->get();
-    }
-
-    protected function formatLastActivity($timestamp): string
-    {
-        return $timestamp ? Carbon::parse($timestamp)->diffForHumans() : null;
-    }
-
-    public function formatuserAgent(string $userAgent): string
-    {
-        // Simplify user_agent (e.g., just show browser name)
-        if (str_contains($userAgent, 'Chrome')) {
-            return 'Chrome';
-        } elseif (str_contains($userAgent, 'Safari') && ! str_contains($userAgent, 'Chrome')) {
-            return 'Safari';
-        } elseif (str_contains($userAgent, 'Firefox')) {
-            return 'Firefox';
-        } elseif (str_contains($userAgent, 'Edge')) {
-            return 'Edge';
-        } else {
-            return 'Other';
+        if ($endDate) {
+            $query->whereDate('date', '<=', $endDate);
         }
+
+        // Clone query for stats and sales distribution
+        $statsQuery = clone $query;
+        $salesQuery = clone $query;
+
+        $incomeStats = $statsQuery->selectRaw('
+            SUM(amount) as total_amount,
+            SUM(price) as total_price,
+            SUM(investment) as total_investment,
+            SUM(profit) as total_profit
+        ')->first();
+
+        // Sales distribution by category (Pie Chart)
+        $salesDistribution = $salesQuery->join('own_products', 'daily_incomes.own_product_id', '=', 'own_products.id')
+            ->join('categories', 'own_products.category_id', '=', 'categories.id')
+            ->select('categories.name as label', DB::raw('SUM(daily_incomes.price) as value'))
+            ->groupBy('categories.id', 'categories.name')
+            ->get();
+
+        return [
+            'total_products' => $productCount,
+            'total_amount' => $incomeStats->total_amount ?? 0,
+            'total_price' => $incomeStats->total_price ?? 0,
+            'total_investment' => $incomeStats->total_investment ?? 0,
+            'total_profit' => $incomeStats->total_profit ?? 0,
+            'product_distribution' => [
+                'labels' => $productDistribution->pluck('label')->toArray(),
+                'series' => $productDistribution->pluck('value')->toArray(),
+            ],
+            'sales_distribution' => [
+                'labels' => $salesDistribution->pluck('label')->toArray(),
+                'series' => $salesDistribution->pluck('value')->map(fn($v) => (float)$v)->toArray(),
+            ],
+        ];
     }
 
+   
 }
