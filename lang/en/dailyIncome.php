@@ -11,6 +11,7 @@ return [
     'unit_id'=>'Unit',
     'is_instant'=>'Is Instant',
     'note'=>'Note',
+    'voucher_no'=>'Voucher No',
 
     'name_validation' => "Name is required",
     'dailyIncome_created' => "Daily Income was successfully created",
