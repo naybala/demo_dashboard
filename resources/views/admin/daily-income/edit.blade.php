@@ -11,7 +11,7 @@
                 <div></div>
             </x-form.grid>
             <br><br>
-            <x-form.grid cols="3" class="shadow-lg rounded-lg p-4">
+            <x-form.grid cols="6" class="shadow-lg rounded-lg p-4">
                 {{-- name --}}
                 <div id="product-select-wrapper">
                     <x-form.searchable-select title="dailyIncome.name" name="own_product_id" id="own-product-id" :required="true"

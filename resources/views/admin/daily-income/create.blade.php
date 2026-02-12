@@ -4,57 +4,52 @@
             data-products="{{ $ownProductsData }}">
 
             @csrf
-            
+    
             <x-form.grid cols="3">
                 <div></div>
                 <x-form.date-picker title="dailyIncome.date" name="date" id="date" value="{{ date('Y-m-d') }}" />
                 <div></div>
             </x-form.grid>
-            <br><br>
-            <x-form.grid cols="3" class="shadow-lg rounded-lg p-4">
-                {{-- name --}}
-                <div id="product-select-wrapper">
-                    <x-form.searchable-select title="dailyIncome.name" name="own_product_id" id="own-product-id" :required="true"
-                        :viewData="$viewOwnProducts" />
+            <br>
+            <button type="button" id="add-row" class="bg-blue-500 text-white px-3 py-1 rounded">
+                + Add More Product
+            </button>
+            <br>
+           <div id="product-rows">
+                <div class="product-row grid grid-cols-7 gap-2 mb-2">
+                    {{-- product --}}
+                    <div class="product-select-wrapper">
+                        <x-form.searchable-select title="dailyIncome.name" name="own_product_id[]"
+                            class="own-product-id" :viewData="$viewOwnProducts" />
+                    </div>
+
+                    {{-- amount --}}
+                    <x-form.input-group title='dailyIncome.amount' name='amount[]'
+                        class="amount comma-format" value="1" />
+
+                    {{-- hidden unit --}}
+                    <input type="hidden" name="unit_id[]" class="unit-id-hidden">
+
+                    {{-- unit name --}}
+                    <x-form.input-group title='dailyIncome.unit_id' name='unit_name[]'
+                        class="unit-name" :disabled="true" />
+
+                    {{-- price --}}
+                    <x-form.input-group title='dailyIncome.price' name='price[]'
+                        class="price comma-format" :customAttributes="['readonly'=>'readonly']" />
+
+                    {{-- investment --}}
+                    <x-form.input-group title='dailyIncome.investment' name='investment[]'
+                        class="investment comma-format" :customAttributes="['readonly'=>'readonly']" />
+
+                    {{-- profit --}}
+                    <x-form.input-group title='dailyIncome.profit' name='profit[]'
+                        class="profit comma-format" :customAttributes="['readonly'=>'readonly']" />
+                    <div type="button" class="remove-row text-red-500 cursor-pointer "><i class="fas fa-trash"></i></div>
+
                 </div>
-
-
-                {{-- name --}}
-
-                {{-- amount --}}
-                <x-form.input-group title='dailyIncome.amount' name='amount' id='amount' value="1" class="comma-format" />
-
-
-
-                {{-- amount --}}
-
-                {{-- unit_id --}}
-                <input type="hidden" name="unit_id" id="unit_id_hidden">
-                <x-form.input-group title='dailyIncome.unit_id' name='unit_name' id='unit_name' :disabled="true" />
-                {{-- unit_id --}}
-
-                {{-- price --}}
-                <x-form.input-group title='dailyIncome.price' name='price' id='price' :customAttributes="['readonly' => 'readonly']" class="comma-format" />
-                {{-- price --}}
-
-
-
-                {{-- investment --}}
-                <x-form.input-group title='dailyIncome.investment' name='investment' id='investment' :customAttributes="['readonly' => 'readonly']" class="comma-format" />
-                {{-- investment --}}
-
-
-
-                {{-- profit --}}
-                <x-form.input-group title='dailyIncome.profit' name='profit' id='profit' :customAttributes="['readonly' => 'readonly']" class="comma-format" />
-                {{-- profit --}}
-
-
-
-                <!-- is_instant -->
-                <x-form.checkbox title="dailyIncome.is_instant" name="is_instant" id="is-instant" />
-                <!-- is_instant -->
-            </x-form.grid>
+            </div>
+            <x-form.checkbox title="dailyIncome.is_instant" name="is_instant" id="is-instant" />
 
 
             <br><br>

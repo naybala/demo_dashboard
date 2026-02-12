@@ -3,67 +3,80 @@ $(document).ready(function () {
   if (!$form.length) return;
 
   const products = JSON.parse($form.attr("data-products") || "{}");
-  const $amount = $("#amount");
-  const $price = $("#price");
-  const $investment = $("#investment");
-  const $profit = $("#profit");
-  const $unitIdHidden = $("#unit_id_hidden");
-  const $unitName = $("#unit_name");
-  const $productWrapper = $("#product-select-wrapper");
+  const $rowsContainer = $("#product-rows");
 
-  let basePrice = 0;
-  let baseInvestment = 0;
-  let baseProfit = 0;
+  function calculateRow($row) {
+    const qty = parseFloat($row.find(".amount").val().replace(/,/g, "")) || 0;
 
-  function calculate() {
-    // Rely on global unformatNumber if possible, or just strip here for calculation
-    const qty = parseFloat($amount.val().replace(/,/g, "")) || 0;
+    const basePrice = parseFloat($row.data("base-price") || 0);
+    const baseInvestment = parseFloat($row.data("base-investment") || 0);
+    const baseProfit = parseFloat($row.data("base-profit") || 0);
 
-    // We update values; comma-formatter.js will handle the visual formatting if they have the class
-    // But since we are setting .val() programmatically, we might need to trigger 'input' or format manually
-    const p = (basePrice * qty).toFixed(2);
-    const i = (baseInvestment * qty).toFixed(2);
-    const pr = (baseProfit * qty).toFixed(2);
-
-    $price.val(p).trigger("input");
-    $investment.val(i).trigger("input");
-    $profit.val(pr).trigger("input");
+    $row
+      .find(".price")
+      .val((basePrice * qty).toFixed(2))
+      .trigger("input");
+    $row
+      .find(".investment")
+      .val((baseInvestment * qty).toFixed(2))
+      .trigger("input");
+    $row
+      .find(".profit")
+      .val((baseProfit * qty).toFixed(2))
+      .trigger("input");
   }
 
-  function updateProduct(id) {
+  function updateProduct($row, id) {
     const product = products[id];
+
     if (product) {
-      $unitIdHidden.val(product.unit_id);
-      $unitName.val(product.unit_name);
-      basePrice = parseFloat(product.price) || 0;
-      baseInvestment = parseFloat(product.investment) || 0;
-      baseProfit = parseFloat(product.profit) || 0;
+      $row.find(".unit-id-hidden").val(product.unit_id);
+      $row.find(".unit-name").val(product.unit_name);
+      $row.data("base-price", parseFloat(product.price) || 0);
+      $row.data("base-investment", parseFloat(product.investment) || 0);
+      $row.data("base-profit", parseFloat(product.profit) || 0);
     } else {
-      $unitIdHidden.val("");
-      $unitName.val("");
-      basePrice = 0;
-      baseInvestment = 0;
-      baseProfit = 0;
+      $row.find(".unit-id-hidden").val("");
+      $row.find(".unit-name").val("");
+
+      $row.data("base-price", 0);
+      $row.data("base-investment", 0);
+      $row.data("base-profit", 0);
     }
-    calculate();
+
+    calculateRow($row);
   }
 
-  // searchable-select dispatches a native 'change' event on its x-data div
-  // We listen for it on the wrapper
-  $productWrapper.on("change", function (e) {
+  // change product
+  $rowsContainer.on("change", ".product-select-wrapper", function (e) {
     const id = e.originalEvent.detail;
-    updateProduct(id);
+    const $row = $(this).closest(".product-row");
+    updateProduct($row, id);
   });
 
-  $amount.on("input", function () {
-    calculate();
+  // change amount
+  $rowsContainer.on("input", ".amount", function () {
+    const $row = $(this).closest(".product-row");
+    calculateRow($row);
   });
 
-  // Initial load for Edit
-  const initialProductId = $form.find('input[name="own_product_id"]').val();
-  if (initialProductId) {
-    updateProduct(initialProductId);
-  }
+  // add row
+  $("#add-row").on("click", function () {
+    const $newRow = $rowsContainer.find(".product-row:first").clone();
 
-  // Comma formatting and final stripping is handled by common/comma-formatter.js
+    $newRow.find("input").val("");
+    $newRow.find(".amount").val("1");
+    $newRow.data("base-price", 0);
+    $newRow.data("base-investment", 0);
+    $newRow.data("base-profit", 0);
+
+    $rowsContainer.append($newRow);
+  });
+
+  // remove row
+  $rowsContainer.on("click", ".remove-row", function () {
+    if ($rowsContainer.find(".product-row").length > 1) {
+      $(this).closest(".product-row").remove();
+    }
+  });
 });
