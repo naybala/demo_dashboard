@@ -32,30 +32,34 @@ class StoreDailyIncomeRequest extends FormRequest
     {
         return [
             "date" => "required|date",
-            "name" => "required|string",
-            "own_product_id" => "required|exists:own_products,id",
-            "amount" => "required|numeric",
-            "unit_id" => "required|exists:units,id",
-            "price" => "required|numeric",
-            "investment" => "required|numeric",
-            "profit" => "required|numeric",
+            "own_product_id" => "required|array|min:1",
+            "own_product_id.*" => "required|exists:own_products,id",
+            "amount" => "required|array|min:1",
+            "amount.*" => "required|numeric|min:0.01",
+            "unit_id" => "required|array|min:1",
+            "unit_id.*" => "required|exists:units,id",
+            "price" => "required|array|min:1",
+            "price.*" => "required|numeric",
+            "investment" => "required|array|min:1",
+            "investment.*" => "required|numeric",
+            "profit" => "required|array|min:1",
+            "profit.*" => "required|numeric",
             "is_instant" => "nullable|boolean",
             "note" => "nullable|string",
-
         ];
     }
 
     public function messages():array{
         return [
             "date.required" => "Date is required",
-            "name.required" => "Name is required",
             "own_product_id.required" => "Own Product is required",
+            "own_product_id.*.required" => "Product selection is required",
             "amount.required" => "Amount is required",
+            "amount.*.required" => "Amount is required for all items",
             "unit_id.required" => "Unit is required",
             "price.required" => "Price is required",
             "investment.required" => "Investment is required",
             "profit.required" => "Profit is required",
-            "is_instant.required" => "Is Instant is required",
         ];
     }
 }

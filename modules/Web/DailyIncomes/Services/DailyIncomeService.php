@@ -35,12 +35,30 @@ class DailyIncomeService
 
     }
 
-    public function store(array $request): DailyIncome
+    public function store(array $request): void
     {
-        return DB::transaction(function () use ($request) {
-            $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
-            $request['created_by'] = Auth::id();
-            return $this->dailyIncome->create($request);
+        DB::transaction(function () use ($request) {
+            $isInstant = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
+            $createdBy = Auth::id();
+            $date = $request['date'];
+            $note = $request['note'] ?? null;
+
+            foreach ($request['own_product_id'] as $index => $productId) {
+                $product = \BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct::find($productId);
+                
+                $this->dailyIncome->create([
+                    'date' => $date,
+                    'name' => $product->name ?? 'Unknown',
+                    'own_product_id' => $productId,
+                    'amount' => $request['amount'][$index],
+                    'price' => $request['price'][$index],
+                    'investment' => $request['investment'][$index],
+                    'profit' => $request['profit'][$index],
+                    'is_instant' => $isInstant,
+                    'note' => $note,
+                    'created_by' => $createdBy,
+                ]);
+            }
         });
     }
 

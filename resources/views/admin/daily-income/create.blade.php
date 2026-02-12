@@ -45,7 +45,11 @@
                     {{-- profit --}}
                     <x-form.input-group title='dailyIncome.profit' name='profit[]'
                         class="profit comma-format" :customAttributes="['readonly'=>'readonly']" />
-                    <div type="button" class="remove-row text-red-500 cursor-pointer "><i class="fas fa-trash"></i></div>
+                    <div class="flex items-center justify-center">
+                        <button type="button" class="remove-row bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 shadow-sm" title="Remove Item">
+                            <i class="fas fa-trash-alt text-sm"></i>
+                        </button>
+                    </div>
 
                 </div>
             </div>

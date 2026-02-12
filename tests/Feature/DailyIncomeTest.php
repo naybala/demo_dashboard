@@ -54,13 +54,12 @@ class DailyIncomeTest extends TestCase
     {
         $data = [
             'date' => now()->toDateString(),
-            'name' => 'Test Sale',
-            'amount' => 5,
-            'own_product_id' => $this->ownProduct->id,
-            'unit_id' => $this->unit->id,
-            'price' => 100,
-            'investment' => 60,
-            'profit' => 40,
+            'own_product_id' => [$this->ownProduct->id],
+            'amount' => [5],
+            'unit_id' => [$this->unit->id],
+            'price' => [100],
+            'investment' => [60],
+            'profit' => [40],
             'is_instant' => 1,
             'note' => 'Test note',
         ];
@@ -69,7 +68,7 @@ class DailyIncomeTest extends TestCase
 
         $response->assertRedirect(route('daily-incomes.index'));
         $this->assertDatabaseHas('daily_incomes', [
-            'name' => 'Test Sale',
+            'own_product_id' => $this->ownProduct->id,
             'is_instant' => true,
         ]);
     }
@@ -178,7 +177,7 @@ class DailyIncomeTest extends TestCase
     {
         $response = $this->post(route('daily-incomes.store'), []);
 
-        $response->assertSessionHasErrors(['date', 'name', 'own_product_id', 'amount', 'unit_id', 'price', 'investment', 'profit']);
+        $response->assertSessionHasErrors(['date', 'own_product_id', 'amount', 'unit_id', 'price', 'investment', 'profit']);
     }
 
     public function test_it_formats_numbers_in_resource()

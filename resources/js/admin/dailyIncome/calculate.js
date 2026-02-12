@@ -64,13 +64,25 @@ $(document).ready(function () {
   $("#add-row").on("click", function () {
     const $newRow = $rowsContainer.find(".product-row:first").clone();
 
+    // Reset values in the new row
     $newRow.find("input").val("");
     $newRow.find(".amount").val("1");
+    $newRow.find(".product-select-wrapper [x-data]").each(function () {
+      // Find the x-data element and reset its state
+      // However, cloning Alpine elements is tricky.
+      // We need to clean up the cloned element's Alpine internal state before re-init.
+    });
+
     $newRow.data("base-price", 0);
     $newRow.data("base-investment", 0);
     $newRow.data("base-profit", 0);
 
     $rowsContainer.append($newRow);
+
+    // Re-initialize Alpine.js for the new row
+    if (window.Alpine) {
+      window.Alpine.initTree($newRow[0]);
+    }
   });
 
   // remove row
