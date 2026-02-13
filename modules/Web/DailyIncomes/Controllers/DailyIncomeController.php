@@ -29,7 +29,7 @@ class DailyIncomeController extends BaseController
 {
     const VIEW = 'admin.daily-income';
     const ROUTE = 'daily-incomes';
-    const LANG_PATH = "daily_income.daily_income";
+    const LANG_PATH = "dailyIncome.dailyIncome";
 
     public function __construct(
         private DailyIncomeService $dailyIncomeService,
@@ -94,7 +94,7 @@ class DailyIncomeController extends BaseController
             'is_instant' => $dailyIncome->dailyIncomeTotal?->is_instant ?? true,
             'note' => $dailyIncome->dailyIncomeTotal?->note,
             'items' => $formattedItems,
-            'voucher_no' => $dailyIncome->voucher_no,
+            'voucher_no' => $dailyIncome->dailyIncomeTotal?->voucher_no,
         ];
 
         return $this->responseFactory->successView(self::VIEW . '.show', $data);

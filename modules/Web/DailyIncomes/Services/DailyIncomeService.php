@@ -113,9 +113,6 @@ class DailyIncomeService
             // Delete existing records for this total in both tables
             if ($totalId) {
                 $this->dailyIncome->where('daily_income_total_id', $totalId)->delete();
-                // $this->dailyIncomeTotal->where('id', $totalId)->delete();
-            } else {
-                $currentRecord->delete();
             }
 
             // Prepare batch data
@@ -154,7 +151,7 @@ class DailyIncomeService
             }
 
             // Update Totals
-            $this->dailyIncomeTotal->update([
+            $this->dailyIncomeTotal->where('id', $totalId)->update([
                 'total_price' => $totalPrice,
                 'total_investment' => $totalInvestment,
                 'total_profit' => $totalProfit,
