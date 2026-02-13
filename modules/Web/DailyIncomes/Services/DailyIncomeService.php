@@ -5,7 +5,7 @@ namespace BasicDashboard\Web\DailyIncomes\Services;
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
 use BasicDashboard\Foundations\Domain\DailyIncomeTotals\DailyIncomeTotal;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
-use Illuminate\Support\Facades\Auth;
+use BasicDashboard\Web\DailyIncomes\Actions\DailyIncomeAction;
 use Illuminate\Support\Facades\DB;
 
 
@@ -25,6 +25,7 @@ class DailyIncomeService
         private DailyIncome $dailyIncome,
         private DailyIncomeTotal $dailyIncomeTotal,
         private OwnProduct $ownProduct,
+        private DailyIncomeAction $dailyIncomeAction
     )
     {
     }
@@ -42,59 +43,9 @@ class DailyIncomeService
     public function store(array $request): void
     {
         DB::transaction(function () use ($request) {
-            $isInstant = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
-            $createdBy = Auth::id();
-            $date = $request['date'];
-            $note = $request['note'] ?? null;
-            $voucherNo = 'VOU-' . date('Ymd') . '-' . strtoupper(uniqid());
-            $now = now();
-
-            $totalPrice = 0;
-            $totalInvestment = 0;
-            $totalProfit = 0;
-
-            $data = [];
-            foreach ($request['own_product_id'] as $index => $productId) {
-                $amount = (float) str_replace(',', '', $request['amount'][$index]);
-                $price = (float) str_replace(',', '', $request['price'][$index]);
-                $investment = (float) str_replace(',', '', $request['investment'][$index]);
-                $profit = (float) str_replace(',', '', $request['profit'][$index]);
-
-                $totalPrice += $price;
-                $totalInvestment += $investment;
-                $totalProfit += $profit;
-
-                $data[] = [
-                    'date' => $date,
-                    'own_product_id' => $productId,
-                    'amount' => $amount,
-                    'price' => $price,
-                    'investment' => $investment,
-                    'profit' => $profit,
-                    'created_by' => $createdBy,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-            }
-
-            // Store Totals
-            $total = $this->dailyIncomeTotal->create([
-                'voucher_no' => $voucherNo,
-                'total_price' => $totalPrice,
-                'total_investment' => $totalInvestment,
-                'total_profit' => $totalProfit,
-                'note' => $note,
-                'is_instant' => $isInstant,
-                'created_by' => $createdBy,
-            ]);
-
-            // Add ID to individual items
-            foreach ($data as &$item) {
-                $item['daily_income_total_id'] = $total->id;
-            }
-
-            // Store individual items
-            $this->dailyIncome->insert($data);
+            $totals = $this->dailyIncomeAction->calculateTotalsAndRows($request);
+            $total = $this->dailyIncomeAction->createTotal($request, $totals,$this->dailyIncomeTotal);
+            $this->dailyIncomeAction->createDailyIncomes($totals['rows'], $total->id,$this->dailyIncome);
         });
     }
 
@@ -106,60 +57,10 @@ class DailyIncomeService
     public function update(array $request, string $id): void
     {
         DB::transaction(function () use ($request, $id) {
-            $isInstant = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
-            $currentRecord = $this->dailyIncome->with('dailyIncomeTotal')->findOrFail($id);
-            $totalId = $currentRecord->daily_income_total_id;
-
-            // Delete existing records for this total in both tables
-            if ($totalId) {
-                $this->dailyIncome->where('daily_income_total_id', $totalId)->delete();
-            }
-
-            // Prepare batch data
-            $createdBy = Auth::id();
-            $date = $request['date'];
-            $note = $request['note'] ?? null;
-            $now = now();
-
-            $totalPrice = 0;
-            $totalInvestment = 0;
-            $totalProfit = 0;
-
-            $data = [];
-            foreach ($request['own_product_id'] as $index => $productId) {
-                $amount = (float) str_replace(',', '', $request['amount'][$index]);
-                $price = (float) str_replace(',', '', $request['price'][$index]);
-                $investment = (float) str_replace(',', '', $request['investment'][$index]);
-                $profit = (float) str_replace(',', '', $request['profit'][$index]);
-
-                $totalPrice += $price;
-                $totalInvestment += $investment;
-                $totalProfit += $profit;
-
-                $data[] = [
-                    'daily_income_total_id' => $totalId,
-                    'date' => $date,
-                    'own_product_id' => $productId,
-                    'amount' => $amount,
-                    'price' => $price,
-                    'investment' => $investment,
-                    'profit' => $profit,
-                    'created_by' => $createdBy,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-            }
-
-            // Update Totals
-            $this->dailyIncomeTotal->where('id', $totalId)->update([
-                'total_price' => $totalPrice,
-                'total_investment' => $totalInvestment,
-                'total_profit' => $totalProfit,
-                'note' => $note,
-                'is_instant' => $isInstant,
-                'updated_by' => $createdBy,
-            ]);
-            $this->dailyIncome->insert($data);
+            $totalId = $this->dailyIncomeAction->getTotalIdFromIncome($id,$this->dailyIncome);
+            $totals = $this->dailyIncomeAction->calculateTotalsAndRows($request);
+            $this->dailyIncomeAction->updateTotal($totalId, $request, $totals,$this->dailyIncomeTotal);
+            $this->dailyIncomeAction->replaceDailyIncomes($totalId, $totals['rows'],$this->dailyIncome);
         });
     }
 
