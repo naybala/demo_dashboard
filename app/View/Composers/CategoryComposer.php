@@ -9,6 +9,6 @@ final class CategoryComposer
 {
     public function compose(View $view)
     {
-        $view->with('viewCategories',DB::table('categories')->pluck('name','id'));
+        $view->with('viewCategories',DB::table('categories') ->whereNull('deleted_at')->where('is_show', 0)->pluck('name','id'));
     }
 }

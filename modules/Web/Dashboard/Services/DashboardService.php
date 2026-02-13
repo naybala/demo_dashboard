@@ -31,6 +31,7 @@ class DashboardService extends BaseController
 
         // Product distribution by category (Donut Chart)
         $productDistribution = OwnProduct::join('categories', 'own_products.category_id', '=', 'categories.id')
+            ->where('categories.is_show', 0)
             ->select('categories.name as label', DB::raw('count(*) as value'))
             ->groupBy('categories.id', 'categories.name')
             ->get();
