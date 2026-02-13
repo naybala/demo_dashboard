@@ -109,12 +109,11 @@ class DailyIncomeService
             $isInstant = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
             $currentRecord = $this->dailyIncome->with('dailyIncomeTotal')->findOrFail($id);
             $totalId = $currentRecord->daily_income_total_id;
-            $voucherNo = $currentRecord->dailyIncomeTotal?->voucher_no;
 
             // Delete existing records for this total in both tables
             if ($totalId) {
                 $this->dailyIncome->where('daily_income_total_id', $totalId)->delete();
-                $this->dailyIncomeTotal->where('id', $totalId)->delete();
+                // $this->dailyIncomeTotal->where('id', $totalId)->delete();
             } else {
                 $currentRecord->delete();
             }
@@ -123,7 +122,6 @@ class DailyIncomeService
             $createdBy = Auth::id();
             $date = $request['date'];
             $note = $request['note'] ?? null;
-            $newVoucherNo = $voucherNo ?? ('VOU-' . date('Ymd') . '-' . strtoupper(uniqid()));
             $now = now();
 
             $totalPrice = 0;
@@ -142,6 +140,7 @@ class DailyIncomeService
                 $totalProfit += $profit;
 
                 $data[] = [
+                    'daily_income_total_id' => $totalId,
                     'date' => $date,
                     'own_product_id' => $productId,
                     'amount' => $amount,
@@ -154,21 +153,15 @@ class DailyIncomeService
                 ];
             }
 
-            // Store Totals
-            $total = $this->dailyIncomeTotal->create([
-                'voucher_no' => $newVoucherNo,
+            // Update Totals
+            $this->dailyIncomeTotal->update([
                 'total_price' => $totalPrice,
                 'total_investment' => $totalInvestment,
                 'total_profit' => $totalProfit,
                 'note' => $note,
                 'is_instant' => $isInstant,
-                'created_by' => $createdBy,
+                'updated_by' => $createdBy,
             ]);
-
-            foreach ($data as &$item) {
-                $item['daily_income_total_id'] = $total->id;
-            }
-
             $this->dailyIncome->insert($data);
         });
     }
