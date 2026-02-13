@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('price');
             $table->integer('investment');
             $table->integer('profit');
-            $table->string('voucher_no')->nullable();
+            $table->foreignId('daily_income_total_id')->nullable()->constrained()->restrictOnDelete();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->unsignedInteger('deleted_by')->nullable();

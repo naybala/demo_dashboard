@@ -30,9 +30,9 @@ class DailyIncomeResource extends JsonResource
             "profit" => number_format($this->profit, 0, '.', ','),
             "unit"=>$this->ownProduct?->unit?->name,
             "unit_id"=>$this->ownProduct?->unit?->id,
-            "is_instant"=>$this->is_instant,
-            "voucher_no"=>$this->voucher_no,
-            "note"=>$this->note,
+            "is_instant" => $this->dailyIncomeTotal?->is_instant ?? true,
+            "voucher_no" => $this->voucher_no,
+            "note" => $this->dailyIncomeTotal?->note,
 
         ];
     }

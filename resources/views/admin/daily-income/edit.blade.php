@@ -6,7 +6,7 @@
             @method('PUT')
             
             <x-form.grid cols="3">
-                <div></div>
+                <x-form.input-group title="dailyIncome.voucher_no" name="voucher_no" :value="$data['voucher_no']" :customAttributes="['readonly'=>'readonly']" class="border-0 font-semibold"/>
                 <x-form.date-picker title="dailyIncome.date" name="date" id="date" :value="$data['date']" />
                 <div></div>
             </x-form.grid>
@@ -56,7 +56,16 @@
             </div>
             <x-form.checkbox title="dailyIncome.is_instant" name="is_instant" id="is-instant" :checked="$data['is_instant'] == 1" />
 
-            <br><br>
+            <br>
+            <div class="">
+                <div>
+                    <p><span>Total Price:</span> <span id="total-price">{{ $data['total_price'] }}</span></p>
+                    <p><span>Total Investment:</span> <span id="total-investment">{{ $data['total_investment'] }}</span></p>
+                    <p><span>Total Profit:</span> <span id="total-profit">{{ $data['total_profit'] }}</span></p>
+                </div>
+            </div>
+
+            <br>
             <x-form.grid cols="1" class="shadow-lg rounded-lg p-4">
                 {{-- note --}}
                 <x-form.textarea title='dailyIncome.note' name='note' id='note' :value="$data['note']" />
@@ -68,5 +77,5 @@
             {{-- Save And Cancel --}}
         </form>
     </x-form.layout>
-    @vite('resources/js/admin/dailyIncome/calculate.js')
+    @vite(['resources/js/admin/dailyIncome/calculate.js', 'resources/js/admin/dailyIncome/totalCalculate.js'])
 </x-master-layout>

@@ -2,7 +2,7 @@
 
 namespace BasicDashboard\Foundations\Domain\DailyIncomes;
 use App\Observers\AuditObserver;
-use BasicDashboard\Foundations\Domain\Units\Unit;
+use BasicDashboard\Foundations\Domain\DailyIncomeTotals\DailyIncomeTotal;
 use Database\Factories\DailyIncomeFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
@@ -42,10 +42,16 @@ class DailyIncome extends Model
         'investment',
         'profit',
         'voucher_no',
+        'daily_income_total_id',
         'created_by',
         'updated_by',
         'deleted_by',
     ];
+
+    public function dailyIncomeTotal()
+    {
+        return $this->belongsTo(DailyIncomeTotal::class);
+    }
 
     public function ownProduct()
     {

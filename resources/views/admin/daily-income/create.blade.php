@@ -56,7 +56,17 @@
             <x-form.checkbox title="dailyIncome.is_instant" name="is_instant" id="is-instant" />
 
 
-            <br><br>
+            <br>
+            <div class="">
+                <div>
+                    <p><span>Total Price:</span> <span id="total-price">0</span></p>
+                    <p><span>Total Investment:</span> <span id="total-investment">0</span></p>
+                    <p><span>Total Profit:</span> <span id="total-profit">0</span></p>
+                </div>
+                
+            </div>
+            
+            <br>
             <x-form.grid cols="1" class="shadow-lg rounded-lg p-4">
                 {{-- note --}}
                 <x-form.textarea title='dailyIncome.note' name='note' id='note'  />
@@ -67,5 +77,5 @@
             {{-- Save And Cancel --}}
         </form>
     </x-form.layout>
-    @vite('resources/js/admin/dailyIncome/calculate.js')
+    @vite(['resources/js/admin/dailyIncome/calculate.js', 'resources/js/admin/dailyIncome/totalCalculate.js'])
 </x-master-layout>

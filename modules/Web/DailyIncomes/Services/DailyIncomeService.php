@@ -3,6 +3,7 @@
 namespace BasicDashboard\Web\DailyIncomes\Services;
 
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
+use BasicDashboard\Foundations\Domain\DailyIncomeTotals\DailyIncomeTotal;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,7 @@ class DailyIncomeService
 {
     public function __construct(
         private DailyIncome $dailyIncome,
+        private DailyIncomeTotal $dailyIncomeTotal,
         private OwnProduct $ownProduct,
     )
     {
@@ -30,7 +32,7 @@ class DailyIncomeService
     public function paginate(array $request)
     {
         return $this->dailyIncome
-            ->with(['ownProduct.unit'])
+            ->with(['ownProduct.unit', 'dailyIncomeTotal'])
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
@@ -47,43 +49,72 @@ class DailyIncomeService
             $voucherNo = 'VOU-' . date('Ymd') . '-' . strtoupper(uniqid());
             $now = now();
 
+            $totalPrice = 0;
+            $totalInvestment = 0;
+            $totalProfit = 0;
+
             $data = [];
             foreach ($request['own_product_id'] as $index => $productId) {
+                $amount = (float) str_replace(',', '', $request['amount'][$index]);
+                $price = (float) str_replace(',', '', $request['price'][$index]);
+                $investment = (float) str_replace(',', '', $request['investment'][$index]);
+                $profit = (float) str_replace(',', '', $request['profit'][$index]);
+
+                $totalPrice += $price;
+                $totalInvestment += $investment;
+                $totalProfit += $profit;
+
                 $data[] = [
                     'date' => $date,
                     'own_product_id' => $productId,
-                    'amount' => str_replace(',', '', $request['amount'][$index]),
-                    'price' => str_replace(',', '', $request['price'][$index]),
-                    'investment' => str_replace(',', '', $request['investment'][$index]),
-                    'profit' => str_replace(',', '', $request['profit'][$index]),
-                    'is_instant' => $isInstant,
-                    'voucher_no' => $voucherNo,
-                    'note' => $note,
+                    'amount' => $amount,
+                    'price' => $price,
+                    'investment' => $investment,
+                    'profit' => $profit,
                     'created_by' => $createdBy,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
             }
 
+            // Store Totals
+            $total = $this->dailyIncomeTotal->create([
+                'voucher_no' => $voucherNo,
+                'total_price' => $totalPrice,
+                'total_investment' => $totalInvestment,
+                'total_profit' => $totalProfit,
+                'note' => $note,
+                'is_instant' => $isInstant,
+                'created_by' => $createdBy,
+            ]);
+
+            // Add ID to individual items
+            foreach ($data as &$item) {
+                $item['daily_income_total_id'] = $total->id;
+            }
+
+            // Store individual items
             $this->dailyIncome->insert($data);
         });
     }
 
     public function findOrFail(string $id): DailyIncome
     {
-        return $this->dailyIncome->findOrFail($id);
+        return $this->dailyIncome->with('dailyIncomeTotal')->findOrFail($id);
     }
 
     public function update(array $request, string $id): void
     {
         DB::transaction(function () use ($request, $id) {
-            $request['is_instant'] = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
-            $currentRecord = $this->dailyIncome->findOrFail($id);
-            $voucherNo = $currentRecord->voucher_no;
+            $isInstant = isset($request['is_instant']) ? (bool) $request['is_instant'] : false;
+            $currentRecord = $this->dailyIncome->with('dailyIncomeTotal')->findOrFail($id);
+            $totalId = $currentRecord->daily_income_total_id;
+            $voucherNo = $currentRecord->dailyIncomeTotal?->voucher_no;
 
-            // Delete existing records for this voucher
-            if ($voucherNo) {
-                $this->dailyIncome->where('voucher_no', $voucherNo)->delete();
+            // Delete existing records for this total in both tables
+            if ($totalId) {
+                $this->dailyIncome->where('daily_income_total_id', $totalId)->delete();
+                $this->dailyIncomeTotal->where('id', $totalId)->delete();
             } else {
                 $currentRecord->delete();
             }
@@ -95,22 +126,47 @@ class DailyIncomeService
             $newVoucherNo = $voucherNo ?? ('VOU-' . date('Ymd') . '-' . strtoupper(uniqid()));
             $now = now();
 
+            $totalPrice = 0;
+            $totalInvestment = 0;
+            $totalProfit = 0;
+
             $data = [];
             foreach ($request['own_product_id'] as $index => $productId) {
+                $amount = (float) str_replace(',', '', $request['amount'][$index]);
+                $price = (float) str_replace(',', '', $request['price'][$index]);
+                $investment = (float) str_replace(',', '', $request['investment'][$index]);
+                $profit = (float) str_replace(',', '', $request['profit'][$index]);
+
+                $totalPrice += $price;
+                $totalInvestment += $investment;
+                $totalProfit += $profit;
+
                 $data[] = [
                     'date' => $date,
                     'own_product_id' => $productId,
-                    'amount' => str_replace(',', '', $request['amount'][$index]),
-                    'price' => str_replace(',', '', $request['price'][$index]),
-                    'investment' => str_replace(',', '', $request['investment'][$index]),
-                    'profit' => str_replace(',', '', $request['profit'][$index]),
-                    'is_instant' => $request['is_instant'],
-                    'voucher_no' => $newVoucherNo,
-                    'note' => $note,
+                    'amount' => $amount,
+                    'price' => $price,
+                    'investment' => $investment,
+                    'profit' => $profit,
                     'created_by' => $createdBy,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
+            }
+
+            // Store Totals
+            $total = $this->dailyIncomeTotal->create([
+                'voucher_no' => $newVoucherNo,
+                'total_price' => $totalPrice,
+                'total_investment' => $totalInvestment,
+                'total_profit' => $totalProfit,
+                'note' => $note,
+                'is_instant' => $isInstant,
+                'created_by' => $createdBy,
+            ]);
+
+            foreach ($data as &$item) {
+                $item['daily_income_total_id'] = $total->id;
             }
 
             $this->dailyIncome->insert($data);
@@ -121,8 +177,9 @@ class DailyIncomeService
     {
         DB::transaction(function () use ($id) {
             $dailyIncome = $this->dailyIncome->findOrFail($id);
-            if ($dailyIncome->voucher_no) {
-                $this->dailyIncome->where('voucher_no', $dailyIncome->voucher_no)->delete();
+            if ($dailyIncome->daily_income_total_id) {
+                $this->dailyIncome->where('daily_income_total_id', $dailyIncome->daily_income_total_id)->delete();
+                $this->dailyIncomeTotal->where('id', $dailyIncome->daily_income_total_id)->delete();
             } else {
                 $dailyIncome->delete();
             }
@@ -131,11 +188,12 @@ class DailyIncomeService
 
     public function getByVoucherNo(DailyIncome $dailyIncome)
     {
-        if (!$dailyIncome->voucher_no) {
+        if (!$dailyIncome->daily_income_total_id) {
             return collect([$dailyIncome]);
         }
 
-        $items = $this->dailyIncome->where('voucher_no', $dailyIncome->voucher_no)
+        $items = $this->dailyIncome->where('daily_income_total_id', $dailyIncome->daily_income_total_id)
+            ->with(['ownProduct.unit', 'dailyIncomeTotal'])
             ->get();
 
         return $items->isEmpty() ? collect([$dailyIncome]) : $items;

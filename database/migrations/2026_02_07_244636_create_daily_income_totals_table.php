@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('daily_income_total', function (Blueprint $table) {
+        Schema::create('daily_income_totals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('voucher_no');
+            $table->string('voucher_no')->nullable();
             $table->integer('total_price');
             $table->integer('total_investment');
             $table->integer('total_profit');
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('daily_income_total');
+        Schema::dropIfExists('daily_income_totals');
     }
 };

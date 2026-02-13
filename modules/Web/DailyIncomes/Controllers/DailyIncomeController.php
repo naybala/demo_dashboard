@@ -70,10 +70,13 @@ class DailyIncomeController extends BaseController
         $data = [
             'id' => $id,
             'date' => $dailyIncome->date,
-            'is_instant' => $dailyIncome->is_instant,
-            'note' => $dailyIncome->note,
+            'is_instant' => $dailyIncome->dailyIncomeTotal?->is_instant ?? true,
+            'note' => $dailyIncome->dailyIncomeTotal?->note,
             'items' => $formattedItems,
-            'voucher_no' => $dailyIncome->voucher_no,
+            'voucher_no' => $dailyIncome->dailyIncomeTotal?->voucher_no,
+            'total_price' => number_format($dailyIncome->dailyIncomeTotal?->total_price ??0,2,'.',''),
+            'total_investment' => number_format($dailyIncome->dailyIncomeTotal?->total_investment ??0,2,'.',''),
+            'total_profit' => number_format($dailyIncome->dailyIncomeTotal?->total_profit ??0,2,'.',''),
         ];
 
         return $this->responseFactory->successView(self::VIEW . ".edit", $data);
@@ -88,8 +91,8 @@ class DailyIncomeController extends BaseController
         $data = [
             'id' => $id,
             'date' => $dailyIncome->date,
-            'is_instant' => $dailyIncome->is_instant,
-            'note' => $dailyIncome->note,
+            'is_instant' => $dailyIncome->dailyIncomeTotal?->is_instant ?? true,
+            'note' => $dailyIncome->dailyIncomeTotal?->note,
             'items' => $formattedItems,
             'voucher_no' => $dailyIncome->voucher_no,
         ];
