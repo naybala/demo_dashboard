@@ -34,9 +34,9 @@ class DailyIncomeService
         return $this->dailyIncome
             ->with(['ownProduct.unit', 'dailyIncomeTotal'])
             ->filterByKeyword($request['keyword'] ?? null)
+            ->filterByDateRange($request['from_date'] ?? null, $request['to_date'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
-
     }
 
     public function store(array $request): void

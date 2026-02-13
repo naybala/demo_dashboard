@@ -75,7 +75,26 @@ class DailyIncome extends Model
             return $query;
         }
 
-        return $query->where('name', 'LIKE', '%' . $keyword . '%');
+        return $query->where('name', 'LIKE', '%' . $keyword . '%')
+            ->orWhereHas('ownProduct', function ($q) use ($keyword) {
+                $q->where('name', 'LIKE', '%' . $keyword . '%');
+            })
+            ->orWhereHas('dailyIncomeTotal', function ($q) use ($keyword) {
+                $q->where('voucher_no', 'LIKE', '%' . $keyword . '%');
+            });
+    }
+
+    public function scopeFilterByDateRange($query, ?string $from, ?string $to)
+    {
+        if ($from) {
+            $query->whereDate('date', '>=', $from);
+        }
+
+        if ($to) {
+            $query->whereDate('date', '<=', $to);
+        }
+
+        return $query;
     }
 
     /**
