@@ -2,11 +2,9 @@
 
 namespace BasicDashboard\Mobile\Auth\Services;
 
-use App\Http\Controllers\Controller;
+use App\Exceptions\WarningException;
 use BasicDashboard\Foundations\Domain\Users\User;
 use BasicDashboard\Mobile\Auth\Resources\AuthResource;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -21,46 +19,44 @@ use Illuminate\Support\Facades\Hash;
  *
  */
 
-class AuthService extends Controller
+class AuthService
 {
 
     public function __construct(
-        private ResponseFactory $responseFactory,
         private User $user
     )
     {
     }
 
-    public function login(array $request): JsonResponse
+    public function login(array $request): array
     {
       $user = $this->user->where('email', $request['email'])->first();
         if ($user) {
             if (! Hash::check($request['password'], $user->password)) {
-                return $this->responseFactory->sendAuthFailedResponse("User credentials are not valid");
+                throw new WarningException("User credentials are not valid");
             }
-            
         }
+
         if (Auth::attempt($request)) {
             $user = $this->user->where('email', $request['email'])->first();
-            $user = new AuthResource($user);
-            $token      = $user->createToken('auth_frontend_token')->plainTextToken;
+            $userResource = new AuthResource($user);
+            $token      = $user->createToken('auth_mobile_token')->plainTextToken;
             $grandToken = strpos($token, "|");
             $finalToken = substr($token, $grandToken + 1);
-            $data       = [
-                'user_info' => $user,
+            
+            return [
+                'user_info' => $userResource,
                 'token'     => $finalToken,
             ];
-            return $this->responseFactory->sendSuccessResponse("Auth Data", $data);
         } else {
-            return $this->responseFactory->sendAuthFailedResponse("Wrong Credentials");
+            throw new WarningException("Wrong Credentials");
         }
     }
 
-    public function logout(string $id): JsonResponse
+    public function logout(string $id): void
     {
         DB::table('personal_access_tokens')
             ->where('tokenable_id', $id)
             ->delete();
-        return $this->responseFactory->sendSuccessResponse("Logout Success");
     }
 }

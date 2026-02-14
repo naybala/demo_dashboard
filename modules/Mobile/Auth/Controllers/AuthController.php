@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use BasicDashboard\Mobile\Auth\Services\AuthService;
 use BasicDashboard\Mobile\Auth\Validation\LoginRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-
-
+use Illuminate\Routing\ResponseFactory;
+use App\Exceptions\WarningException;
+use Throwable;
 
 /**
  *
@@ -24,19 +24,32 @@ use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     public function __construct(
-        private AuthService $authService
+        private AuthService $authService,
+        private ResponseFactory $responseFactory
     ) {
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
-        return $this->authService->login($request->validated());
+        try {
+            $data = $this->authService->login($request->validated());
+            return $this->responseFactory->sendSuccessResponse("Login Success", $data);
+        } catch (WarningException $e) {
+            return $this->responseFactory->sendAuthFailedResponse($e->getMessage());
+        } catch (Throwable $e) {
+            return $this->responseFactory->sendErrorResponse($e->getMessage());
+        }
     }
 
 
     public function logout(string $id): JsonResponse
     {
-        return $this->authService->logout($id);
+        try {
+            $this->authService->logout($id);
+            return $this->responseFactory->sendSuccessResponse("Logout Success");
+        } catch (Throwable $e) {
+            return $this->responseFactory->sendErrorResponse($e->getMessage());
+        }
     }
 
 }
