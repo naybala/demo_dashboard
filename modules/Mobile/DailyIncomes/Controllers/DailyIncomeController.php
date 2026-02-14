@@ -1,10 +1,10 @@
 <?php
 
-namespace BasicDashboard\Mobile\DailyIncome\Controllers;
+namespace BasicDashboard\Mobile\DailyIncomes\Controllers;
 
 use App\Http\Controllers\Controller;
-use BasicDashboard\Mobile\DailyIncome\Services\DailyIncomeService;
-use BasicDashboard\Mobile\DailyIncome\Resources\DailyIncomeResource;
+use BasicDashboard\Mobile\DailyIncomes\Services\DailyIncomeService;
+use BasicDashboard\Mobile\DailyIncomes\Resources\DailyIncomeResource;
 use BasicDashboard\Web\DailyIncomes\Validation\StoreDailyIncomeRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

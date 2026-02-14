@@ -1,6 +1,6 @@
 <?php
 
-namespace BasicDashboard\Mobile\DailyIncome\Resources;
+namespace BasicDashboard\Mobile\DailyIncomes\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

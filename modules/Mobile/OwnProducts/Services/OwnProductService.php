@@ -1,6 +1,6 @@
 <?php
 
-namespace BasicDashboard\Mobile\OwnProduct\Services;
+namespace BasicDashboard\Mobile\OwnProducts\Services;
 
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 /**

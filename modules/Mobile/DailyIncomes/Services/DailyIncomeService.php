@@ -1,6 +1,6 @@
 <?php
 
-namespace BasicDashboard\Mobile\DailyIncome\Services;
+namespace BasicDashboard\Mobile\DailyIncomes\Services;
 
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
 use BasicDashboard\Foundations\Domain\DailyIncomeTotals\DailyIncomeTotal;

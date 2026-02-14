@@ -1,10 +1,10 @@
 <?php
 
-namespace BasicDashboard\Mobile\OwnProduct\Controllers;
+namespace BasicDashboard\Mobile\OwnProducts\Controllers;
 
 use App\Http\Controllers\Controller;
-use BasicDashboard\Mobile\OwnProduct\Services\OwnProductService;
-use BasicDashboard\Mobile\OwnProduct\Resources\OwnProductResource;
+use BasicDashboard\Mobile\OwnProducts\Services\OwnProductService;
+use BasicDashboard\Mobile\OwnProducts\Resources\OwnProductResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\ResponseFactory;
