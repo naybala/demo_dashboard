@@ -4,10 +4,11 @@ namespace BasicDashboard\Mobile\Categories\Controllers;
 
 use App\Http\Controllers\Controller;
 use BasicDashboard\Mobile\Categories\Services\CategoryService;
+use BasicDashboard\Mobile\Categories\Resources\CategoryResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
-
+use Illuminate\Routing\ResponseFactory;
+use Throwable;
 
 /**
  *
@@ -23,19 +24,33 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     public function __construct(
-        private CategoryService $categoryService
+        private CategoryService $categoryService,
+        private ResponseFactory $responseFactory
     ) {
     }
 
     public function index(Request $request): JsonResponse
     {
-        return $this->categoryService->index($request->all());
+        try {
+            $categoryList = $this->categoryService->paginate($request->all());
+            $categoryList = CategoryResource::collection($categoryList)->response()->getData(true);
+            return $this->responseFactory->sendSuccessResponse('Index Success', $categoryList);
+        } catch (Throwable $e) {
+            return $this->responseFactory->sendErrorResponse($e->getMessage());
+        }
     }
 
 
     public function show(string $id): JsonResponse
     {
-        return $this->categoryService->show($id);
+        try {
+            $category = $this->categoryService->findOrFail($id);
+            $category = new CategoryResource($category);
+            $categoryData = $category->response()->getData(true)['data'];
+            return $this->responseFactory->sendSuccessResponse("Show success", $categoryData);
+        } catch (Throwable $e) {
+            return $this->responseFactory->sendErrorResponse($e->getMessage());
+        }
     }
 
 }

@@ -16,7 +16,7 @@ use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 class OwnProductService
 {
     public function __construct(
-        private $ownProduct,
+        private OwnProduct $ownProduct,
     )
     {
     }

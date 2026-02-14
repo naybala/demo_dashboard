@@ -8,6 +8,7 @@ use BasicDashboard\Mobile\OwnProduct\Resources\OwnProductResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\ResponseFactory;
+use Throwable;
 
 
 
@@ -33,16 +34,24 @@ class OwnProductController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $ownProductList = $this->ownProductService->paginate($request->all());
-        $ownProductList = OwnProductResource::collection($ownProductList)->response()->getData(true);
-        return $this->responseFactory->sendSuccessResponse('Index Success', $ownProductList);
+        try {
+            $ownProductList = $this->ownProductService->paginate($request->all());
+            $ownProductList = OwnProductResource::collection($ownProductList)->response()->getData(true);
+            return $this->responseFactory->sendSuccessResponse('Index Success', $ownProductList);
+        } catch (Throwable $e) {
+            return $this->responseFactory->sendErrorResponse($e->getMessage());
+        }
     }
 
     public function show(string $id): JsonResponse
     {
-        $ownProduct = $this->ownProductService->findOrFail($id);
-        $ownProduct = new OwnProductResource($ownProduct);
-        $ownProduct = $ownProduct->response()->getData(true)['data'];
-        return $this->responseFactory->sendSuccessResponse("Show success", $ownProduct);
+        try {
+            $ownProduct = $this->ownProductService->findOrFail($id);
+            $ownProduct = new OwnProductResource($ownProduct);
+            $ownProductData = $ownProduct->response()->getData(true)['data'];
+            return $this->responseFactory->sendSuccessResponse("Show success", $ownProductData);
+        } catch (Throwable $e) {
+            return $this->responseFactory->sendErrorResponse($e->getMessage());
+        }
     }
 }

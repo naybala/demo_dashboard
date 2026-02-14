@@ -3,10 +3,7 @@
 namespace BasicDashboard\Mobile\Categories\Services;
 
 use BasicDashboard\Foundations\Domain\Categories\Category;
-use App\Http\Controllers\Controller;
 use BasicDashboard\Mobile\Categories\Resources\CategoryResource;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\ResponseFactory;
 
 /**
  *
@@ -18,31 +15,25 @@ use Illuminate\Routing\ResponseFactory;
  *
  */
 
-class CategoryService extends Controller
+class CategoryService
 {
 
     public function __construct(
-        private Category $category,
-        private ResponseFactory $responseFactory,
+        private Category $category
     )
     {
     }
 
-    public function index(array $request): JsonResponse
+    public function paginate(array $request)
     {
-        $categoryList = $this->category
+        return $this->category
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
-        $categoryList = CategoryResource::collection($categoryList)->response()->getData(true);
-        return $this->responseFactory->sendSuccessResponse('Index Success', $categoryList);
     }
 
-    public function show(string $id): JsonResponse
+    public function findOrFail(string $id): Category
     {
-        $data = $this->category->findOrFail($id);
-        $data = new CategoryResource($data);
-        $data = $data->response()->getData(true)['data'];
-        return $this->responseFactory->sendSuccessResponse("Show success", $data);
+        return $this->category->findOrFail($id);
     }
 }
