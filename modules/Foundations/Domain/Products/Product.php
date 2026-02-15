@@ -35,6 +35,8 @@ class Product extends Model
         'photos',
         'description',
         'description_other',
+        'is_banner',
+        'is_mini_banner',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -45,6 +47,8 @@ class Product extends Model
 
     protected $casts = [
         'photos' => 'array',
+        'is_banner' => 'boolean',
+        'is_mini_banner' => 'boolean',
     ];
 
     // ==========================================

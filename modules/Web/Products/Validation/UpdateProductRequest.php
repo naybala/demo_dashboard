@@ -45,6 +45,8 @@ class UpdateProductRequest extends FormRequest
             "updated_by" => "nullable",
             "categories" => "required|array",
             "categories.*" => "exists:categories,id",
+            "is_banner" => "nullable|boolean",
+            "is_mini_banner" => "nullable|boolean",
         ];
     }
 

@@ -44,6 +44,8 @@ class StoreProductRequest extends FormRequest
             "photos.*" => "image|mimes:jpeg,png,jpg,gif,svg|max:2048",
             "categories" => "required|array",
             "categories.*" => "exists:categories,id",
+            "is_banner" => "nullable|boolean",
+            "is_mini_banner" => "nullable|boolean",
             "created_by"=> "nullable",
         ];
     }

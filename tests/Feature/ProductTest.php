@@ -54,6 +54,8 @@ class ProductTest extends TestCase
                 UploadedFile::fake()->image('product1.jpg'),
             ],
             'categories' => [$this->category->id],
+            'is_banner' => true,
+            'is_mini_banner' => true,
         ];
 
         $response = $this->post(route('products.store'), $data);
@@ -61,6 +63,8 @@ class ProductTest extends TestCase
         $response->assertRedirect(route('products.index'));
         $this->assertDatabaseHas('products', [
             'name' => 'New Product',
+            'is_banner' => 1,
+            'is_mini_banner' => 1,
         ]);
     }
 
@@ -89,6 +93,8 @@ class ProductTest extends TestCase
                 UploadedFile::fake()->image('updated_product.jpg'),
             ],
             'categories' => [$this->category->id],
+            'is_banner' => false,
+            'is_mini_banner' => false,
         ];
 
         $obfuscatedId = customEncoder($product->id);
@@ -98,6 +104,8 @@ class ProductTest extends TestCase
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
             'name' => 'Updated Product',
+            'is_banner' => 0,
+            'is_mini_banner' => 0,
         ]);
     }
 
