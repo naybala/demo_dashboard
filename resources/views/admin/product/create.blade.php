@@ -23,6 +23,14 @@
                     :viewData="$viewCategories" />
                 {{-- categories --}}
 
+                <!-- Banner -->
+                 <x-form.checkbox title="product.is_banner" name="is_banner" id="is-banner" />
+                 <!-- Banner -->
+                  
+                 <!-- Mini Banner -->
+                 <x-form.checkbox title="product.is_mini_banner" name="is_mini_banner" id="is-mini-banner" />
+                 <!-- Mini Banner -->
+
                 {{-- description --}}
                 <x-form.quill-editor title="product.description" name="description" id="description"
                 helperText="description" />

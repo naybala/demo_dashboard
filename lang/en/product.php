@@ -12,4 +12,6 @@ return [
     'product_deleted' => "Product was successfully deleted",
     'photo'=>'Photo',
     'category'=>'Categories',
+    'is_banner'=>'Is Banner',
+    'is_mini_banner'=>'Is Mini Banner',
 ];

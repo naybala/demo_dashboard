@@ -4,6 +4,7 @@ namespace BasicDashboard\Web\Products\Services;
 
 use BasicDashboard\Foundations\Domain\Products\Product;
 use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
@@ -43,7 +44,7 @@ class ProductService
 
             $categories = $request['categories'] ?? [];
             unset($request['categories']);
-
+            $request['created_by'] = Auth::id();
             $product = $this->product->create($request);
             
             if (!empty($categories)) {
@@ -79,6 +80,7 @@ class ProductService
 
             $categories = $request['categories'] ?? [];
             unset($request['categories']);
+            $request['updated_by'] = Auth::id();
 
             $product->update($request);
 

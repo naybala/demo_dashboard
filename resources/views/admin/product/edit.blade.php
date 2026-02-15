@@ -31,6 +31,15 @@
                     :viewData="$viewCategories" :selected-value="$data['category_ids']" />
                 {{-- categories --}}
 
+
+                <!-- Banner -->
+                 <x-form.checkbox title="product.is_banner" name="is_banner" id="is-banner" :checked="$data['is_banner'] == 1" />
+                 <!-- Banner -->
+
+                 <!-- Mini Banner -->
+                 <x-form.checkbox title="product.is_mini_banner" name="is_mini_banner" id="is-mini-banner" :checked="$data['is_mini_banner'] == 1" />
+                 <!-- Mini Banner -->
+
                 {{-- description --}}
                 <x-form.quill-editor title="product.description" name="description" id="description"
                 :value="$data['description']" helperText="description" />

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('name_other')->nullable();
             $table->integer('price');
             $table->json('photos')->nullable();
+            $table->boolean('is_banner')->default(false);
+            $table->boolean('is_mini_banner')->default(false);
             $table->text('description')->nullable();
             $table->text('description_other')->nullable();
             $table->unsignedInteger('created_by')->nullable();

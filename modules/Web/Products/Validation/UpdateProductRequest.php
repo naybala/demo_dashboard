@@ -25,7 +25,8 @@ class UpdateProductRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'updated_by' => Auth::id(),
+            'is_banner' => $this->boolean('is_banner') ? 1 : 0,
+            'is_mini_banner' => $this->boolean('is_mini_banner') ? 1 : 0,
         ]);
     }
     public function rules(): array
