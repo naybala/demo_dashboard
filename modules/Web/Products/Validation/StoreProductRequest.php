@@ -27,6 +27,7 @@ class StoreProductRequest extends FormRequest
         $this->merge([
             'is_banner' => $this->boolean('is_banner') ? 1 : 0,
             'is_mini_banner' => $this->boolean('is_mini_banner') ? 1 : 0,
+            'price' => str_replace(',', '', $this->price),
         ]);
     
     }

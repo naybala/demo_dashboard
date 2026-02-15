@@ -28,12 +28,23 @@ class StoreDailyIncomeRequest extends FormRequest
             foreach ($this->input('own_product_id') as $index => $productId) {
                 $items[] = [
                     'product_id' => $productId,
-                    'amount' => $this->input('amount')[$index] ?? 0,
+                    'amount' => str_replace(',', '', $this->input('amount')[$index] ?? 0),
                     'unit_id' => $this->input('unit_id')[$index] ?? null,
-                    'price' => $this->input('price')[$index] ?? 0,
-                    'investment' => $this->input('investment')[$index] ?? 0,
-                    'profit' => $this->input('profit')[$index] ?? 0,
+                    'price' => str_replace(',', '', $this->input('price')[$index] ?? 0),
+                    'investment' => str_replace(',', '', $this->input('investment')[$index] ?? 0),
+                    'profit' => str_replace(',', '', $this->input('profit')[$index] ?? 0),
                 ];
+            }
+            $this->merge(['items' => $items]);
+        }
+
+        if ($this->has('items')) {
+            $items = $this->input('items');
+            foreach ($items as &$item) {
+                if (isset($item['price'])) $item['price'] = str_replace(',', '', $item['price']);
+                if (isset($item['investment'])) $item['investment'] = str_replace(',', '', $item['investment']);
+                if (isset($item['profit'])) $item['profit'] = str_replace(',', '', $item['profit']);
+                if (isset($item['amount'])) $item['amount'] = str_replace(',', '', $item['amount']);
             }
             $this->merge(['items' => $items]);
         }

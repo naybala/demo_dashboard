@@ -21,6 +21,15 @@ class UpdateOwnProductRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'price' => str_replace(',', '', $this->price),
+            'investment' => str_replace(',', '', $this->investment),
+            'profit' => str_replace(',', '', $this->profit),
+        ]);
+    }
+
     public function rules(): array
     {
         return [

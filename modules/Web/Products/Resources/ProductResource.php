@@ -33,6 +33,8 @@ class ProductResource extends JsonResource
             "category_ids" => $this->categories->pluck('id')->toArray(),
             "category_names" => $this->categories->pluck('name')->toArray(),
             "primary_photo" => !empty($photoUrls) ? $photoUrls[0] : null,
+            "is_banner"=>$this->is_banner,
+            "is_mini_banner"=>$this->is_mini_banner,
         ];
     }
 }
