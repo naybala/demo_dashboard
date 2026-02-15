@@ -21,7 +21,16 @@ export default defineConfig({
         "resources/js/app.js",
         "resources/js/bootstrap.js",
 
+        //Admin
+        "resources/js/admin/dailyIncome/calculate.js",
+        "resources/js/admin/dailyIncome/totalCalculate.js",
+        "resources/js/admin/product/cloud-store.js",
+        "resources/js/admin/product/local-store.js",
+        "resources/js/admin/product/product-quill.js",
+        "resources/js/admin/product/productStartQuillEditor.js",
+
         //common total (25)
+        "resources/js/common/comma-formatter.js",
         "resources/js/common/customCropper.js",
         "resources/js/common/customVideoUploadHandler.js",
         "resources/js/common/deleteConfirm.js",
@@ -46,7 +55,6 @@ export default defineConfig({
         "resources/js/common/startQuillEditor.js",
         "resources/js/common/uploadErrorHandle.js",
         "resources/js/common/uploadToDigitalOcean.js",
-        "resources/js/common/comma-formatter.js",
         "resources/js/common/validateDisappear.js",
 
         //dashboard total (1)
@@ -57,12 +65,12 @@ export default defineConfig({
 
         //quill total (7)
         "resources/js/quill/addAudioButton.js",
+        "resources/js/quill/init.js",
         "resources/js/quill/insertToEditor.js",
         "resources/js/quill/saveToServer.js",
         "resources/js/quill/selectLocalAudio.js",
         "resources/js/quill/selectLocalImage.js",
         "resources/js/quill/startQuillEditor.js",
-        "resources/js/quill/init.js",
 
         //tag
         "resources/js/tag/tagPreview.js",

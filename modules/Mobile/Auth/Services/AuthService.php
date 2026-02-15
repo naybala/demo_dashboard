@@ -59,4 +59,5 @@ class AuthService
             ->where('tokenable_id', $id)
             ->delete();
     }
+    
 }

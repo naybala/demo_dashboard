@@ -22,6 +22,7 @@ class AuthResource extends JsonResource
 
         $avatarPhoto = $this->avatar ?: "/Default/default_profile_photo.jpg";
         return [
+            'id' => customEncoder($this->id),
             'fullname' => $this->fullname,
             "email" => $this->email,
             "avatar" => Storage::url($avatarPhoto),

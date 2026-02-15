@@ -29,6 +29,7 @@ class CategoryService
         return $this->category
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
+            ->where('is_show',false)
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
     }
 

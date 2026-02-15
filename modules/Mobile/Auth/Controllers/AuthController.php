@@ -5,6 +5,7 @@ namespace BasicDashboard\Mobile\Auth\Controllers;
 use App\Http\Controllers\Controller;
 use BasicDashboard\Mobile\Auth\Services\AuthService;
 use BasicDashboard\Mobile\Auth\Validation\LoginRequest;
+use BasicDashboard\Mobile\Auth\Validation\LogoutRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\ResponseFactory;
 use App\Exceptions\WarningException;
@@ -42,10 +43,10 @@ class AuthController extends Controller
     }
 
 
-    public function logout(string $id): JsonResponse
+    public function logout(LogoutRequest $request): JsonResponse
     {
         try {
-            $this->authService->logout($id);
+            $this->authService->logout($request->validated()['id']);
             return $this->responseFactory->sendSuccessResponse("Logout Success");
         } catch (Throwable $e) {
             return $this->responseFactory->sendErrorResponse($e->getMessage());

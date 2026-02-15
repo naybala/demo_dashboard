@@ -39,4 +39,17 @@ class DailyIncomeService
     {
         return $this->dailyIncome->with(['ownProduct.unit', 'dailyIncomeTotal'])->findOrFail($id);
     }
+
+    public function getByVoucherNo(DailyIncome $dailyIncome)
+    {
+        if (!$dailyIncome->daily_income_total_id) {
+            return collect([$dailyIncome]);
+        }
+
+        $items = $this->dailyIncome->where('daily_income_total_id', $dailyIncome->daily_income_total_id)
+            ->with(['ownProduct.unit', 'dailyIncomeTotal'])
+            ->get();
+
+        return $items->isEmpty() ? collect([$dailyIncome]) : $items;
+    }
 }

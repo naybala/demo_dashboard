@@ -43,9 +43,22 @@ class DailyIncomeController extends Controller
     public function show(string $id): JsonResponse
     {
         try {
-            $dailyIncome = $this->dailyIncomeService->findOrFail($id);
-            $dailyIncome = new DailyIncomeResource($dailyIncome);
-            $data = $dailyIncome->response()->getData(true)['data'];
+           $decodedId = customDecoder($id);
+           $dailyIncome = $this->dailyIncomeService->findOrFail($decodedId);
+           $items = $this->dailyIncomeService->getByVoucherNo($dailyIncome);
+
+           $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
+           $data = [
+                'id' => $id,
+                'date' => $dailyIncome->date,
+                'is_instant' => $dailyIncome->dailyIncomeTotal?->is_instant ?? true,
+                'note' => $dailyIncome->dailyIncomeTotal?->note,
+                'items' => $formattedItems,
+                'voucher_no' => $dailyIncome->dailyIncomeTotal?->voucher_no,
+                'total_price' => number_format($dailyIncome->dailyIncomeTotal?->total_price ??0,2,'.',''),
+                'total_investment' => number_format($dailyIncome->dailyIncomeTotal?->total_investment ??0,2,'.',''),
+                'total_profit' => number_format($dailyIncome->dailyIncomeTotal?->total_profit ??0,2,'.',''),
+            ];
             return $this->responseFactory->sendSuccessResponse('Show success', $data);
         } catch (Throwable $e) {
             return $this->responseFactory->sendErrorResponse($e->getMessage());

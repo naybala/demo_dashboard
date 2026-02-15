@@ -8,21 +8,21 @@ class DailyIncomeResource extends JsonResource
 {
     public function toArray($request): array
     {
-        return [
-            'id' => $this->id,
-            'date' => $this->date,
-            'amount' => $this->amount,
-            'price' => $this->price,
-            'investment' => $this->investment,
-            'profit' => $this->profit,
-            'own_product' => [
-                'id' => $this->ownProduct?->id,
-                'name' => $this->ownProduct?->name,
-                'unit' => $this->ownProduct?->unit?->name,
-            ],
-            'voucher_no' => $this->dailyIncomeTotal?->voucher_no,
-            'note' => $this->dailyIncomeTotal?->note,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+       return [
+            "id" =>customEncoder($this->id),
+            "date"=>$this->date,
+            "name"=>$this->name,
+            "own_product_id"=>$this->own_product_id,
+            "own_product"=>$this->ownProduct?->name,
+            "amount" => number_format($this->amount, 0, '.', ','),
+            "price" => number_format($this->price, 0, '.', ','),
+            "investment" => number_format($this->investment, 0, '.', ','),
+            "profit" => number_format($this->profit, 0, '.', ','),
+            "unit"=>$this->ownProduct?->unit?->name,
+            "unit_id"=>$this->ownProduct?->unit?->id,
+            "is_instant" => $this->dailyIncomeTotal?->is_instant ?? true,
+            "voucher_no" => $this->dailyIncomeTotal?->voucher_no,
+            "note" => $this->dailyIncomeTotal?->note,
         ];
     }
 }
