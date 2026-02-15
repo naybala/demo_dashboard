@@ -23,6 +23,21 @@ class UpdateDailyIncomeRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        if (!$this->has('items') && $this->has('own_product_id')) {
+            $items = [];
+            foreach ($this->input('own_product_id') as $index => $productId) {
+                $items[] = [
+                    'product_id' => $productId,
+                    'amount' => $this->input('amount')[$index] ?? 0,
+                    'unit_id' => $this->input('unit_id')[$index] ?? null,
+                    'price' => $this->input('price')[$index] ?? 0,
+                    'investment' => $this->input('investment')[$index] ?? 0,
+                    'profit' => $this->input('profit')[$index] ?? 0,
+                ];
+            }
+            $this->merge(['items' => $items]);
+        }
+
         $this->merge([
             'is_instant' => $this->boolean('is_instant') ? 1 : 0,
         ]);
@@ -32,21 +47,15 @@ class UpdateDailyIncomeRequest extends FormRequest
     {
         return [
             "date" => "required|date",
-            "own_product_id" => "required|array|min:1",
-            "own_product_id.*" => "required|exists:own_products,id",
-            "amount" => "required|array|min:1",
-            "amount.*" => "required|numeric|min:0.01",
-            "unit_id" => "required|array|min:1",
-            "unit_id.*" => "required|exists:units,id",
-            "price" => "required|array|min:1",
-            "price.*" => "required|numeric",
-            "investment" => "required|array|min:1",
-            "investment.*" => "required|numeric",
-            "profit" => "required|array|min:1",
-            "profit.*" => "required|numeric",
+            "items" => "required|array|min:1",
+            "items.*.product_id" => "required|exists:own_products,id",
+            "items.*.amount" => "required|numeric|min:0.01",
+            "items.*.unit_id" => "required|exists:units,id",
+            "items.*.price" => "required|numeric",
+            "items.*.investment" => "required|numeric",
+            "items.*.profit" => "required|numeric",
             "is_instant" => "nullable|boolean",
             "note" => "nullable|string",
-
         ];
     }
 }

@@ -56,7 +56,6 @@ class DailyIncomeService
 
     public function update(array $request, string $id): void
     {
-        dd($request,$id);
         DB::transaction(function () use ($request, $id) {
             $totalId = $this->dailyIncomeAction->getTotalIdFromIncome($id,$this->dailyIncome);
             $totals = $this->dailyIncomeAction->calculateTotalsAndRows($request);

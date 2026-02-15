@@ -1,6 +1,6 @@
 <?php
 
-namespace BasicDashboard\Web\DailyIncomes\Validation;
+namespace BasicDashboard\Mobile\DailyIncomes\Validation;
 
 use Illuminate\Foundation\Http\FormRequest;
 

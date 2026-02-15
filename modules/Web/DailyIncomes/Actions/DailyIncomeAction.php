@@ -29,12 +29,12 @@ class DailyIncomeAction
 
         $rows = [];
 
-        foreach ($request['own_product_id'] as $index => $productId) {
+        foreach ($request['items'] as $item) {
 
-            $amount = $this->toFloat($request['amount'][$index]);
-            $price = $this->toFloat($request['price'][$index]);
-            $investment = $this->toFloat($request['investment'][$index]);
-            $profit = $this->toFloat($request['profit'][$index]);
+            $amount = $this->toFloat($item['amount']);
+            $price = $this->toFloat($item['price']);
+            $investment = $this->toFloat($item['investment']);
+            $profit = $this->toFloat($item['profit']);
 
             $totalPrice += $price;
             $totalInvestment += $investment;
@@ -42,7 +42,7 @@ class DailyIncomeAction
 
             $rows[] = [
                 'date' => $date,
-                'own_product_id' => $productId,
+                'own_product_id' => $item['product_id'],
                 'amount' => $amount,
                 'price' => $price,
                 'investment' => $investment,

@@ -54,12 +54,16 @@ class DailyIncomeTest extends TestCase
     {
         $data = [
             'date' => now()->toDateString(),
-            'own_product_id' => [$this->ownProduct->id],
-            'amount' => [5],
-            'unit_id' => [$this->unit->id],
-            'price' => [100],
-            'investment' => [60],
-            'profit' => [40],
+            'items' => [
+                [
+                    'product_id' => $this->ownProduct->id,
+                    'amount' => 5,
+                    'unit_id' => $this->unit->id,
+                    'price' => 100,
+                    'investment' => 60,
+                    'profit' => 40,
+                ]
+            ],
             'is_instant' => 1,
             'note' => 'Test note',
         ];
@@ -83,12 +87,16 @@ class DailyIncomeTest extends TestCase
 
         $data = [
             'date' => now()->toDateString(),
-            'own_product_id' => [$this->ownProduct->id],
-            'amount' => [10],
-            'unit_id' => [$this->unit->id],
-            'price' => [200],
-            'investment' => [120],
-            'profit' => [80],
+            'items' => [
+                [
+                    'product_id' => $this->ownProduct->id,
+                    'amount' => 10,
+                    'unit_id' => $this->unit->id,
+                    'price' => 200,
+                    'investment' => 120,
+                    'profit' => 80,
+                ]
+            ],
             'is_instant' => 0,
             'note' => 'Updated note',
         ];
@@ -99,7 +107,7 @@ class DailyIncomeTest extends TestCase
 
         $response->assertRedirect(route('daily-incomes.index'));
         $this->assertDatabaseHas('daily_incomes', [
-            'voucher_no' => 'VOU-TEST', // It preserves the old voucher number if it existed, or generates a new one. In my service I generate new one if null.
+            'voucher_no' => 'VOU-TEST', 
             'amount' => 10,
             'is_instant' => false,
         ]);
@@ -177,7 +185,7 @@ class DailyIncomeTest extends TestCase
     {
         $response = $this->post(route('daily-incomes.store'), []);
 
-        $response->assertSessionHasErrors(['date', 'own_product_id', 'amount', 'unit_id', 'price', 'investment', 'profit']);
+        $response->assertSessionHasErrors(['date', 'items']);
     }
 
     public function test_it_formats_numbers_in_resource()
@@ -197,5 +205,28 @@ class DailyIncomeTest extends TestCase
         $this->assertEquals('50,000', $data['price']);
         $this->assertEquals('30,000', $data['investment']);
         $this->assertEquals('20,000', $data['profit']);
+    }
+
+    public function test_can_create_daily_income_with_legacy_parallel_arrays()
+    {
+        $data = [
+            'date' => now()->toDateString(),
+            'own_product_id' => [$this->ownProduct->id],
+            'amount' => [5],
+            'unit_id' => [$this->unit->id],
+            'price' => [100],
+            'investment' => [60],
+            'profit' => [40],
+            'is_instant' => 1,
+            'note' => 'Test legacy format',
+        ];
+
+        $response = $this->post(route('daily-incomes.store'), $data);
+
+        $response->assertRedirect(route('daily-incomes.index'));
+        $this->assertDatabaseHas('daily_incomes', [
+            'own_product_id' => $this->ownProduct->id,
+            'amount' => 5,
+        ]);
     }
 }

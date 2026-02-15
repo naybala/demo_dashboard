@@ -5,7 +5,8 @@ namespace BasicDashboard\Mobile\DailyIncomes\Controllers;
 use App\Http\Controllers\Controller;
 use BasicDashboard\Mobile\DailyIncomes\Services\DailyIncomeService;
 use BasicDashboard\Mobile\DailyIncomes\Resources\DailyIncomeResource;
-use BasicDashboard\Web\DailyIncomes\Validation\StoreDailyIncomeRequest;
+use BasicDashboard\Mobile\DailyIncomes\Validation\UpdateDailyIncomeRequest;
+use BasicDashboard\Mobile\DailyIncomes\Validation\StoreDailyIncomeRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\ResponseFactory;
@@ -60,6 +61,16 @@ class DailyIncomeController extends Controller
                 'total_profit' => number_format($dailyIncome->dailyIncomeTotal?->total_profit ??0,2,'.',''),
             ];
             return $this->responseFactory->sendSuccessResponse('Show success', $data);
+        } catch (Throwable $e) {
+            return $this->responseFactory->sendErrorResponse($e->getMessage());
+        }
+    }
+
+     public function update(UpdateDailyIncomeRequest $request, string $id): JsonResponse
+    {
+        try {
+            $this->dailyIncomeService->update($request->validated(), customDecoder($id));
+            return $this->responseFactory->sendSuccessResponse('Daily Income updated successfully');
         } catch (Throwable $e) {
             return $this->responseFactory->sendErrorResponse($e->getMessage());
         }

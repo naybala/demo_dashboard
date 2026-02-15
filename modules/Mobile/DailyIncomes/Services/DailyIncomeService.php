@@ -45,11 +45,20 @@ class DailyIncomeService
         if (!$dailyIncome->daily_income_total_id) {
             return collect([$dailyIncome]);
         }
-
         $items = $this->dailyIncome->where('daily_income_total_id', $dailyIncome->daily_income_total_id)
             ->with(['ownProduct.unit', 'dailyIncomeTotal'])
             ->get();
-
         return $items->isEmpty() ? collect([$dailyIncome]) : $items;
+    }
+
+
+    public function update(array $request, string $id): void
+    {
+        DB::transaction(function () use ($request, $id) {
+            $totalId = $this->dailyIncomeAction->getTotalIdFromIncome($id,$this->dailyIncome);
+            $totals = $this->dailyIncomeAction->calculateTotalsAndRows($request);
+            $this->dailyIncomeAction->updateTotal($totalId, $request, $totals,$this->dailyIncomeTotal);
+            $this->dailyIncomeAction->replaceDailyIncomes($totalId, $totals['rows'],$this->dailyIncome);
+        });
     }
 }
