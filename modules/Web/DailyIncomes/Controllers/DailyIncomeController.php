@@ -52,7 +52,7 @@ class DailyIncomeController extends BaseController
     public function store(StoreDailyIncomeRequest $request): RedirectResponse
     {
         try {
-            $this->dailyIncomeService->store($request->all());
+            $this->dailyIncomeService->store($request->validated());
             return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
         } catch (Throwable $e) {
             $this->LogError("DailyIncome store failed", $e);

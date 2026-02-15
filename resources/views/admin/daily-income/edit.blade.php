@@ -17,34 +17,34 @@
             <br>
             <div id="product-rows">
                 @foreach($data['items'] as $index => $item)
-                <div class="product-row grid grid-cols-7 gap-2 mb-2">
+                <div class="product-row grid grid-cols-7 gap-2 mb-2" data-index="{{ $index }}">
                     {{-- product --}}
                     <div class="product-select-wrapper">
-                        <x-form.searchable-select title="dailyIncome.name" name="own_product_id[]"
+                        <x-form.searchable-select title="dailyIncome.name" name="items[{{ $index }}][product_id]"
                             class="own-product-id" :viewData="$viewOwnProducts" :selectedValue="$item['own_product_id']" />
                     </div>
 
                     {{-- amount --}}
-                    <x-form.input-group title='dailyIncome.amount' name='amount[]'
+                    <x-form.input-group title='dailyIncome.amount' name='items[{{ $index }}][amount]'
                         class="amount comma-format" :value="$item['amount']" />
 
                     {{-- hidden unit --}}
-                    <input type="hidden" name="unit_id[]" class="unit-id-hidden" value="{{ $item['unit_id'] }}">
+                    <input type="hidden" name="items[{{ $index }}][unit_id]" class="unit-id-hidden" value="{{ $item['unit_id'] }}">
 
                     {{-- unit name --}}
-                    <x-form.input-group title='dailyIncome.unit_id' name='unit_name[]'
+                    <x-form.input-group title='dailyIncome.unit_id' name='items[{{ $index }}][unit_name]'
                         class="unit-name" :disabled="true" :value="$item['unit']" />
 
                     {{-- price --}}
-                    <x-form.input-group title='dailyIncome.price' name='price[]'
+                    <x-form.input-group title='dailyIncome.price' name='items[{{ $index }}][price]'
                         class="price comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['price']" />
 
                     {{-- investment --}}
-                    <x-form.input-group title='dailyIncome.investment' name='investment[]'
+                    <x-form.input-group title='dailyIncome.investment' name='items[{{ $index }}][investment]'
                         class="investment comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['investment']" />
 
                     {{-- profit --}}
-                    <x-form.input-group title='dailyIncome.profit' name='profit[]'
+                    <x-form.input-group title='dailyIncome.profit' name='items[{{ $index }}][profit]'
                         class="profit comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['profit']" />
                     <div class="flex items-center justify-center">
                         <button type="button" class="remove-row bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 shadow-sm" title="Remove Item">

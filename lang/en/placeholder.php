@@ -29,12 +29,12 @@ return [
     'placeholder_description_other'             => "Please enter description in English Language",
 
     //Product
-    'placeholder_amount[]'                         => "Please enter amount",
-    'placeholder_price[]'                         => "Please enter price",
-    'placeholder_investment[]'                    => "Please enter investment",
-    'placeholder_profit[]'                        => "Please enter profit",
-    'placeholder_note[]'                          => "Please enter note",
-    'placeholder_unit_id[]'                       => "Please enter unit",
+    'placeholder_items[0][amount]'                         => "Please enter amount",
+    'placeholder_items[0][price]'                         => "Please enter price",
+    'placeholder_items[0][investment]'                    => "Please enter investment",
+    'placeholder_items[0][profit]'                        => "Please enter profit",
+    'placeholder_items[0][note]'                          => "Please enter note",
+    'placeholder_items[0][unit_name]'                       => "Please enter unit",
     'placeholder_category_id'                   => "Please enter category",
 
     'placeholder_unit_name[]'                       => "Please enter unit",

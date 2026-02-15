@@ -19,8 +19,6 @@ class DailyIncomeFactory extends Factory
             'price' => $this->faker->randomFloat(2, 10, 1000),
             'investment' => $this->faker->randomFloat(2, 5, 500),
             'profit' => $this->faker->randomFloat(2, 2, 200),
-            'is_instant' => $this->faker->boolean(),
-            'note' => $this->faker->sentence(),
             'created_by' => 1,
         ];
     }

@@ -41,7 +41,6 @@ class DailyIncome extends Model
         'price',
         'investment',
         'profit',
-        'voucher_no',
         'daily_income_total_id',
         'created_by',
         'updated_by',

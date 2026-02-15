@@ -63,6 +63,18 @@ $(document).ready(function () {
   // add row
   $("#add-row").on("click", function () {
     const $newRow = $rowsContainer.find(".product-row:first").clone();
+    const newIndex = $rowsContainer.find(".product-row").length;
+
+    $newRow.attr("data-index", newIndex);
+
+    // Update input names with new index
+    $newRow.find("input, select").each(function () {
+      const name = $(this).attr("name");
+      if (name) {
+        const newName = name.replace(/items\[\d+\]/, `items[${newIndex}]`);
+        $(this).attr("name", newName);
+      }
+    });
 
     // Reset values in the new row
     $newRow.find("input").val("");

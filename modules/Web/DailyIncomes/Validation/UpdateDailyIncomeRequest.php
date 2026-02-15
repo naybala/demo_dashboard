@@ -23,21 +23,6 @@ class UpdateDailyIncomeRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        if (!$this->has('items') && $this->has('own_product_id')) {
-            $items = [];
-            foreach ($this->input('own_product_id') as $index => $productId) {
-                $items[] = [
-                    'product_id' => $productId,
-                    'amount' => str_replace(',', '', $this->input('amount')[$index] ?? 0),
-                    'unit_id' => $this->input('unit_id')[$index] ?? null,
-                    'price' => str_replace(',', '', $this->input('price')[$index] ?? 0),
-                    'investment' => str_replace(',', '', $this->input('investment')[$index] ?? 0),
-                    'profit' => str_replace(',', '', $this->input('profit')[$index] ?? 0),
-                ];
-            }
-            $this->merge(['items' => $items]);
-        }
-
         if ($this->has('items')) {
             $items = $this->input('items');
             foreach ($items as &$item) {

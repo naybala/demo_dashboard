@@ -71,18 +71,28 @@ class DailyIncomeTest extends TestCase
         $response = $this->post(route('daily-incomes.store'), $data);
 
         $response->assertRedirect(route('daily-incomes.index'));
+        $this->assertDatabaseHas('daily_income_totals', [
+            'is_instant' => true,
+            'note' => 'Test note',
+        ]);
         $this->assertDatabaseHas('daily_incomes', [
             'own_product_id' => $this->ownProduct->id,
-            'is_instant' => true,
         ]);
     }
 
     public function test_can_update_daily_income()
     {
+        $total = \BasicDashboard\Foundations\Domain\DailyIncomeTotals\DailyIncomeTotal::create([
+            'voucher_no' => 'VOU-TEST',
+            'total_price' => 100,
+            'total_investment' => 60,
+            'total_profit' => 40,
+        ]);
+
         $dailyIncome = DailyIncome::factory()->create([
             'own_product_id' => $this->ownProduct->id,
             'created_by' => $this->user->id,
-            'voucher_no' => 'VOU-TEST',
+            'daily_income_total_id' => $total->id,
         ]);
 
         $data = [
@@ -106,10 +116,9 @@ class DailyIncomeTest extends TestCase
         $response = $this->put(route('daily-incomes.update', $obfuscatedId), $data);
 
         $response->assertRedirect(route('daily-incomes.index'));
-        $this->assertDatabaseHas('daily_incomes', [
-            'voucher_no' => 'VOU-TEST', 
-            'amount' => 10,
+        $this->assertDatabaseHas('daily_income_totals', [
             'is_instant' => false,
+            'note' => 'Updated note',
         ]);
     }
 
@@ -207,26 +216,4 @@ class DailyIncomeTest extends TestCase
         $this->assertEquals('20,000', $data['profit']);
     }
 
-    public function test_can_create_daily_income_with_legacy_parallel_arrays()
-    {
-        $data = [
-            'date' => now()->toDateString(),
-            'own_product_id' => [$this->ownProduct->id],
-            'amount' => [5],
-            'unit_id' => [$this->unit->id],
-            'price' => [100],
-            'investment' => [60],
-            'profit' => [40],
-            'is_instant' => 1,
-            'note' => 'Test legacy format',
-        ];
-
-        $response = $this->post(route('daily-incomes.store'), $data);
-
-        $response->assertRedirect(route('daily-incomes.index'));
-        $this->assertDatabaseHas('daily_incomes', [
-            'own_product_id' => $this->ownProduct->id,
-            'amount' => 5,
-        ]);
-    }
 }
