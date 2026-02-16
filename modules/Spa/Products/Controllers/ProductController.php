@@ -30,6 +30,21 @@ class ProductController extends Controller
     ) {
     }
 
+    public function fetchHomeData(Request $request): JsonResponse
+    {
+        $productList = $this->productService->fetchHomeData($request->all());
+        $bannerData = ProductResource::collection($productList['bannerData'])->response()->getData(true);
+        $miniBannerData = ProductResource::collection($productList['miniBannerData'])->response()->getData(true);
+        $normalData = ProductResource::collection($productList['normalData'])->response()->getData(true);
+        $normalDataTwo = ProductResource::collection($productList['normalDataTwo'])->response()->getData(true);
+        return $this->responseFactory->sendSuccessResponse('Index Success', [
+            'banner_data' => $bannerData['data'],
+            'mini_banner_data' => $miniBannerData['data'],
+            'normal_data' => $normalData['data'],
+            'normal_data_two' => $normalDataTwo['data'],
+        ]);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $productList = $this->productService->paginate($request->all());

@@ -14,4 +14,5 @@ Route::prefix('v1/mobile')->middleware(['accept.json'])->group(function (): void
 
 Route::prefix('v1/spa')->middleware(['accept.json'])->group(function (): void {
     require __DIR__ . "/Spa/Category/categoryApi.php";
+    require __DIR__ . "/Spa/Product/productApi.php";
 });

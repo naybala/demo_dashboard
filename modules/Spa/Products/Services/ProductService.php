@@ -23,6 +23,20 @@ class ProductService
     {
     }
 
+    public function fetchHomeData(array $request)
+    {
+        $bannerData = $this->product->getBannerData(2);
+        $miniBannerData = $this->product->getMiniBannerData(4);
+        $NormalData = $this->product->limit(10)->get();
+        $NormalDataTwo = $this->product->limit(10)->get();
+        return [
+            'bannerData' => $bannerData,
+            'miniBannerData' => $miniBannerData,
+            'normalData' => $NormalData,
+            'normalDataTwo' => $NormalDataTwo,
+        ];
+    }
+
     public function paginate(array $request)
     {
         return $this->product

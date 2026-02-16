@@ -78,6 +78,16 @@ class Product extends Model
             ->orderBy('id', 'desc');
     }
 
+    public function scopeGetBannerData($query, ?int $limit = 2)
+    {
+        return $query->where('is_banner', true)->limit($limit)->orderBy('id', 'desc')->get();
+    }
+
+    public function scopeGetMiniBannerData($query, ?int $limit = 4)
+    {
+        return $query->where('is_mini_banner', true)->limit($limit)->orderBy('id', 'desc')->get();
+    }
+
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_product');

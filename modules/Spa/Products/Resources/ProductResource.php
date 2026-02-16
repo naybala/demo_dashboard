@@ -16,12 +16,26 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
 {
-    public function toArray($request):array
+     public function toArray($request): array
     {
-         return [
-            "id" =>customEncoder($this->id),
-            "name"=>$this->name,
-            "description"=>$this->description,
+        $photos = $this->photos ?? [];
+        $photoUrls = array_map(fn($photo) => asset($photo), $photos);
+
+        return [
+            "id" => customEncoder($this->id),
+            "name" => $this->name,
+            "name_other" => $this->name_other,
+            "price" => number_format($this->price, 0, '.', ','),
+
+            "description" => $this->description,
+            "description_other" => $this->description_other,
+            "photos" => $photoUrls,
+            "photo_paths" => $photos,
+            "category_ids" => $this->categories->pluck('id')->toArray(),
+            "category_names" => $this->categories->pluck('name')->toArray(),
+            "primary_photo" => !empty($photoUrls) ? $photoUrls[0] : null,
+            "is_banner"=>$this->is_banner,
+            "is_mini_banner"=>$this->is_mini_banner,
         ];
     }
 }
