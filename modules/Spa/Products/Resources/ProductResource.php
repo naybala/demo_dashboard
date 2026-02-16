@@ -16,7 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
 {
-     public function toArray($request): array
+    public function toArray($request): array
     {
         $photos = $this->photos ?? [];
         $photoUrls = array_map(fn($photo) => asset($photo), $photos);
@@ -27,8 +27,8 @@ class ProductResource extends JsonResource
             "name_other" => $this->name_other,
             "price" => number_format($this->price, 0, '.', ','),
 
-            "description" => $this->description,
-            "description_other" => $this->description_other,
+            "description" => $this->resolveHtmlImageUrls($this->description),
+            "description_other" => $this->resolveHtmlImageUrls($this->description_other),
             "photos" => $photoUrls,
             "photo_paths" => $photos,
             "category_ids" => $this->categories->pluck('id')->toArray(),
@@ -37,5 +37,21 @@ class ProductResource extends JsonResource
             "is_banner"=>$this->is_banner,
             "is_mini_banner"=>$this->is_mini_banner,
         ];
+    }
+
+    /**
+     * Resolve relative image URLs in HTML content to absolute URLs.
+     *
+     * @param string|null $content
+     * @return string|null
+     */
+    private function resolveHtmlImageUrls($content)
+    {
+        if (empty($content)) {
+            return $content;
+        }
+
+        $baseUrl = url('/');
+        return str_replace('src="/storage/', 'src="' . $baseUrl . '/storage/', $content);
     }
 }
