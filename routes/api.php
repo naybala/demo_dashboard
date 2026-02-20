@@ -8,11 +8,14 @@ Route::prefix('v1/mobile')->middleware(['accept.json','auth:sanctum'])->group(fu
     require __DIR__ . "/Mobile/DailyIncome/dailyIncomeApi.php";
 });
 
+//Mobile No-Auth Route
 Route::prefix('v1/mobile')->middleware(['accept.json'])->group(function (): void {
     require __DIR__ . "/Mobile/Auth/authApi.php";
 });
 
+//Spa No-Auth Route
 Route::prefix('v1/spa')->middleware(['accept.json'])->group(function (): void {
     require __DIR__ . "/Spa/Category/categoryApi.php";
     require __DIR__ . "/Spa/Product/productApi.php";
+    require __DIR__ . "/Spa/Auth/authApi.php";
 });
