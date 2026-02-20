@@ -17,9 +17,9 @@
             <br>
             <div id="product-rows">
                 @foreach($data['items'] as $index => $item)
-                <div class="product-row grid grid-cols-7 gap-2 mb-2" data-index="{{ $index }}">
+                <div class="product-row grid grid-cols-2 md:grid-cols-5 gap-2 mb-2 bg-gray-200 p-2 rounded-lg relative" data-index="{{ $index }}">
                     {{-- product --}}
-                    <div class="product-select-wrapper">
+                    <div class="product-select-wrapper col-span-2">
                         <x-form.searchable-select title="dailyIncome.name" name="items[{{ $index }}][product_id]"
                             class="own-product-id" :viewData="$viewOwnProducts" :selectedValue="$item['own_product_id']" />
                     </div>
@@ -38,15 +38,16 @@
                     {{-- price --}}
                     <x-form.input-group title='dailyIncome.price' name='items[{{ $index }}][price]'
                         class="price comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['price']" />
+                    <div class="hidden">
+                        {{-- investment --}}
+                        <x-form.input-group title='dailyIncome.investment' name='items[{{ $index }}][investment]'
+                            class="investment comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['investment']" />
 
-                    {{-- investment --}}
-                    <x-form.input-group title='dailyIncome.investment' name='items[{{ $index }}][investment]'
-                        class="investment comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['investment']" />
-
-                    {{-- profit --}}
-                    <x-form.input-group title='dailyIncome.profit' name='items[{{ $index }}][profit]'
+                        {{-- profit --}}
+                        <x-form.input-group title='dailyIncome.profit' name='items[{{ $index }}][profit]'
                         class="profit comma-format" :customAttributes="['readonly'=>'readonly']" :value="$item['profit']" />
-                    <div class="flex items-center justify-center">
+                    </div>
+                    <div class="flex items-center justify-center absolute top-0 right-0">
                         <button type="button" class="remove-row bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 shadow-sm" title="Remove Item">
                             <i class="fas fa-trash-alt text-sm"></i>
                         </button>

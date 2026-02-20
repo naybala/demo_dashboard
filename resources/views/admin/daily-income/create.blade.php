@@ -16,9 +16,9 @@
             </button>
             <br>
            <div id="product-rows">
-                <div class="product-row grid grid-cols-2 md:grid-cols-5 gap-2 mb-2 bg-gray-200 p-2 rounded-lg" data-index="0">
+                <div class="product-row grid grid-cols-2 md:grid-cols-5 gap-2 mb-2 bg-gray-200 p-2 rounded-lg relative" data-index="0">
                     {{-- product --}}
-                    <div class="product-select-wrapper">
+                    <div class="product-select-wrapper col-span-2">
                         <x-form.searchable-select title="dailyIncome.name" name="items[0][product_id]"
                             class="own-product-id" :viewData="$viewOwnProducts" />
                     </div>
@@ -47,7 +47,7 @@
                         <x-form.input-group title='dailyIncome.profit' name='items[0][profit]'
                             class="profit comma-format" :customAttributes="['readonly'=>'readonly']" />
                     </div>
-                    <div class="flex items-center justify-center">
+                    <div class="flex items-center justify-center absolute top-0 right-0">
                         <button type="button" class="remove-row bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 shadow-sm" title="Remove Item">
                             <i class="fas fa-trash-alt text-sm"></i>
                         </button>
