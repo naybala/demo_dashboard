@@ -21,7 +21,7 @@ class CategoryResource extends JsonResource
          return [
             "id" =>customEncoder($this->id),
             "name"=>$this->name,
-            "description"=>$this->description,
+            "name_other"=>$this->name_other,
         ];
     }
 }

@@ -46,4 +46,11 @@ class CategoryService extends Controller
         $data = $data->response()->getData(true)['data'];
         return $this->responseFactory->sendSuccessResponse("Show success", $data);
     }
+
+    public function fetchAll(): JsonResponse
+    {
+        $data = $this->category->get(['id','name','name_other']);
+        $data = CategoryResource::collection($data)->response()->getData(true)['data'];
+        return $this->responseFactory->sendSuccessResponse("Fetch All success", $data);
+    }
 }

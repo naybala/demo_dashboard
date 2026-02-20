@@ -38,4 +38,9 @@ class CategoryController extends Controller
         return $this->categoryService->show($id);
     }
 
+    public function fetchAll(): JsonResponse
+    {
+        return $this->categoryService->fetchAll();
+    }
+
 }

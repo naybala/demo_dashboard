@@ -70,6 +70,20 @@ class Product extends Model
     }
 
     /**
+     * Scope to filter by category ID
+     */
+    public function scopeFilterByCategory($query, ?int $categoryId)
+    {
+        if (empty($categoryId)) {
+            return $query;
+        }
+
+        return $query->whereHas('categories', function ($query) use ($categoryId) {
+            $query->where('categories.id', $categoryId);
+        });
+    }
+
+    /**
      * Scope to order by latest activity
      */
     public function scopeOrderByLatest($query)

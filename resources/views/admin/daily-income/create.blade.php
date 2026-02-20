@@ -16,7 +16,7 @@
             </button>
             <br>
            <div id="product-rows">
-                <div class="product-row grid grid-cols-1 md:grid-cols-7 gap-2 mb-2" data-index="0">
+                <div class="product-row grid grid-cols-2 md:grid-cols-5 gap-2 mb-2 bg-gray-200 p-2 rounded-lg" data-index="0">
                     {{-- product --}}
                     <div class="product-select-wrapper">
                         <x-form.searchable-select title="dailyIncome.name" name="items[0][product_id]"
@@ -33,18 +33,20 @@
                     {{-- unit name --}}
                     <x-form.input-group title='dailyIncome.unit_id' name='items[0][unit_name]'
                         class="unit-name" :disabled="true" />
-
+                        
                     {{-- price --}}
                     <x-form.input-group title='dailyIncome.price' name='items[0][price]'
                         class="price comma-format" :customAttributes="['readonly'=>'readonly']" />
 
-                    {{-- investment --}}
-                    <x-form.input-group title='dailyIncome.investment' name='items[0][investment]'
-                        class="investment comma-format" :customAttributes="['readonly'=>'readonly']" />
+                    <div class="hidden">
+                        {{-- investment --}}
+                        <x-form.input-group title='dailyIncome.investment' name='items[0][investment]'
+                            class="investment comma-format" :customAttributes="['readonly'=>'readonly']" />
 
-                    {{-- profit --}}
-                    <x-form.input-group title='dailyIncome.profit' name='items[0][profit]'
-                        class="profit comma-format" :customAttributes="['readonly'=>'readonly']" />
+                        {{-- profit --}}
+                        <x-form.input-group title='dailyIncome.profit' name='items[0][profit]'
+                            class="profit comma-format" :customAttributes="['readonly'=>'readonly']" />
+                    </div>
                     <div class="flex items-center justify-center">
                         <button type="button" class="remove-row bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 shadow-sm" title="Remove Item">
                             <i class="fas fa-trash-alt text-sm"></i>

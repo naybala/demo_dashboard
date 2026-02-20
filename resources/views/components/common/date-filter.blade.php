@@ -1,6 +1,6 @@
 @props(['fromDate' => null, 'toDate' => null, 'resetUrl' => '#'])
 
-<div class="flex items-end gap-3">
+<div class="flex items-end flex-wrap gap-3">
     <div class="flex flex-col">
         <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">From Date</label>
         <input type="date" name="from_date" value="{{ $fromDate ?? request()->from_date }}" 

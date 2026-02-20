@@ -25,7 +25,7 @@ class ProductService
 
     public function fetchHomeData(array $request)
     {
-        $bannerData = $this->product->getBannerData(2);
+        $bannerData = $this->product->getBannerData(4);
         $miniBannerData = $this->product->getMiniBannerData(4);
         $NormalData = $this->product->limit(10)->get();
         $NormalDataTwo = $this->product->limit(10)->get();
@@ -39,10 +39,13 @@ class ProductService
 
     public function paginate(array $request)
     {
+        $keyword = $request['search'] ?? ($request['keyword'] ?? null);
+
         return $this->product
-            ->filterByKeyword($request['keyword'] ?? null)
+            ->filterByCategory($request['category_id'] ?? null)
+            ->filterByKeyword($keyword)
             ->orderByLatest()
-            ->paginate($request['paginate'] ?? config('numbers.paginate'));
+            ->paginate($request['per_page'] ?? config('numbers.paginate'));
     }
 
     public function findOrFail(string $id): Product
