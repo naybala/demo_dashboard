@@ -38,11 +38,13 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title={__("sidebar.category", "Categories")}>
-    <PrimaryButton slot="actions" on:click={openCreateModal}>
-      {__("messages.create", "Add Category")}
-    </PrimaryButton>
-  </PageHeader>
+  <svelte:fragment slot="header">
+    <h2
+      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+    >
+      {__("sidebar.category", "Categories")}
+    </h2>
+  </svelte:fragment>
 
   <div class="mb-6 flex justify-between items-center">
     <div class="flex gap-2 w-1/2">
@@ -57,6 +59,9 @@
         {__("messages.search", "Search")}
       </SecondaryButton>
     </div>
+    <PrimaryButton on:click={openCreateModal}>
+      {__("messages.create", "Add Category")}
+    </PrimaryButton>
   </div>
 
   <div class="mt-6">
