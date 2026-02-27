@@ -7,6 +7,8 @@
   import TextInput from "@/Components/TextInput.svelte";
   import { router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
+  import Pagination from "@/Components/Pagination.svelte";
+  import { __ } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
@@ -18,13 +20,13 @@
   let incomeToDelete = null;
 
   const headers = [
-    { key: "date", label: "Date" },
-    { key: "voucher_no", label: "Voucher No" },
-    { key: "own_product", label: "Product" },
-    { key: "amount", label: "Amount" },
-    { key: "price", label: "Price" },
-    { key: "profit", label: "Profit" },
-    { key: "actions", label: "Actions" },
+    { key: "date", label: __("dailyIncome.date", "Date") },
+    { key: "voucher_no", label: __("dailyIncome.voucher_no", "Voucher No") },
+    { key: "own_product", label: __("sidebar.own_product", "Product") },
+    { key: "amount", label: __("dailyIncome.amount", "Amount") },
+    { key: "price", label: __("dailyIncome.price", "Price") },
+    { key: "profit", label: __("dailyIncome.profit", "Profit") },
+    { key: "actions", label: __("table.action", "Actions") },
   ];
 
   const handleFilter = () => {
@@ -55,13 +57,13 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title="Daily Incomes">
-    <div slot="actions">
-      <Link href="/daily-incomes/create">
-        <PrimaryButton>Create Daily Income</PrimaryButton>
-      </Link>
-    </div>
-  </PageHeader>
+  <svelte:fragment slot="header">
+    <h2
+      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+    >
+      {__("sidebar.daily_income", "Daily Incomes")}
+    </h2>
+  </svelte:fragment>
 
   <div
     class="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
@@ -71,12 +73,15 @@
         <label
           for="search"
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >Search</label
+          >{__("messages.search", "Search")}</label
         >
         <TextInput
           id="search"
           type="text"
-          placeholder="Voucher or Product..."
+          placeholder={__(
+            "placeholder.voucher_or_product",
+            "Voucher or Product...",
+          )}
           bind:value={search}
           class="w-full"
         />
@@ -85,7 +90,7 @@
         <label
           for="from_date"
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >From Date</label
+          >{__("messages.from_date", "From Date")}</label
         >
         <input
           type="date"
@@ -98,7 +103,7 @@
         <label
           for="to_date"
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >To Date</label
+          >{__("messages.to_date", "To Date")}</label
         >
         <input
           type="date"
@@ -108,16 +113,23 @@
         />
       </div>
       <div class="flex gap-2">
-        <PrimaryButton on:click={handleFilter}>Filter</PrimaryButton>
+        <PrimaryButton on:click={handleFilter}
+          >{__("messages.filter", "Filter")}</PrimaryButton
+        >
         <SecondaryButton
           on:click={() => {
             search = "";
             fromDate = "";
             toDate = "";
             handleFilter();
-          }}>Reset</SecondaryButton
+          }}>{__("messages.reset", "Reset")}</SecondaryButton
         >
       </div>
+      <Link href="/daily-incomes/create" class="md:ml-auto">
+        <PrimaryButton
+          >{__("messages.create", "Create Daily Income")}</PrimaryButton
+        >
+      </Link>
     </div>
   </div>
 
@@ -158,16 +170,16 @@
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex gap-2">
             <Link href={`/daily-incomes/${income.id}`}>
-              <SecondaryButton>View</SecondaryButton>
+              <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
             </Link>
             <Link href={`/daily-incomes/${income.id}/edit`}>
-              <SecondaryButton>Edit</SecondaryButton>
+              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
             </Link>
             <button
               on:click={() => confirmDelete(income)}
               class="text-red-600 hover:text-red-900 font-medium"
             >
-              Delete
+              {__("messages.delete", "Delete")}
             </button>
           </div>
         </td>
@@ -175,32 +187,16 @@
     {/each}
   </BaseTable>
 
-  {#if meta && meta.links}
-    <div class="mt-6 flex items-center justify-between">
-      <div class="text-sm text-gray-700 dark:text-gray-400">
-        Showing {meta.from} to {meta.to} of {meta.total} results
-      </div>
-      <div class="flex gap-1">
-        {#each meta.links as link}
-          <button
-            class="px-3 py-1 rounded border {link.active
-              ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'}"
-            on:click={() => link.url && router.visit(link.url)}
-            disabled={!link.url}
-          >
-            {@html link.label}
-          </button>
-        {/each}
-      </div>
-    </div>
-  {/if}
+  <Pagination {meta} />
 
   <DeleteConfirmationModal
     show={showDeleteModal}
-    title="Delete Daily Income"
-    message={`Are you sure you want to delete this record? If it belongs to a voucher, the entire voucher will be deleted.`}
-    on:confirm={deleteIncome}
-    on:cancel={() => (showDeleteModal = false)}
+    title={__("dailyIncome.delete_title", "Delete Daily Income")}
+    message={__(
+      "dailyIncome.delete_message",
+      "Are you sure you want to delete this record? If it belongs to a voucher, the entire voucher will be deleted.",
+    )}
+    onConfirm={deleteIncome}
+    onClose={() => (showDeleteModal = false)}
   />
 </AdminLayout>

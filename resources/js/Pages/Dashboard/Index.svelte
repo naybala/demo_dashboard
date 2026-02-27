@@ -3,6 +3,7 @@
   import PageHeader from "@/Components/PageHeader.svelte";
   import Chart from "@/Components/Chart.svelte";
   import { router } from "@inertiajs/svelte";
+  import { __ } from "@/helpers.js";
 
   export let stats = {};
   export let filters = {};
@@ -32,7 +33,13 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title="Dashboard" />
+  <svelte:fragment slot="header">
+    <h2
+      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+    >
+      {__("sidebar.dashboard", "Dashboard")}
+    </h2>
+  </svelte:fragment>
 
   <main class="space-y-6">
     <!-- Date Filter -->
@@ -47,7 +54,7 @@
           <label
             for="start_date"
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >Start Date</label
+            >{__("messages.start_date", "Start Date")}</label
           >
           <input
             type="date"
@@ -60,7 +67,7 @@
           <label
             for="end_date"
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >End Date</label
+            >{__("messages.end_date", "End Date")}</label
           >
           <input
             type="date"
@@ -73,13 +80,13 @@
           <button
             type="submit"
             class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-            >Filter</button
+            >{__("messages.filter", "Filter")}</button
           >
           <button
             type="button"
             on:click={handleReset}
             class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
-            >Reset</button
+            >{__("messages.reset", "Reset")}</button
           >
         </div>
       </form>
@@ -91,7 +98,7 @@
         class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
       >
         <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          Own Product Types
+          {__("dashboard.total_own_product", "Own Product Types")}
         </p>
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
           {stats.total_products?.toLocaleString() || 0}
@@ -101,7 +108,7 @@
         class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
       >
         <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          Total Price
+          {__("dashboard.total_price", "Total Price")}
         </p>
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
           {stats.total_price?.toLocaleString() || 0}
@@ -111,7 +118,7 @@
         class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
       >
         <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          Total Investment
+          {__("dashboard.total_investment", "Total Investment")}
         </p>
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
           {stats.total_investment?.toLocaleString() || 0}
@@ -121,7 +128,7 @@
         class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
       >
         <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          Total Profit
+          {__("dashboard.total_profit", "Total Profit")}
         </p>
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
           {stats.total_profit?.toLocaleString() || 0}
@@ -132,14 +139,17 @@
     <!-- Charts -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Chart
-        title="Own Product By Category"
+        title={__(
+          "dashboard.own_product_by_category",
+          "Own Product By Category",
+        )}
         type="donut"
         series={stats.product_distribution?.series || []}
         labels={stats.product_distribution?.labels || []}
         height={320}
       />
       <Chart
-        title="Sales By Category"
+        title={__("dashboard.sales_by_category", "Sales By Category")}
         type="pie"
         series={stats.sales_distribution?.series || []}
         labels={stats.sales_distribution?.labels || []}

@@ -7,4 +7,6 @@ return [
     'new_data' => "ဒေတာအသစ်",
     'created_by' => "ဖန်တီးသူ",
     'created_at' => "ဖန်တီးချိန်",
+    'user' => "အသုံးပြုသူ",
+    'ip_address' => "IP လိပ်စာ",
 ];

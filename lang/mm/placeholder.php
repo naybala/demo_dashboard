@@ -27,6 +27,5 @@ return [
 
     //Product
     'placeholder_price'                         => "Please enter price in MM",
-
-
+    'voucher_or_product' => "ဘောက်ချာ သို့မဟုတ် ထုတ်ကုန်...",
 ];

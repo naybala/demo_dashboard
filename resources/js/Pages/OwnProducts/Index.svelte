@@ -7,6 +7,8 @@
   import TextInput from "@/Components/TextInput.svelte";
   import { router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
+  import Pagination from "@/Components/Pagination.svelte";
+  import { __ } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
@@ -16,13 +18,13 @@
   let productToDelete = null;
 
   const headers = [
-    { key: "image", label: "Image" },
-    { key: "name", label: "Name" },
-    { key: "category", label: "Category" },
-    { key: "unit", label: "Unit" },
-    { key: "price", label: "Price" },
-    { key: "profit", label: "Profit" },
-    { key: "actions", label: "Actions" },
+    { key: "image", label: __("ownProduct.image", "Image") },
+    { key: "name", label: __("ownProduct.name", "Name") },
+    { key: "category", label: __("ownProduct.category", "Category") },
+    { key: "unit", label: __("ownProduct.unit", "Unit") },
+    { key: "price", label: __("ownProduct.price", "Price") },
+    { key: "profit", label: __("ownProduct.profit", "Profit") },
+    { key: "actions", label: __("table.action", "Actions") },
   ];
 
   const handleSearch = () => {
@@ -50,24 +52,32 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title="Own Products">
-    <div slot="actions">
-      <Link href="/own-products/create">
-        <PrimaryButton>Create Own Product</PrimaryButton>
-      </Link>
-    </div>
-  </PageHeader>
+  <svelte:fragment slot="header">
+    <h2
+      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+    >
+      {__("sidebar.own_product", "Own Products")}
+    </h2>
+  </svelte:fragment>
 
   <div class="mb-6 flex justify-between items-center">
-    <div class="w-1/3">
+    <div class="flex gap-2 w-1/2">
       <TextInput
         type="text"
-        placeholder="Search products..."
+        placeholder={__("messages.search_item", "Search products...")}
         bind:value={search}
-        on:input={handleSearch}
+        on:keydown={(e) => e.key === "Enter" && handleSearch()}
         class="w-full"
       />
+      <SecondaryButton on:click={handleSearch}>
+        {__("messages.search", "Search")}
+      </SecondaryButton>
     </div>
+    <Link href="/own-products/create">
+      <PrimaryButton
+        >{__("messages.create", "Create Own Product")}</PrimaryButton
+      >
+    </Link>
   </div>
 
   <BaseTable {headers}>
@@ -128,13 +138,13 @@
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex gap-2">
             <Link href={`/own-products/${product.id}/edit`}>
-              <SecondaryButton>Edit</SecondaryButton>
+              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
             </Link>
             <button
               on:click={() => confirmDelete(product)}
               class="text-red-600 hover:text-red-900 font-medium"
             >
-              Delete
+              {__("messages.delete", "Delete")}
             </button>
           </div>
         </td>
@@ -142,32 +152,16 @@
     {/each}
   </BaseTable>
 
-  {#if meta && meta.links}
-    <div class="mt-6 flex items-center justify-between">
-      <div class="text-sm text-gray-700 dark:text-gray-400">
-        Showing {meta.from} to {meta.to} of {meta.total} results
-      </div>
-      <div class="flex gap-1">
-        {#each meta.links as link}
-          <button
-            class="px-3 py-1 rounded border {link.active
-              ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'}"
-            on:click={() => link.url && router.visit(link.url)}
-            disabled={!link.url}
-          >
-            {@html link.label}
-          </button>
-        {/each}
-      </div>
-    </div>
-  {/if}
+  <Pagination {meta} />
 
   <DeleteConfirmationModal
     show={showDeleteModal}
-    title="Delete Own Product"
-    message={`Are you sure you want to delete ${productToDelete?.name}? This action cannot be undone.`}
-    on:confirm={deleteProduct}
-    on:cancel={() => (showDeleteModal = false)}
+    title={__("ownProduct.delete_title", "Delete Own Product")}
+    message={__(
+      "ownProduct.delete_message",
+      `Are you sure you want to delete ${productToDelete?.name}? This action cannot be undone.`,
+    )}
+    onConfirm={deleteProduct}
+    onClose={() => (showDeleteModal = false)}
   />
 </AdminLayout>

@@ -32,6 +32,14 @@ return [
     'are_you_sure' => "Are you sure?",
     'login_again' => "Want to logout will you be login again!",
     'yes_logout' => "Yes,Logout!",
+    'active' => "Active",
+    'inactive' => "Inactive",
+    'filter' => "Filter",
+    'reset' => "Reset",
+    'start_date' => "Start Date",
+    'end_date' => "End Date",
+    'from_date' => "From Date",
+    'to_date' => "To Date",
    
     
     

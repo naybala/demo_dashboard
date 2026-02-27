@@ -5,6 +5,8 @@
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import TextInput from "@/Components/TextInput.svelte";
   import { router, Link } from "@inertiajs/svelte";
+  import Pagination from "@/Components/Pagination.svelte";
+  import { __ } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
@@ -12,12 +14,12 @@
   let search = "";
 
   const headers = [
-    { key: "user", label: "User" },
-    { key: "event", label: "Event" },
-    { key: "auditable_type", label: "Model" },
-    { key: "ip_address", label: "IP Address" },
-    { key: "created_at", label: "Date" },
-    { key: "actions", label: "Actions" },
+    { key: "user", label: __("audit.user", "User") },
+    { key: "event", label: __("audit.event", "Event") },
+    { key: "auditable_type", label: __("audit.model", "Model") },
+    { key: "ip_address", label: __("audit.ip_address", "IP Address") },
+    { key: "created_at", label: __("audit.created_at", "Date") },
+    { key: "actions", label: __("table.action", "Actions") },
   ];
 
   const handleSearch = () => {
@@ -43,13 +45,19 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title="Activity Logs" />
+  <svelte:fragment slot="header">
+    <h2
+      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+    >
+      {__("sidebar.audit", "Activity Logs")}
+    </h2>
+  </svelte:fragment>
 
   <div class="mb-6 flex justify-between items-center">
     <div class="w-1/3">
       <TextInput
         type="text"
-        placeholder="Search logs..."
+        placeholder={__("messages.search_item", "Search logs...")}
         bind:value={search}
         on:input={handleSearch}
         class="w-full"
@@ -89,31 +97,14 @@
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <Link href={`/audits/${audit.id}`}>
-            <SecondaryButton>View Details</SecondaryButton>
+            <SecondaryButton
+              >{__("messages.view", "View Details")}</SecondaryButton
+            >
           </Link>
         </td>
       </tr>
     {/each}
   </BaseTable>
 
-  {#if meta && meta.links}
-    <div class="mt-6 flex items-center justify-between">
-      <div class="text-sm text-gray-700 dark:text-gray-400">
-        Showing {meta.from} to {meta.to} of {meta.total} results
-      </div>
-      <div class="flex gap-1">
-        {#each meta.links as link}
-          <button
-            class="px-3 py-1 rounded border {link.active
-              ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'}"
-            on:click={() => link.url && router.visit(link.url)}
-            disabled={!link.url}
-          >
-            {@html link.label}
-          </button>
-        {/each}
-      </div>
-    </div>
-  {/if}
+  <Pagination {meta} />
 </AdminLayout>

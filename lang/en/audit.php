@@ -7,4 +7,6 @@ return [
     'new_data' => "New Data",
     'created_by' => "Created By",
     'created_at' => "Created At",
+    'user' => "User",
+    'ip_address' => "IP Address",
 ];

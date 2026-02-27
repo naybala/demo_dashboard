@@ -7,6 +7,8 @@
   import TextInput from "@/Components/TextInput.svelte";
   import { router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
+  import Pagination from "@/Components/Pagination.svelte";
+  import { __ } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
@@ -16,8 +18,8 @@
   let unitToDelete = null;
 
   const headers = [
-    { key: "name", label: "Unit Name" },
-    { key: "actions", label: "Actions" },
+    { key: "name", label: __("unit.name", "Unit Name") },
+    { key: "actions", label: __("table.action", "Actions") },
   ];
 
   const handleSearch = () => {
@@ -45,24 +47,30 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title="Units">
-    <div slot="actions">
-      <Link href="/units/create">
-        <PrimaryButton>Create Unit</PrimaryButton>
-      </Link>
-    </div>
-  </PageHeader>
+  <svelte:fragment slot="header">
+    <h2
+      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+    >
+      {__("sidebar.unit", "Units")}
+    </h2>
+  </svelte:fragment>
 
   <div class="mb-6 flex justify-between items-center">
-    <div class="w-1/3">
+    <div class="flex gap-2 w-1/2">
       <TextInput
         type="text"
-        placeholder="Search units..."
+        placeholder={__("messages.search_item", "Search units...")}
         bind:value={search}
-        on:input={handleSearch}
+        on:keydown={(e) => e.key === "Enter" && handleSearch()}
         class="w-full"
       />
+      <SecondaryButton on:click={handleSearch}>
+        {__("messages.search", "Search")}
+      </SecondaryButton>
     </div>
+    <Link href="/units/create">
+      <PrimaryButton>{__("messages.create", "Create Unit")}</PrimaryButton>
+    </Link>
   </div>
 
   <BaseTable {headers}>
@@ -76,13 +84,13 @@
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex gap-2">
             <Link href={`/units/${unit.id}/edit`}>
-              <SecondaryButton>Edit</SecondaryButton>
+              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
             </Link>
             <button
               on:click={() => confirmDelete(unit)}
               class="text-red-600 hover:text-red-900 font-medium"
             >
-              Delete
+              {__("messages.delete", "Delete")}
             </button>
           </div>
         </td>
@@ -90,32 +98,16 @@
     {/each}
   </BaseTable>
 
-  {#if meta && meta.links}
-    <div class="mt-6 flex items-center justify-between">
-      <div class="text-sm text-gray-700 dark:text-gray-400">
-        Showing {meta.from} to {meta.to} of {meta.total} results
-      </div>
-      <div class="flex gap-1">
-        {#each meta.links as link}
-          <button
-            class="px-3 py-1 rounded border {link.active
-              ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'}"
-            on:click={() => link.url && router.visit(link.url)}
-            disabled={!link.url}
-          >
-            {@html link.label}
-          </button>
-        {/each}
-      </div>
-    </div>
-  {/if}
+  <Pagination {meta} />
 
   <DeleteConfirmationModal
     show={showDeleteModal}
-    title="Delete Unit"
-    message={`Are you sure you want to delete ${unitToDelete?.name}? This action cannot be undone.`}
-    on:confirm={deleteUnit}
-    on:cancel={() => (showDeleteModal = false)}
+    title={__("unit.delete_title", "Delete Unit")}
+    message={__(
+      "unit.delete_message",
+      `Are you sure you want to delete ${unitToDelete?.name}? This action cannot be undone.`,
+    )}
+    onConfirm={deleteUnit}
+    onClose={() => (showDeleteModal = false)}
   />
 </AdminLayout>
