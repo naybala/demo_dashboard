@@ -36,7 +36,6 @@
         id="name"
         class="mt-2 block w-3/4"
         bind:value={$form.name}
-        required
         autofocus
       />
       <InputError message={$form.errors.name} class="mt-2" />

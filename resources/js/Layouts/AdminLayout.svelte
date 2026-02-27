@@ -359,7 +359,7 @@
 
     <!-- Page Content -->
     <main
-      class="flex-1 overflow-y-auto p-1 md:p-2 custom-scrollbar bg-gray-50 dark:bg-gray-900/50"
+      class="flex-1 overflow-y-auto p-1 md:p-4 shadow-inner custom-scrollbar bg-gray-50 dark:bg-gray-900/50"
     >
       <div class="mx-auto w-full">
         <slot />

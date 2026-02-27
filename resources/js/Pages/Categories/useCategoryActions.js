@@ -1,11 +1,51 @@
 import { router } from "@inertiajs/svelte";
+import { writable, get } from "svelte/store";
 
 export function useCategoryActions() {
-  const deleteCategory = (id) => {
-    if (confirm("Are you sure you want to delete this category?")) {
-      router.delete(`/categories/${id}`);
+  const showModal = writable(false);
+  const showDeleteModal = writable(false);
+  const editingCategory = writable(null);
+  const deletingCategory = writable(null);
+
+  const openCreateModal = () => {
+    editingCategory.set(null);
+    showModal.set(true);
+  };
+
+  const openEditModal = (category) => {
+    editingCategory.set(category);
+    showModal.set(true);
+  };
+
+  const openDeleteModal = (category) => {
+    deletingCategory.set(category);
+    showDeleteModal.set(true);
+  };
+
+  const closeDeleteModal = () => {
+    showDeleteModal.set(false);
+  };
+
+  const confirmDelete = () => {
+    const category = get(deletingCategory);
+    if (category) {
+      router.delete(`/categories/${category.id}`, {
+        onSuccess: () => {
+          closeDeleteModal();
+        },
+      });
     }
   };
 
-  return { deleteCategory };
+  return {
+    showModal,
+    showDeleteModal,
+    editingCategory,
+    deletingCategory,
+    openCreateModal,
+    openEditModal,
+    openDeleteModal,
+    closeDeleteModal,
+    confirmDelete,
+  };
 }

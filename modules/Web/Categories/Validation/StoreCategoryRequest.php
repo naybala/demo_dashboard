@@ -43,8 +43,8 @@ class StoreCategoryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            "name.required" => "Name is required",
-            "name_other.required" => "Name Other is required",
+            "name.required" => __('category.name_validation'),
+            "name_other.required" => __('category.name_other_validation'),
         ];
     }
 }

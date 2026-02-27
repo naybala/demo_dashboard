@@ -5,6 +5,8 @@
   import CategoryTable from "./CategoryTable.svelte";
   import CategoryModal from "./CategoryModal.svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
+  import Pagination from "@/Components/Pagination.svelte";
+  import { useCategoryActions } from "./useCategoryActions";
   import { router } from "@inertiajs/svelte";
   import TextInput from "@/Components/TextInput.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
@@ -13,40 +15,18 @@
   export let data = []; // Categories data
   export let meta = {};
 
-  let showModal = false;
-  let showDeleteModal = false;
-  let editingCategory = null;
-  let deletingCategory = null;
+  const {
+    showModal,
+    showDeleteModal,
+    editingCategory,
+    openCreateModal,
+    openEditModal,
+    openDeleteModal,
+    closeDeleteModal,
+    confirmDelete,
+  } = useCategoryActions();
+
   let search = "";
-
-  const openCreateModal = () => {
-    editingCategory = null;
-    showModal = true;
-  };
-
-  const openEditModal = (category) => {
-    editingCategory = category;
-    showModal = true;
-  };
-
-  const openDeleteModal = (category) => {
-    deletingCategory = category;
-    showDeleteModal = true;
-  };
-
-  const closeDeleteModal = () => {
-    showDeleteModal = false;
-  };
-
-  const confirmDelete = () => {
-    if (deletingCategory) {
-      router.delete(`/categories/${deletingCategory.id}`, {
-        onSuccess: () => {
-          closeDeleteModal();
-        },
-      });
-    }
-  };
 
   const handleSearch = () => {
     router.get(
@@ -87,37 +67,12 @@
     />
   </div>
 
-  {#if meta && meta.links}
-    <div class="mt-6 flex items-center justify-between">
-      <div class="text-sm text-gray-700 dark:text-gray-400">
-        {__("messages.showing", "Showing")}
-        {meta.from}
-        {__("messages.to", "to")}
-        {meta.to}
-        {__("messages.of", "of")}
-        {meta.total}
-        {__("messages.results", "results")}
-      </div>
-      <div class="flex gap-1">
-        {#each meta.links as link}
-          <button
-            class="px-3 py-1 rounded border {link.active
-              ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'}"
-            on:click={() => link.url && router.visit(link.url)}
-            disabled={!link.url}
-          >
-            {@html link.label}
-          </button>
-        {/each}
-      </div>
-    </div>
-  {/if}
+  <Pagination {meta} />
 
-  <CategoryModal bind:show={showModal} category={editingCategory} />
+  <CategoryModal bind:show={$showModal} category={$editingCategory} />
 
   <DeleteConfirmationModal
-    show={showDeleteModal}
+    show={$showDeleteModal}
     onClose={closeDeleteModal}
     onConfirm={confirmDelete}
     title={__("messages.confirm_delete_title", "Delete Category")}

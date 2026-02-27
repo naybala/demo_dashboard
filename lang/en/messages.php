@@ -32,6 +32,7 @@ return [
     'are_you_sure' => "Are you sure?",
     'login_again' => "Want to logout will you be login again!",
     'yes_logout' => "Yes,Logout!",
+   
     
     
 ];
