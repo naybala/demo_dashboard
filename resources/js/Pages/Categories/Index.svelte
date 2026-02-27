@@ -6,6 +6,8 @@
   import CategoryModal from "./CategoryModal.svelte";
   import { router } from "@inertiajs/svelte";
   import TextInput from "@/Components/TextInput.svelte";
+  import SecondaryButton from "@/Components/SecondaryButton.svelte";
+  import { __ } from "@/helpers.js";
 
   export let data = []; // Categories data
   export let meta = {};
@@ -27,28 +29,31 @@
   const handleSearch = () => {
     router.get(
       "/categories",
-      { search: search },
+      { keyword: search },
       { preserveState: true, replace: true },
     );
   };
 </script>
 
 <AdminLayout>
-  <PageHeader title="Categories">
+  <PageHeader title={__("sidebar.category", "Categories")}>
     <PrimaryButton slot="actions" on:click={openCreateModal}>
-      Add Category
+      {__("messages.create", "Add Category")}
     </PrimaryButton>
   </PageHeader>
 
   <div class="mb-6 flex justify-between items-center">
-    <div class="w-1/3">
+    <div class="flex gap-2 w-1/2">
       <TextInput
         type="text"
-        placeholder="Search categories..."
+        placeholder={__("messages.search_item", "Search categories...")}
         bind:value={search}
-        on:input={handleSearch}
+        on:keydown={(e) => e.key === "Enter" && handleSearch()}
         class="w-full"
       />
+      <SecondaryButton on:click={handleSearch}>
+        {__("messages.search", "Search")}
+      </SecondaryButton>
     </div>
   </div>
 
@@ -59,7 +64,13 @@
   {#if meta && meta.links}
     <div class="mt-6 flex items-center justify-between">
       <div class="text-sm text-gray-700 dark:text-gray-400">
-        Showing {meta.from} to {meta.to} of {meta.total} results
+        {__("messages.showing", "Showing")}
+        {meta.from}
+        {__("messages.to", "to")}
+        {meta.to}
+        {__("messages.of", "of")}
+        {meta.total}
+        {__("messages.results", "results")}
       </div>
       <div class="flex gap-1">
         {#each meta.links as link}

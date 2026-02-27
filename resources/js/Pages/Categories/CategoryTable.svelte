@@ -1,4 +1,5 @@
 <script>
+  import { __ } from "@/helpers.js";
   import BaseTable from "@/Components/BaseTable.svelte";
   import { useCategoryActions } from "./useCategoryActions";
 
@@ -7,7 +8,13 @@
 
   const { deleteCategory } = useCategoryActions();
 
-  const headers = ["Name", "Other Name", "Description", "Show"];
+  const headers = [
+    __("category.name", "Name"),
+    __("category.name_other", "Other Name"),
+    __("category.description", "Description"),
+    __("category.is_show", "Show"),
+    __("table.action", "Action"),
+  ];
 </script>
 
 <BaseTable {headers}>
@@ -31,18 +38,18 @@
           {category.is_show ? "Yes" : "No"}
         </span>
       </td>
-      <td class="px-6 py-4 text-right space-x-2">
+      <td class="px-6 py-4 space-x-2">
         <button
           on:click={() => onEdit(category)}
           class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
         >
-          Edit
+          {__("messages.edit", "Edit")}
         </button>
         <button
           on:click={() => deleteCategory(category.id)}
           class="font-medium text-red-600 dark:text-red-500 hover:underline"
         >
-          Delete
+          {__("messages.delete", "Delete")}
         </button>
       </td>
     </tr>

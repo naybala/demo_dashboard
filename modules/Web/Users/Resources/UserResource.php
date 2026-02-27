@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             "status"          => $this->status,
             "status_text"     => $this->status->label(),
             'role_marked'     => $this->roles->value('name'),
+            'can_be_deleted'  => $this->id !== 1, // Example logic: don't delete first user
             'created_at'      => $this->created_at ? Carbon::parse($this->created_at)->format('d/F/Y') : '---',
         ];
     }

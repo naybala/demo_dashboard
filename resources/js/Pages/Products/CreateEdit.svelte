@@ -34,7 +34,7 @@
       [{ color: [] }, { background: [] }],
       [{ font: [] }],
       [{ align: [] }],
-      ["clean"],
+      ["image", "clean"],
     ];
 
     quillEn = new Quill("#editor-en", {
@@ -95,7 +95,7 @@
               class="relative group aspect-square rounded-lg overflow-hidden border border-gray-200"
             >
               <img
-                src={`/${path}`}
+                src={path}
                 alt="product"
                 class="w-full h-full object-cover"
               />
@@ -124,11 +124,16 @@
             <div
               class="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center"
             >
-              <span class="text-xs text-center px-2 truncate">{file.name}</span>
+              <img
+                src={URL.createObjectURL(file)}
+                alt="preview"
+                class="w-full h-full object-cover"
+                on:load={(e) => URL.revokeObjectURL(e.target.src)}
+              />
               <button
                 type="button"
                 on:click={() => removeNewPhoto(i)}
-                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-sm"
               >
                 <svg
                   class="w-4 h-4"

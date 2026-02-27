@@ -18,14 +18,20 @@ class AuditResource extends JsonResource
 {
     public function toArray($request): array
     {
+        $oldData = json_decode($this->old_data, true) ?: [];
+        $newData = json_decode($this->new_data, true) ?: [];
+        $auditableId = $newData['id'] ?? $oldData['id'] ?? '---';
+
         return [
             "id"             => customEncoder($this->id),
             "auditable_type" => $this->model,
+            "auditable_id"   => $auditableId,
             "event"          => $this->event,
-            "old_data"       => json_encode(json_decode($this->old_data), JSON_PRETTY_PRINT),
-            "new_data"       => json_encode(json_decode($this->new_data), JSON_PRETTY_PRINT),
+            "old_values"     => $this->old_data,
+            "new_values"     => $this->new_data,
             "user_name"      => $this->user?->name ?? $this->user?->fullname ?? '---',
             "ip_address"     => "---",
+            "user_agent"     => "---",
             "created_at"     => $this->created_at,
         ];
     }

@@ -143,31 +143,123 @@
           >
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead
-              class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase font-medium"
-            >
-              <tr>
-                <th class="px-4 py-2">Product</th>
-                <th class="px-4 py-2 w-24">Amount</th>
-                <th class="px-4 py-2 w-32">Price</th>
-                <th class="px-4 py-2 w-32">Profit</th>
-                <th class="px-4 py-2 w-16"></th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-              {#each $form.items as item, i}
+        <div class="space-y-4">
+          <!-- Desktop Table View -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead
+                class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase font-medium"
+              >
                 <tr>
-                  <td class="px-4 py-2 min-w-[300px]">
-                    <SearchableSelect
-                      options={productOptions}
-                      bind:value={item.own_product_id}
-                      on:change={() => handleProductChange(i)}
-                      placeholder="Select Product"
+                  <th class="px-4 py-2 w-1/4">Product</th>
+                  <th class="px-4 py-2 w-24">Amount</th>
+                  <th class="px-4 py-2 w-32">Price</th>
+                  <th class="px-4 py-2 w-32">Profit</th>
+                  <th class="px-4 py-2 w-16"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                {#each $form.items as item, i}
+                  <tr>
+                    <td class="px-4 py-2">
+                      <SearchableSelect
+                        options={productOptions}
+                        bind:value={item.own_product_id}
+                        on:change={() => handleProductChange(i)}
+                        placeholder="Select Product"
+                      />
+                    </td>
+                    <td class="px-4 py-2">
+                      <input
+                        id="amount_{i}"
+                        type="number"
+                        bind:value={item.amount}
+                        on:input={() => calculateProfit(i)}
+                        class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-sm"
+                        step="0.01"
+                        required
+                      />
+                    </td>
+                    <td class="px-4 py-2 text-right">
+                      <div
+                        class="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono"
+                      >
+                        {item.price || "0.00"}
+                      </div>
+                    </td>
+                    <td class="px-4 py-2 text-right">
+                      <div
+                        class="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono"
+                      >
+                        {item.profit || "0.00"}
+                      </div>
+                    </td>
+                    <td class="px-4 py-2">
+                      <button
+                        type="button"
+                        on:click={() => removeItem(i)}
+                        class="text-red-600 hover:text-red-900"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Card View -->
+          <div class="md:hidden space-y-4">
+            {#each $form.items as item, i}
+              <div
+                class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600 space-y-4 relative"
+              >
+                <button
+                  type="button"
+                  on:click={() => removeItem(i)}
+                  class="absolute top-2 right-2 text-red-600 p-1"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                     />
-                  </td>
-                  <td class="px-4 py-2">
+                  </svg>
+                </button>
+
+                <div class="space-y-2">
+                  <InputLabel value="Product" />
+                  <SearchableSelect
+                    options={productOptions}
+                    bind:value={item.own_product_id}
+                    on:change={() => handleProductChange(i)}
+                    placeholder="Select Product"
+                  />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <InputLabel value="Amount" />
                     <input
                       type="number"
                       bind:value={item.amount}
@@ -176,54 +268,43 @@
                       step="0.01"
                       required
                     />
-                  </td>
-                  <td class="px-4 py-2">
-                    <input
-                      type="text"
-                      bind:value={item.price}
-                      readonly
-                      class="w-full bg-gray-100 dark:bg-gray-800 rounded-md border-gray-300 dark:border-gray-700 dark:text-gray-300 text-sm"
-                    />
-                  </td>
-                  <td class="px-4 py-2">
-                    <input
-                      type="text"
-                      bind:value={item.profit}
-                      readonly
-                      class="w-full bg-gray-100 dark:bg-gray-800 rounded-md border-gray-300 dark:border-gray-700 dark:text-gray-300 text-sm"
-                    />
-                  </td>
-                  <td class="px-4 py-2">
-                    <button
-                      type="button"
-                      on:click={() => removeItem(i)}
-                      class="text-red-600 hover:text-red-900"
+                  </div>
+                  <div class="space-y-2">
+                    <InputLabel value="Price" />
+                    <div
+                      class="px-3 py-2 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono truncate"
                     >
-                      <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        ><path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        /></svg
-                      >
-                    </button>
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
-            <tfoot>
-              <tr class="font-bold text-gray-900 dark:text-white">
-                <td colspan="2" class="px-4 py-4 text-right">Total:</td>
-                <td class="px-4 py-4">{totalAmount}</td>
-                <td colspan="2"></td>
-              </tr>
-            </tfoot>
-          </table>
+                      {item.price || "0.00"}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="flex justify-between items-center text-sm pt-2 border-t border-gray-200 dark:border-gray-600"
+                >
+                  <span class="text-gray-500">Profit:</span>
+                  <span class="font-bold text-indigo-600 dark:text-indigo-400"
+                    >{item.profit || "0.00"}</span
+                  >
+                </div>
+              </div>
+            {/each}
+          </div>
+
+          <!-- Footer/Totals -->
+          <div
+            class="pt-4 border-t border-gray-200 dark:border-gray-600 flex justify-end"
+          >
+            <div
+              class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-4"
+            >
+              <span>Total:</span>
+              <span
+                class="text-indigo-600 p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded"
+                >{totalAmount}</span
+              >
+            </div>
+          </div>
         </div>
       </div>
 

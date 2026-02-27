@@ -69,7 +69,8 @@ class UserController extends BaseController
 
     public function show($id): Response
     {
-        $user = $this->userService->findOrFail($id);
+        $decodedId = customDecoder($id);
+        $user = $this->userService->findOrFail($decodedId);
         $user = new UserResource($user);
         $user = $user->response()->getData(true)['data'];
         return Inertia::render('Users/Show', [
@@ -80,7 +81,8 @@ class UserController extends BaseController
     public function update(UpdateUserRequest $request, string $id): RedirectResponse
     {
         try {
-            $this->userService->update($request->all(), $id);
+            $decodedId = customDecoder($id);
+            $this->userService->update($request->all(), $decodedId);
             return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("User update failed", $e);

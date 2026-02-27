@@ -3,74 +3,40 @@
   import { Link } from "@inertiajs/svelte";
   export let user = $page.props.auth.user;
   let isMobileMenuOpen = false;
+  let isDarkMode = false;
+  let currentLocale = $page.props.locale || "en";
 
-  const navigation = [
-    {
-      name: "Dashboard",
-      href: "/dashboard",
-      icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
-    },
-    {
-      name: "Inventory",
-      items: [
-        {
-          name: "Categories",
-          href: "/categories",
-          icon: "M4 6h16M4 10h16M4 14h16M4 18h16",
-        },
-        {
-          name: "Products",
-          href: "/products",
-          icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
-        },
-        {
-          name: "Own Products",
-          href: "/own-products",
-          icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01",
-        },
-      ],
-    },
-    {
-      name: "Sales",
-      items: [
-        {
-          name: "Daily Incomes",
-          href: "/daily-incomes",
-          icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-        },
-      ],
-    },
-    {
-      name: "User Management",
-      items: [
-        {
-          name: "Users",
-          href: "/users",
-          icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
-        },
-        {
-          name: "Roles",
-          href: "/roles",
-          icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
-        },
-      ],
-    },
-    {
-      name: "Maintenance",
-      items: [
-        {
-          name: "Units",
-          href: "/units",
-          icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
-        },
-        {
-          name: "Activity Logs",
-          href: "/audits",
-          icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
-        },
-      ],
-    },
-  ];
+  import { onMount } from "svelte";
+
+  onMount(() => {
+    // Initialize theme
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+      isDarkMode = true;
+    } else {
+      document.documentElement.classList.remove("dark");
+      isDarkMode = false;
+    }
+  });
+
+  const toggleTheme = () => {
+    isDarkMode = !isDarkMode;
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.theme = "dark";
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.theme = "light";
+    }
+  };
+
+  const changeLanguage = (lang) => {
+    router.get("/change", { lang }, { preserveState: false });
+  };
 
   const isActive = (href) => {
     if (href === "/dashboard") return $page.url === href;
@@ -80,6 +46,76 @@
   const logout = () => {
     router.post("/logout");
   };
+
+  import { __ } from "@/helpers.js";
+
+  $: navigation = [
+    {
+      name: __("sidebar.dashboard", "Dashboard"),
+      href: "/dashboard",
+      icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+    },
+    {
+      name: __("sidebar.inventory", "Inventory"),
+      items: [
+        {
+          name: __("sidebar.category", "Categories"),
+          href: "/categories",
+          icon: "M4 6h16M4 10h16M4 14h16M4 18h16",
+        },
+        {
+          name: __("sidebar.product", "Products"),
+          href: "/products",
+          icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
+        },
+        {
+          name: __("sidebar.own_product", "Own Products"),
+          href: "/own-products",
+          icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01",
+        },
+      ],
+    },
+    {
+      name: __("sidebar.sales", "Sales"),
+      items: [
+        {
+          name: __("sidebar.daily_income", "Daily Incomes"),
+          href: "/daily-incomes",
+          icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+        },
+      ],
+    },
+    {
+      name: __("sidebar.user_management", "User Management"),
+      items: [
+        {
+          name: __("sidebar.user", "Users"),
+          href: "/users",
+          icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
+        },
+        {
+          name: __("sidebar.role", "Roles"),
+          href: "/roles",
+          icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+        },
+      ],
+    },
+    {
+      name: __("sidebar.maintenance", "Maintenance"),
+      items: [
+        {
+          name: __("sidebar.unit", "Units"),
+          href: "/units",
+          icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
+        },
+        {
+          name: __("sidebar.audit", "Activity Logs"),
+          href: "/audits",
+          icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+        },
+      ],
+    },
+  ];
 </script>
 
 <div class="h-dvh flex bg-gray-100 dark:bg-gray-900 overflow-hidden">
@@ -247,7 +283,58 @@
         <!-- Breadcrumbs could go here -->
       </div>
 
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <!-- Language Switcher -->
+        <div
+          class="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1"
+        >
+          <button
+            on:click={() => changeLanguage("en")}
+            class={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${currentLocale === "en" ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm" : "text-gray-500 hover:text-gray-700 dark:text-gray-400"}`}
+          >
+            EN
+          </button>
+          <button
+            on:click={() => changeLanguage("mm")}
+            class={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${currentLocale === "mm" ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm" : "text-gray-500 hover:text-gray-700 dark:text-gray-400"}`}
+          >
+            MM
+          </button>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button
+          on:click={toggleTheme}
+          class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
+          aria-label="Toggle theme"
+        >
+          {#if isDarkMode}
+            <svg
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+              />
+            </svg>
+          {:else}
+            <svg
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+              />
+            </svg>
+          {/if}
+        </button>
+
         <button
           on:click={logout}
           class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-2 rounded-lg"
@@ -265,7 +352,7 @@
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             />
           </svg>
-          <span class="hidden sm:inline">Logout</span>
+          <span class="hidden lg:inline">Logout</span>
         </button>
       </div>
     </header>

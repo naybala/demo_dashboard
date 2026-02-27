@@ -15,13 +15,7 @@
   let showDeleteModal = false;
   let userToDelete = null;
 
-  const headers = [
-    { key: "name", label: "Name" },
-    { key: "username", label: "Username" },
-    { key: "role", label: "Role" },
-    { key: "status", label: "Status" },
-    { key: "actions", label: "Actions" },
-  ];
+  const headers = ["Name", "Email", "Role", "Status"];
 
   const handleSearch = () => {
     router.get(
@@ -74,12 +68,12 @@
         <td
           class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
         >
-          {user.name}
+          {user.fullname}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {user.username}
+          {user.email}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
@@ -87,21 +81,21 @@
           <span
             class="px-2 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-semibold"
           >
-            {user.role}
+            {user.role_marked}
           </span>
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
           <span
-            class={`px-2 py-1 rounded-full text-xs font-semibold ${user.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+            class={`px-2 py-1 rounded-full text-xs font-semibold ${user.status === 1 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
           >
-            {user.active ? "Active" : "Inactive"}
+            {user.status === 1 ? "Active" : "Inactive"}
           </span>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div class="flex gap-2">
-            <Link href={`/users/${user.id}/show`}>
+          <div class="flex gap-2 justify-end">
+            <Link href={`/users/${user.id}`}>
               <SecondaryButton>View</SecondaryButton>
             </Link>
             <Link href={`/users/${user.id}/edit`}>
@@ -110,7 +104,7 @@
             {#if user.can_be_deleted}
               <button
                 on:click={() => confirmDelete(user)}
-                class="text-red-600 hover:text-red-900 font-medium"
+                class="text-red-600 hover:text-red-900 font-medium ml-2"
               >
                 Delete
               </button>
