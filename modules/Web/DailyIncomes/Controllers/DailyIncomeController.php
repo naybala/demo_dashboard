@@ -2,7 +2,9 @@
 
 namespace BasicDashboard\Web\DailyIncomes\Controllers;
 
+use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
 use BasicDashboard\Web\Common\BaseController;
+
 use BasicDashboard\Web\DailyIncomes\Resources\DailyIncomeResource;
 use BasicDashboard\Web\DailyIncomes\Services\DailyIncomeService;
 use BasicDashboard\Web\DailyIncomes\Validation\StoreDailyIncomeRequest;
@@ -63,15 +65,13 @@ class DailyIncomeController extends BaseController
         }
     }
 
-    public function edit(string $id): Response
+    public function edit(DailyIncome $dailyIncome): Response
     {
-        $decodedId = customDecoder($id);
-        $dailyIncome = $this->dailyIncomeService->findOrFail($decodedId);
         $items = $this->dailyIncomeService->getByVoucherNo($dailyIncome);
 
         $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
         $data = [
-            'id' => $id,
+            'id' => customEncoder($dailyIncome->id),
             'date' => $dailyIncome->date,
             'is_instant' => $dailyIncome->dailyIncomeTotal?->is_instant ?? true,
             'note' => $dailyIncome->dailyIncomeTotal?->note,
@@ -90,14 +90,13 @@ class DailyIncomeController extends BaseController
         ]);
     }
 
-    public function show(string $id): Response
+    public function show(DailyIncome $dailyIncome): Response
     {
-        $dailyIncome = $this->dailyIncomeService->findOrFail($id);
         $items = $this->dailyIncomeService->getByVoucherNo($dailyIncome);
 
         $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
         $data = [
-            'id' => $id,
+            'id' => customEncoder($dailyIncome->id),
             'date' => $dailyIncome->date,
             'is_instant' => $dailyIncome->dailyIncomeTotal?->is_instant ?? true,
             'note' => $dailyIncome->dailyIncomeTotal?->note,
@@ -110,10 +109,10 @@ class DailyIncomeController extends BaseController
         ]);
     }
 
-    public function update(UpdateDailyIncomeRequest $request, string $id): RedirectResponse
+    public function update(UpdateDailyIncomeRequest $request, DailyIncome $dailyIncome): RedirectResponse
     {
         try {
-            $this->dailyIncomeService->update($request->validated(), customDecoder($id));
+            $this->dailyIncomeService->update($request->validated(), $dailyIncome->id);
             return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("DailyIncome update failed", $e);
@@ -121,10 +120,10 @@ class DailyIncomeController extends BaseController
         }
     }
 
-    public function destroy(DeleteDailyIncomeRequest $request): RedirectResponse
+    public function destroy(DeleteDailyIncomeRequest $request, DailyIncome $dailyIncome): RedirectResponse
     {
         try {
-            $this->dailyIncomeService->delete($request->validated()['id']);
+            $this->dailyIncomeService->delete($dailyIncome->id);
             return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_deleted'));
         } catch (Throwable $e) {
             $this->LogError("DailyIncome destroy failed", $e);

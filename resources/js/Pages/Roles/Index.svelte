@@ -35,8 +35,7 @@
   };
 
   const deleteRole = () => {
-    router.delete("/roles", {
-      data: { id: roleToDelete.id },
+    router.delete(`/roles/${roleToDelete.id}`, {
       onSuccess: () => {
         showDeleteModal = false;
         roleToDelete = null;
@@ -85,7 +84,7 @@
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex gap-2">
-            <Link href={`/roles/${role.id}/show`}>
+            <Link href={`/roles/${role.id}`}>
               <SecondaryButton>View</SecondaryButton>
             </Link>
             <Link href={`/roles/${role.id}/edit`}>

@@ -21,6 +21,11 @@ class DeleteDailyIncomeRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge(['id' => $this->route('daily_income')]);
+    }
+ 
     public function rules(): array
     {
         return [

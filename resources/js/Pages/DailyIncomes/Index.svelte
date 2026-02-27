@@ -45,8 +45,7 @@
   };
 
   const deleteIncome = () => {
-    router.delete("/daily-incomes", {
-      data: { id: incomeToDelete.id },
+    router.delete(`/daily-incomes/${incomeToDelete.id}`, {
       onSuccess: () => {
         showDeleteModal = false;
         incomeToDelete = null;
@@ -158,7 +157,7 @@
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex gap-2">
-            <Link href={`/daily-incomes/${income.id}/show`}>
+            <Link href={`/daily-incomes/${income.id}`}>
               <SecondaryButton>View</SecondaryButton>
             </Link>
             <Link href={`/daily-incomes/${income.id}/edit`}>

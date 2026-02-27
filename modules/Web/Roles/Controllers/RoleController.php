@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
+use BasicDashboard\Foundations\Domain\Roles\Role;
 
 /**
  *
@@ -50,7 +51,8 @@ class RoleController extends BaseController
     {
         $getAllPermissions = $this->roleService->getFormattedPermissions();
         return Inertia::render('Roles/CreateEdit', [
-            'getAllPermissions' => $getAllPermissions
+            'getAllPermissions' => $getAllPermissions,
+            'getCurrentPermissions' => []
         ]);
     }
 
@@ -65,30 +67,26 @@ class RoleController extends BaseController
         }
     }
 
-    public function edit(string $id): Response
+    public function edit(Role $role): Response
     {
-        $decodedId = customDecoder($id);
-        $data = $this->roleService->findOrFail($decodedId);      
-        $role = new RoleResource($data['role']);
-        $role = $role->response()->getData(true)['data'];
-        $data['role'] = $role;
+        $data = $this->roleService->findOrFail($role->id);      
+        $roleResource = new RoleResource($data['role']);
+        $data['role'] = $roleResource->resolve();
         return Inertia::render('Roles/CreateEdit', $data);        
     }
 
-    public function show(string $id): Response
+    public function show(Role $role): Response
     {
-        $decodedId = customDecoder($id);
-        $data = $this->roleService->findOrFail($decodedId);
-        $role = new RoleResource($data['role']);
-        $role = $role->response()->getData(true)['data'];
-        $data['role'] = $role;
+        $data = $this->roleService->findOrFail($role->id);
+        $roleResource = new RoleResource($data['role']);
+        $data['role'] = $roleResource->resolve();
         return Inertia::render('Roles/Show', $data);
     }
 
-    public function update(UpdateRoleRequest $request, string $id): RedirectResponse
+    public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
         try {
-            $this->roleService->update($request->validated(), customDecoder($id));
+            $this->roleService->update($request->validated(), $role->id);
             return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("Role update failed", $e);

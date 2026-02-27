@@ -6,10 +6,17 @@
   import InputError from "@/Components/InputError.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
+  import SearchableSelect from "@/Components/SearchableSelect.svelte";
   import { useForm, router } from "@inertiajs/svelte";
 
   export let dailyIncome = null;
   export let products = [];
+
+  $: productOptions = products.map((p) => ({
+    id: p.id,
+    label: `${p.name} (${p.unit?.name || "No Unit"})`,
+    searchKey: p.name,
+  }));
 
   const form = useForm({
     date: dailyIncome?.date || new Date().toISOString().split("T")[0],
@@ -45,6 +52,14 @@
       (p) => p.id === $form.items[index].own_product_id,
     );
     if (product) {
+      // Default amount to 1 if it's empty or 0
+      if (
+        !$form.items[index].amount ||
+        parseFloat($form.items[index].amount) === 0
+      ) {
+        $form.items[index].amount = "1";
+      }
+
       $form.items[index].price = product.price.toString().replace(/,/g, "");
       $form.items[index].investment = product.investment
         .toString()
@@ -144,20 +159,13 @@
             <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
               {#each $form.items as item, i}
                 <tr>
-                  <td class="px-4 py-2">
-                    <select
+                  <td class="px-4 py-2 min-w-[300px]">
+                    <SearchableSelect
+                      options={productOptions}
                       bind:value={item.own_product_id}
                       on:change={() => handleProductChange(i)}
-                      class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-sm"
-                      required
-                    >
-                      <option value="">Select Product</option>
-                      {#each products as product}
-                        <option value={product.id}
-                          >{product.name} ({product.unit || "No Unit"})</option
-                        >
-                      {/each}
-                    </select>
+                      placeholder="Select Product"
+                    />
                   </td>
                   <td class="px-4 py-2">
                     <input

@@ -33,10 +33,10 @@ class RoleService
         $permissions      = $this->permission->orderBy('id', 'asc')->get(['id', 'name'])->toArray(); 
         $finalPermissions = [];
         foreach ($features as $feature) {
-            $finalPermissions[$feature] = array_filter($permissions, function ($permission) use ($feature) {
+            $finalPermissions[$feature] = array_values(array_filter($permissions, function ($permission) use ($feature) {
                 $getPermissionFeature = explode(' ', $permission['name'])[1];
                 return $getPermissionFeature == $feature;
-            });
+            }));
         }
         return $finalPermissions;
     }

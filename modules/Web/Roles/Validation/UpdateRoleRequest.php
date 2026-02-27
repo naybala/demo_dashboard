@@ -24,24 +24,9 @@ class UpdateRoleRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->offsetUnset('_token');
-        $removeName = array_slice($this->all(),1); //remove 'Name' key
-        $getKeys = array_keys($removeName); // get array [p_1,p_2]
-        $arrayWithId = array_map(fn($value): string => substr($value,2),$getKeys); // [1,2]
-        $permissions = Permission::whereIn('id',$arrayWithId)->pluck('name')->toArray(); // ['manage users','create users']
         $this->merge([
-            'permissions' => $permissions
+            'can_access_panel' => $this->boolean('can_access_panel') ? 1 : 0,
         ]);
-        
-        if($this->can_access_panel=='on') {
-            $this->merge([
-                'can_access_panel' => 1
-            ]);
-        }else{
-            $this->merge([
-                'can_access_panel' => 0
-            ]);
-        }
     }
 
     public function rules(): array

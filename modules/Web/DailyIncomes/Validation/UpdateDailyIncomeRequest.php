@@ -44,10 +44,10 @@ class UpdateDailyIncomeRequest extends FormRequest
         return [
             "date" => "required|date",
             "items" => "required|array|min:1",
-            "items.*.product_id" => "required|exists:own_products,id",
+            "items.*.own_product_id" => "required|exists:own_products,id",
             "items.*.amount" => "required|numeric|min:0.01",
-            "items.*.unit_id" => "required|exists:units,id",
             "items.*.price" => "required|numeric",
+
             "items.*.investment" => "required|numeric",
             "items.*.profit" => "required|numeric",
             "is_instant" => "nullable|boolean",

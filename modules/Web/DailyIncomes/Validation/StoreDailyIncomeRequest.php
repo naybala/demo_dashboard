@@ -44,10 +44,10 @@ class StoreDailyIncomeRequest extends FormRequest
         return [
             "date" => "required|date",
             "items" => "required|array|min:1",
-            "items.*.product_id" => "required|exists:own_products,id",
+            "items.*.own_product_id" => "required|exists:own_products,id",
             "items.*.amount" => "required|numeric|min:0.01",
-            "items.*.unit_id" => "required|exists:units,id",
             "items.*.price" => "required|numeric",
+
             "items.*.investment" => "required|numeric",
             "items.*.profit" => "required|numeric",
             "is_instant" => "nullable|boolean",
@@ -60,10 +60,10 @@ class StoreDailyIncomeRequest extends FormRequest
         return [
             "date.required" => "Date is required",
             "items.required" => "Items are required",
-            "items.*.product_id.required" => "Product selection is required",
+            "items.*.own_product_id.required" => "Product selection is required",
             "items.*.amount.required" => "Amount is required",
-            "items.*.unit_id.required" => "Unit is required",
             "items.*.price.required" => "Price is required",
+
             "items.*.investment.required" => "Investment is required",
             "items.*.profit.required" => "Profit is required",
         ];

@@ -24,6 +24,10 @@ use BasicDashboard\Web\Dashboard\Controllers\DashboardController;
 |
  */
 
+Route::get('/', function () {
+    return redirect()->route('dashboard.index');
+});
+
 Route::get('optimize-hey-yo', function () {
     Artisan::call('optimize:clear');
     return redirect('/');

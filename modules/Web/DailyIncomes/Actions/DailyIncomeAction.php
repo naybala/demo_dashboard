@@ -42,7 +42,7 @@ class DailyIncomeAction
 
             $rows[] = [
                 'date' => $date,
-                'own_product_id' => $item['product_id'],
+                'own_product_id' => $item['own_product_id'],
                 'amount' => $amount,
                 'price' => $price,
                 'investment' => $investment,

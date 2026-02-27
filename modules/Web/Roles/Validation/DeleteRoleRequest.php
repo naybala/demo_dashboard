@@ -21,6 +21,13 @@ class DeleteRoleRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'id' => $this->route('role'),
+        ]);
+    }
+
     public function rules(): array
     {
         return [
