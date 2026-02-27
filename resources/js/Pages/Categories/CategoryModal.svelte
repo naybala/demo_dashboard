@@ -6,6 +6,7 @@
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import { useCategoryForm } from "./useCategoryForm";
+  import { __ } from "@/helpers.js";
 
   export let show = false;
   export let category = null;
@@ -22,16 +23,18 @@
 </script>
 
 <Modal {show} on:close={close}>
-  <form on:submit|preventDefault={submit} class="p-6">
+  <form on:submit|preventDefault={submit} class="p-6 dark:bg-slate-500">
     <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-      {category ? "Edit Category" : "Create Category"}
+      {category
+        ? __("category.update_category", "Update Category")
+        : __("category.create_category", "Create Category Hello")}
     </h2>
 
     <div class="mt-6">
-      <InputLabel for="name" value="Name" />
+      <InputLabel for="name" value={__("category.name", "Name")} />
       <TextInput
         id="name"
-        class="mt-1 block w-3/4"
+        class="mt-2 block w-3/4"
         bind:value={$form.name}
         required
         autofocus
@@ -40,7 +43,10 @@
     </div>
 
     <div class="mt-4">
-      <InputLabel for="name_other" value="Other Name" />
+      <InputLabel
+        for="name_other"
+        value={__("category.name_other", "Other Name")}
+      />
       <TextInput
         id="name_other"
         class="mt-1 block w-3/4"
@@ -50,7 +56,10 @@
     </div>
 
     <div class="mt-4">
-      <InputLabel for="description" value="Description" />
+      <InputLabel
+        for="description"
+        value={__("category.description", "Description")}
+      />
       <textarea
         id="description"
         class="mt-1 block w-3/4 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
@@ -72,9 +81,9 @@
       </label>
     </div>
 
-    <div class="mt-6 flex justify-end">
+    <div class="mt-6 flex justify-end gap-3">
       <SecondaryButton on:click={close}>Cancel</SecondaryButton>
-      <PrimaryButton class="ms-3" disabled={$form.processing}>
+      <PrimaryButton disabled={$form.processing}>
         {category ? "Update" : "Save"}
       </PrimaryButton>
     </div>

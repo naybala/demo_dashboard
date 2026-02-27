@@ -4,6 +4,8 @@ return [
     'name' => 'နာမည်',
     'name_other'=>"အခြားနာမည်",
     'description'=>"ဖော်ပြချက်",
+    'create_category' => "ဖန်တီးရန်",
+    'update_category' => "အပ်ဒိတ်လုပ်ရန်",
     'description_other'=>"အခြားဖော်ပြချက်",
     'name_validation' => "အမည်ဖြည့်ရန် လိုအပ်သည်။",
     'category_created' => "Category ကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ။",

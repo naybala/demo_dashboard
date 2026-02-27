@@ -3,6 +3,8 @@
 return [
     'name' => 'Name',
     'name_other'=>"Other Name",
+    'create_category' => "Create Category",
+    'update_category' => "Update Category",
     'is_show'=>"Showing Category",
     'description'=>"Description",
     'description_other'=>"Other Description",

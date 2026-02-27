@@ -4,6 +4,7 @@
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import CategoryTable from "./CategoryTable.svelte";
   import CategoryModal from "./CategoryModal.svelte";
+  import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import { router } from "@inertiajs/svelte";
   import TextInput from "@/Components/TextInput.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
@@ -13,7 +14,9 @@
   export let meta = {};
 
   let showModal = false;
+  let showDeleteModal = false;
   let editingCategory = null;
+  let deletingCategory = null;
   let search = "";
 
   const openCreateModal = () => {
@@ -24,6 +27,25 @@
   const openEditModal = (category) => {
     editingCategory = category;
     showModal = true;
+  };
+
+  const openDeleteModal = (category) => {
+    deletingCategory = category;
+    showDeleteModal = true;
+  };
+
+  const closeDeleteModal = () => {
+    showDeleteModal = false;
+  };
+
+  const confirmDelete = () => {
+    if (deletingCategory) {
+      router.delete(`/categories/${deletingCategory.id}`, {
+        onSuccess: () => {
+          closeDeleteModal();
+        },
+      });
+    }
   };
 
   const handleSearch = () => {
@@ -58,7 +80,11 @@
   </div>
 
   <div class="mt-6">
-    <CategoryTable categories={data} onEdit={openEditModal} />
+    <CategoryTable
+      categories={data}
+      onEdit={openEditModal}
+      onDelete={openDeleteModal}
+    />
   </div>
 
   {#if meta && meta.links}
@@ -89,4 +115,15 @@
   {/if}
 
   <CategoryModal bind:show={showModal} category={editingCategory} />
+
+  <DeleteConfirmationModal
+    show={showDeleteModal}
+    onClose={closeDeleteModal}
+    onConfirm={confirmDelete}
+    title={__("messages.confirm_delete_title", "Delete Category")}
+    message={__(
+      "messages.confirm_delete_message",
+      "Are you sure you want to delete this category? This action cannot be undone.",
+    )}
+  />
 </AdminLayout>

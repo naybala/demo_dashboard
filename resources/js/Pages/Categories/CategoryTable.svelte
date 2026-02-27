@@ -1,12 +1,10 @@
 <script>
   import { __ } from "@/helpers.js";
   import BaseTable from "@/Components/BaseTable.svelte";
-  import { useCategoryActions } from "./useCategoryActions";
 
   export let categories = [];
   export let onEdit = () => {};
-
-  const { deleteCategory } = useCategoryActions();
+  export let onDelete = () => {};
 
   const headers = [
     __("category.name", "Name"),
@@ -46,7 +44,7 @@
           {__("messages.edit", "Edit")}
         </button>
         <button
-          on:click={() => deleteCategory(category.id)}
+          on:click={() => onDelete(category)}
           class="font-medium text-red-600 dark:text-red-500 hover:underline"
         >
           {__("messages.delete", "Delete")}

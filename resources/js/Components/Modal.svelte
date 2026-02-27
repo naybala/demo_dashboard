@@ -1,5 +1,6 @@
 <script>
-  import { onMount, onDestroy } from "svelte";
+  import { createEventDispatcher, onMount, onDestroy } from "svelte";
+  const dispatch = createEventDispatcher();
 
   export let show = false;
   export let maxWidth = "2xl";
@@ -13,7 +14,7 @@
 
   const close = () => {
     if (closeable) {
-      show = false;
+      dispatch("close");
     }
   };
 
@@ -42,7 +43,9 @@
 </script>
 
 {#if show}
-  <div class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50">
+  <div
+    class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 flex items-center justify-center"
+  >
     <div
       class="fixed inset-0 transform transition-all"
       on:click={close}
@@ -55,7 +58,7 @@
     </div>
 
     <div
-      class="mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full {maxWidthClass} sm:mx-auto"
+      class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full {maxWidthClass} sm:mx-auto"
     >
       <slot />
     </div>
