@@ -7,6 +7,9 @@
   let currentLocale = $page.props.locale || "en";
 
   import { onMount } from "svelte";
+  import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
+
+  let showLogoutModal = false;
 
   onMount(() => {
     // Initialize theme
@@ -43,8 +46,13 @@
     return $page.url.startsWith(href);
   };
 
-  const logout = () => {
+  const handleLogoutClick = () => {
+    showLogoutModal = true;
+  };
+
+  const confirmLogout = () => {
     router.post("/logout");
+    showLogoutModal = false;
   };
 
   import { __ } from "@/helpers.js";
@@ -343,7 +351,7 @@
         </button>
 
         <button
-          on:click={logout}
+          on:click={handleLogoutClick}
           class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-2 rounded-lg"
         >
           <svg
@@ -373,6 +381,15 @@
       </div>
     </main>
   </div>
+
+  <DeleteConfirmationModal
+    show={showLogoutModal}
+    title={__("messages.are_you_sure", "Are you sure?")}
+    message={__("messages.login_again", "Are you sure you want to logout?")}
+    confirmText={__("messages.yes_logout", "Yes, Logout")}
+    onConfirm={confirmLogout}
+    onClose={() => (showLogoutModal = false)}
+  />
 </div>
 
 <style>

@@ -1,9 +1,7 @@
 <script>
   import { useForm } from "@inertiajs/svelte";
-  import InputLabel from "@/Components/InputLabel.svelte";
-  import TextInput from "@/Components/TextInput.svelte";
   import InputError from "@/Components/InputError.svelte";
-  import PrimaryButton from "@/Components/PrimaryButton.svelte";
+  import Logo from "../../../../public/images/logo.png";
 
   const form = useForm({
     email: "",
@@ -24,96 +22,172 @@
 </script>
 
 <div
-  class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900"
+  class="min-h-screen flex bg-[#e8f3f1] font-sans overflow-hidden items-center justify-center p-4"
 >
-  <div class="container mx-auto text-center mb-8">
-    <p class="text-5xl text-gray-500 dark:text-white font-bold">
-      Admin Login Page.
-    </p>
-  </div>
-
   <div
-    class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg"
+    class="w-full max-w-[1100px] h-[650px] flex bg-white rounded-[40px] shadow-2xl overflow-hidden relative border-8 border-white"
   >
-    <form on:submit|preventDefault={submit}>
-      <div>
-        <InputLabel for="email" value="User Email" />
-        <TextInput
-          id="email"
-          type="text"
-          class="mt-1 block w-full"
-          bind:value={$form.email}
-          required
-          autofocus
-          autocomplete="username"
-        />
-        <InputError class="mt-2" message={$form.errors.email} />
+    <!-- Left Side: Login Form -->
+    <div
+      class="w-full lg:w-[45%] p-12 flex flex-col justify-center relative z-10 bg-white"
+    >
+      <!-- Decorative Circles -->
+      <div
+        class="absolute -top-16 -left-16 w-48 h-48 bg-[#f9a472] rounded-full opacity-80"
+      ></div>
+      <div
+        class="absolute -bottom-12 right-12 w-32 h-32 bg-[#fbd4c0] rounded-full opacity-60"
+      ></div>
+      <div
+        class="absolute top-8 right-8 w-12 h-12 bg-[#2c7db6] rounded-full"
+      ></div>
+
+      <div class="relative z-20">
+        <h1 class="text-6xl font-serif text-[#1b1b1b] leading-tight mb-2">
+          Tha Dar Aung
+        </h1>
+        <h2 class="text-6xl font-serif text-[#1b1b1b] leading-tight mb-12">
+          Admin Portal
+        </h2>
+
+        <form on:submit|preventDefault={submit} class="space-y-6 max-w-[340px]">
+          <div>
+            <label
+              for="email"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >Username</label
+            >
+            <input
+              id="email"
+              type="text"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#2cb699] focus:ring-2 focus:ring-[#2cb699]/20 outline-none transition-all duration-300"
+              bind:value={$form.email}
+              required
+              autofocus
+            />
+            <InputError class="mt-1" message={$form.errors.email} />
+          </div>
+
+          <div class="relative">
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >Password</label
+            >
+            <div class="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#2cb699] focus:ring-2 focus:ring-[#2cb699]/20 outline-none transition-all duration-300 pr-12"
+                value={$form.password}
+                on:input={(e) => ($form.password = e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                on:click={togglePasswordVisibility}
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                {#if showPassword}
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    /><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    /></svg
+                  >
+                {:else}
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                    /></svg
+                  >
+                {/if}
+              </button>
+            </div>
+            <InputError class="mt-1" message={$form.errors.password} />
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              type="button"
+              class="text-xs font-semibold text-gray-800 hover:text-[#2cb699] transition-colors"
+              >Contact : 09763684400</button
+            >
+          </div>
+
+          <div class="pt-6">
+            <button
+              type="submit"
+              disabled={$form.processing}
+              class="w-full flex items-center bg-[#2c58b6] text-white rounded-xl overflow-hidden hover:bg-[#25519d] transition-all group disabled:opacity-50"
+            >
+              <span
+                class="flex-grow py-4 text-sm font-bold tracking-widest uppercase"
+                >Login</span
+              >
+              <span
+                class="bg-[#f9a472] p-4 group-hover:bg-[#e89361] transition-colors"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  /></svg
+                >
+              </span>
+            </button>
+          </div>
+        </form>
       </div>
+    </div>
 
-      <div class="mt-4 relative">
-        <InputLabel for="password" value="User Password" />
-        <TextInput
-          id="password"
-          type={showPassword ? "text" : "password"}
-          class="mt-1 block w-full"
-          bind:value={$form.password}
-          required
-          autocomplete="current-password"
-        />
-
-        <button
-          type="button"
-          on:click={togglePasswordVisibility}
-          class="absolute right-3 top-[38px] text-gray-500 dark:text-gray-400 focus:outline-none"
-          aria-label={showPassword ? "Hide password" : "Show password"}
+    <!-- Right Side: Illustration -->
+    <div
+      class="hidden lg:flex w-[55%] bg-[#2cb699] relative items-center justify-center p-12"
+    >
+      <div class="text-center">
+        <div
+          class="bg-white/20 p-8 rounded-[40px] backdrop-blur-sm border border-white/30 inline-block mb-6 transform hover:scale-105 transition-transform duration-500"
         >
-          {#if showPassword}
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-            </svg>
-          {:else}
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-              />
-            </svg>
-          {/if}
-        </button>
-
-        <InputError class="mt-2" message={$form.errors.password} />
+          <img src={Logo} alt="Logo" class="w-32 h-32" />
+        </div>
       </div>
-
-      <div class="flex items-center justify-end mt-4">
-        <PrimaryButton class="ms-4" disabled={$form.processing}>
-          Login
-        </PrimaryButton>
-      </div>
-    </form>
+    </div>
   </div>
 </div>
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap");
+
+  :global(.font-serif) {
+    font-family: "Playfair Display", serif;
+  }
+
+  :global(.font-sans) {
+    font-family: "Inter", sans-serif;
+  }
+</style>
