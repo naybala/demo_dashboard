@@ -5,6 +5,9 @@ namespace BasicDashboard\Web\Dashboard\Controllers;
 use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\Dashboard\Services\DashboardService;
 
+use Inertia\Inertia;
+use Inertia\Response;
+
 class DashboardController extends BaseController
 {
     public function __construct(private DashboardService $dashboardService)
@@ -12,10 +15,11 @@ class DashboardController extends BaseController
     }
 
     /**
-     * Display a listing of the resource.
+     * Display the dashboard.
      */
-    public function index(\Illuminate\Http\Request $request)
+    public function index(\Illuminate\Http\Request $request): Response
     {
-        return $this->dashboardService->index($request->all());
+        $data = $this->dashboardService->getDashboardData($request->all());
+        return Inertia::render('Dashboard/Index', $data);
     }
 }

@@ -14,12 +14,15 @@ class DashboardService extends BaseController
     }
 
     /**
-     * Display a listing of the resource.
+     * Get dashboard data.
      */
-    public function index(array $filters = [])
+    public function getDashboardData(array $filters = []): array
     {        
         $stats = $this->getDashboardStats($filters);
-        return view('admin.dashboard.index', compact('stats', 'filters'));
+        return [
+            'stats' => $stats,
+            'filters' => $filters
+        ];
     }
 
     public function getDashboardStats(array $filters): array

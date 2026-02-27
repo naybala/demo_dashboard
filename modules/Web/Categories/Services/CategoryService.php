@@ -15,6 +15,11 @@ class CategoryService
     {
     }
 
+    public function all()
+    {
+        return $this->category->orderBy('name')->get();
+    }
+
     public function paginate(array $request) :LengthAwarePaginator
     {
         $categoryList = $this->category

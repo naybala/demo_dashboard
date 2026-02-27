@@ -9,9 +9,10 @@ use BasicDashboard\Web\DailyIncomes\Validation\StoreDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\UpdateDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\DeleteDailyIncomeRequest;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
+use BasicDashboard\Web\OwnProducts\Services\OwnProductService;
+use Inertia\Inertia;
+use Inertia\Response;
 use Throwable;
 
 
@@ -32,35 +33,37 @@ class DailyIncomeController extends BaseController
     const LANG_PATH = "dailyIncome.dailyIncome";
 
     public function __construct(
-        private DailyIncomeService $dailyIncomeService,
-        private ResponseFactory $responseFactory
+        private DailyIncomeService $dailyIncomeService
     ) {
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $dailyIncomeList = $this->dailyIncomeService->paginate($request->all());
         $dailyIncomeList = DailyIncomeResource::collection($dailyIncomeList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW . '.index', $dailyIncomeList);
+        return Inertia::render('DailyIncomes/Index', $dailyIncomeList);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view(self::VIEW . '.create');
+        $products = app(OwnProductService::class)->all();
+        return Inertia::render('DailyIncomes/CreateEdit', [
+            'products' => $products,
+        ]);
     }
 
     public function store(StoreDailyIncomeRequest $request): RedirectResponse
     {
         try {
             $this->dailyIncomeService->store($request->validated());
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_created'));
         } catch (Throwable $e) {
             $this->LogError("DailyIncome store failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 
-    public function edit(string $id): View | RedirectResponse
+    public function edit(string $id): Response
     {
         $decodedId = customDecoder($id);
         $dailyIncome = $this->dailyIncomeService->findOrFail($decodedId);
@@ -79,10 +82,15 @@ class DailyIncomeController extends BaseController
             'total_profit' => number_format($dailyIncome->dailyIncomeTotal?->total_profit ??0,2,'.',''),
         ];
 
-        return $this->responseFactory->successView(self::VIEW . ".edit", $data);
+        $products = app(OwnProductService::class)->all();
+
+        return Inertia::render('DailyIncomes/CreateEdit', [
+            'dailyIncome' => $data,
+            'products' => $products,
+        ]);
     }
 
-    public function show(string $id): View | RedirectResponse
+    public function show(string $id): Response
     {
         $dailyIncome = $this->dailyIncomeService->findOrFail($id);
         $items = $this->dailyIncomeService->getByVoucherNo($dailyIncome);
@@ -97,17 +105,19 @@ class DailyIncomeController extends BaseController
             'voucher_no' => $dailyIncome->dailyIncomeTotal?->voucher_no,
         ];
 
-        return $this->responseFactory->successView(self::VIEW . '.show', $data);
+        return Inertia::render('DailyIncomes/Show', [
+            'dailyIncome' => $data,
+        ]);
     }
 
     public function update(UpdateDailyIncomeRequest $request, string $id): RedirectResponse
     {
         try {
             $this->dailyIncomeService->update($request->validated(), customDecoder($id));
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_updated'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("DailyIncome update failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -115,10 +125,10 @@ class DailyIncomeController extends BaseController
     {
         try {
             $this->dailyIncomeService->delete($request->validated()['id']);
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_deleted'));
         } catch (Throwable $e) {
             $this->LogError("DailyIncome destroy failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 }

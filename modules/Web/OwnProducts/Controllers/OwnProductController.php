@@ -11,7 +11,10 @@ use BasicDashboard\Web\OwnProducts\Validation\DeleteOwnProductRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
+use BasicDashboard\Web\Categories\Services\CategoryService;
+use BasicDashboard\Web\Units\Services\UnitService;
+use Inertia\Inertia;
+use Inertia\Response;
 use Throwable;
 
 
@@ -32,59 +35,73 @@ class OwnProductController extends BaseController
     const LANG_PATH = "ownProduct.ownProduct";
 
     public function __construct(
-        private OwnProductService $ownProductService,
-        private ResponseFactory $responseFactory
+        private OwnProductService $ownProductService
     ) {
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $ownProductList = $this->ownProductService->paginate($request->all());
         $ownProductList = OwnProductResource::collection($ownProductList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW . '.index', $ownProductList);
+        return Inertia::render('OwnProducts/Index', $ownProductList);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view(self::VIEW . '.create');
+        $categories = app(CategoryService::class)->all();
+        $units = app(UnitService::class)->all();
+        return Inertia::render('OwnProducts/CreateEdit', [
+            'categories' => $categories,
+            'units' => $units,
+        ]);
     }
 
     public function store(StoreOwnProductRequest $request): RedirectResponse
     {
         try {
             $this->ownProductService->store($request->validated());
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_created'));
         } catch (Throwable $e) {
             $this->LogError("OwnProduct store failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 
-    public function edit(string $id): View | RedirectResponse
+    public function edit(string $id): Response
     {
         $decodedId = customDecoder($id);
         $ownProduct = $this->ownProductService->findOrFail($decodedId);
         $ownProduct = new OwnProductResource($ownProduct);
         $ownProduct = $ownProduct->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".edit", $ownProduct);
+        
+        $categories = app(CategoryService::class)->all();
+        $units = app(UnitService::class)->all();
+
+        return Inertia::render('OwnProducts/CreateEdit', [
+            'ownProduct' => $ownProduct,
+            'categories' => $categories,
+            'units' => $units,
+        ]);
     }
 
-    public function show(string $id): View | RedirectResponse
+    public function show(string $id): Response
     {
         $ownProduct = $this->ownProductService->findOrFail($id);
         $ownProduct = new OwnProductResource($ownProduct);
         $ownProduct = $ownProduct->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . '.show', $ownProduct);
+        return Inertia::render('OwnProducts/Show', [
+            'ownProduct' => $ownProduct,
+        ]);
     }
 
     public function update(UpdateOwnProductRequest $request, string $id): RedirectResponse
     {
         try {
             $this->ownProductService->update($request->validated(), customDecoder($id));
-            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("OwnProduct update failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -92,10 +109,10 @@ class OwnProductController extends BaseController
     {
         try {
             $this->ownProductService->delete($request->validated()['id']);
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_deleted'));
         } catch (Throwable $e) {
             $this->LogError("OwnProduct destroy failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 }

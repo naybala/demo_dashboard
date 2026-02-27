@@ -6,9 +6,9 @@ use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\Audits\Services\AuditService;
 use BasicDashboard\Web\Audits\Resources\AuditResource;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
+use Inertia\Inertia;
+use Inertia\Response;
 use Throwable;
 
 /**
@@ -24,29 +24,30 @@ class AuditController extends BaseController
     const LANG_PATH = "audit.audit";
 
     public function __construct(
-        private AuditService $auditService,
-        private ResponseFactory $responseFactory
+        private AuditService $auditService
     ) {
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $auditList = $this->auditService->paginate($request->all());
         $auditList = AuditResource::collection($auditList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW . '.index', $auditList);
+        return Inertia::render('Audits/Index', $auditList);
     }
 
-    public function show(string $id): View | RedirectResponse
+    public function show(string $id): Response | RedirectResponse
     {
         try {
             $decodedId = customDecoder($id);
             $audit = $this->auditService->findOrFail($decodedId);
             $audit = new AuditResource($audit);
             $audit = $audit->response()->getData(true)['data'];
-            return $this->responseFactory->successView(self::VIEW . '.show', $audit);
+            return Inertia::render('Audits/Show', [
+                'audit' => $audit
+            ]);
         } catch (Throwable $e) {
             $this->LogError("Audit show failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 }

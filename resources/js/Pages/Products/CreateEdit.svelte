@@ -1,0 +1,285 @@
+<script>
+  import AdminLayout from "@/Layouts/AdminLayout.svelte";
+  import PageHeader from "@/Components/PageHeader.svelte";
+  import InputLabel from "@/Components/InputLabel.svelte";
+  import TextInput from "@/Components/TextInput.svelte";
+  import InputError from "@/Components/InputError.svelte";
+  import PrimaryButton from "@/Components/PrimaryButton.svelte";
+  import SecondaryButton from "@/Components/SecondaryButton.svelte";
+  import { useProductForm } from "./useProductForm";
+  import { onMount } from "svelte";
+  import Quill from "quill";
+  import "quill/dist/quill.snow.css";
+
+  export let product = null;
+  export let categories = [];
+
+  const { form, submit } = useProductForm(product);
+
+  let quillEn;
+  let quillOther;
+  let fileInput;
+
+  onMount(() => {
+    const toolbarOptions = [
+      ["bold", "italic", "underline", "strike"],
+      ["blockquote", "code-block"],
+      [{ header: 1 }, { header: 2 }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ script: "sub" }, { script: "super" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ direction: "rtl" }],
+      [{ size: ["small", false, "large", "huge"] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ color: [] }, { background: [] }],
+      [{ font: [] }],
+      [{ align: [] }],
+      ["clean"],
+    ];
+
+    quillEn = new Quill("#editor-en", {
+      theme: "snow",
+      modules: { toolbar: toolbarOptions },
+    });
+
+    quillOther = new Quill("#editor-other", {
+      theme: "snow",
+      modules: { toolbar: toolbarOptions },
+    });
+
+    quillEn.root.innerHTML = $form.description;
+    quillOther.root.innerHTML = $form.description_other;
+
+    quillEn.on("text-change", () => {
+      $form.description = quillEn.root.innerHTML;
+    });
+
+    quillOther.on("text-change", () => {
+      $form.description_other = quillOther.root.innerHTML;
+    });
+  });
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    $form.photos = [...$form.photos, ...files];
+  };
+
+  const removeNewPhoto = (index) => {
+    $form.photos = $form.photos.filter((_, i) => i !== index);
+  };
+
+  const removeExistingPhoto = (path) => {
+    $form.existing_photos = $form.existing_photos.filter((p) => p !== path);
+  };
+
+  const toggleCategory = (categoryId) => {
+    if ($form.categories.includes(categoryId)) {
+      $form.categories = $form.categories.filter((id) => id !== categoryId);
+    } else {
+      $form.categories = [...$form.categories, categoryId];
+    }
+  };
+</script>
+
+<AdminLayout>
+  <PageHeader title={product ? "Edit Product" : "Create Product"} />
+
+  <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+    <form on:submit|preventDefault={submit} class="space-y-6">
+      <!-- Image Upload -->
+      <div>
+        <InputLabel value="Product Photos" />
+        <div class="mt-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {#each $form.existing_photos as path}
+            <div
+              class="relative group aspect-square rounded-lg overflow-hidden border border-gray-200"
+            >
+              <img
+                src={`/${path}`}
+                alt="product"
+                class="w-full h-full object-cover"
+              />
+              <button
+                type="button"
+                on:click={() => removeExistingPhoto(path)}
+                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  /></svg
+                >
+              </button>
+            </div>
+          {/each}
+
+          {#each $form.photos as file, i}
+            <div
+              class="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center"
+            >
+              <span class="text-xs text-center px-2 truncate">{file.name}</span>
+              <button
+                type="button"
+                on:click={() => removeNewPhoto(i)}
+                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  /></svg
+                >
+              </button>
+            </div>
+          {/each}
+
+          <button
+            type="button"
+            on:click={() => fileInput.click()}
+            class="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-500 hover:border-indigo-500 hover:text-indigo-500 transition-colors"
+          >
+            <svg
+              class="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              /></svg
+            >
+            <span class="mt-1 text-xs">Add Photo</span>
+          </button>
+          <input
+            type="file"
+            multiple
+            class="hidden"
+            bind:this={fileInput}
+            on:change={handleFileChange}
+            accept="image/*"
+          />
+        </div>
+        <InputError message={$form.errors.photos} />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <InputLabel for="name" value="Name (EN)" />
+          <TextInput
+            id="name"
+            type="text"
+            class="mt-1 block w-full"
+            bind:value={$form.name}
+            required
+          />
+          <InputError message={$form.errors.name} />
+        </div>
+
+        <div>
+          <InputLabel for="name_other" value="Name (Other)" />
+          <TextInput
+            id="name_other"
+            type="text"
+            class="mt-1 block w-full"
+            bind:value={$form.name_other}
+            required
+          />
+          <InputError message={$form.errors.name_other} />
+        </div>
+
+        <div>
+          <InputLabel for="price" value="Price" />
+          <TextInput
+            id="price"
+            type="number"
+            class="mt-1 block w-full"
+            bind:value={$form.price}
+            required
+          />
+          <InputError message={$form.errors.price} />
+        </div>
+
+        <div>
+          <InputLabel value="Categories" />
+          <div class="mt-2 flex flex-wrap gap-2">
+            {#each categories as category}
+              <button
+                type="button"
+                on:click={() => toggleCategory(category.id)}
+                class={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${$form.categories.includes(category.id) ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"}`}
+              >
+                {category.name}
+              </button>
+            {/each}
+          </div>
+          <InputError message={$form.errors.categories} />
+        </div>
+      </div>
+
+      <div class="flex gap-6">
+        <label class="inline-flex items-center">
+          <input
+            type="checkbox"
+            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+            bind:checked={$form.is_banner}
+          />
+          <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
+            >Is Banner</span
+          >
+        </label>
+        <label class="inline-flex items-center">
+          <input
+            type="checkbox"
+            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+            bind:checked={$form.is_mini_banner}
+          />
+          <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
+            >Is Mini Banner</span
+          >
+        </label>
+      </div>
+
+      <div>
+        <InputLabel value="Description (EN)" />
+        <div
+          class="mt-1 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 min-h-[200px]"
+          id="editor-en"
+        ></div>
+        <InputError message={$form.errors.description} />
+      </div>
+
+      <div>
+        <InputLabel value="Description (Other)" />
+        <div
+          class="mt-1 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 min-h-[200px]"
+          id="editor-other"
+        ></div>
+        <InputError message={$form.errors.description_other} />
+      </div>
+
+      <div class="flex items-center justify-end gap-4">
+        <SecondaryButton on:click={() => router.get("/products")}
+          >Cancel</SecondaryButton
+        >
+        <PrimaryButton type="submit" disabled={$form.processing}>
+          {product ? "Update Product" : "Create Product"}
+        </PrimaryButton>
+      </div>
+    </form>
+  </div>
+</AdminLayout>

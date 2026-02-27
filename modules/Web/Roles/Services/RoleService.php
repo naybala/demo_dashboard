@@ -6,14 +6,17 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use BasicDashboard\Foundations\Domain\Roles\Role;
 
-
-
 class RoleService
 {
     public function __construct(
         private Role $role,
         private Permission $permission,
     ) {
+    }
+
+    public function all()
+    {
+        return $this->role->orderBy('name')->get();
     }
 
     public function paginate(array $request)

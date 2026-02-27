@@ -25,6 +25,11 @@ class UnitService
     {
     }
 
+    public function all()
+    {
+        return $this->unit->orderBy('name')->get();
+    }
+
     public function paginate(array $request)
     {
         return $this->unit

@@ -8,6 +8,10 @@ use BasicDashboard\Web\Auth\Validation\AuthLoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
+use Inertia\Inertia;
+use Inertia\Response;
+use Illuminate\Http\RedirectResponse;
+
 class AuthController extends BaseController
 {
     public function __construct(private AuthService $authService)
@@ -15,12 +19,12 @@ class AuthController extends BaseController
     }
 
     /**
-     * Display a listing of the resource.
+     * Display the login page.
      */
-    public function login()
+    public function login(): Response|RedirectResponse
     {
         if (Auth::user() == null) {
-            return view('auth.login');
+            return Inertia::render('Auth/Login');
         } else {
             $permissionArr = $this->authService->getAuthPermissions();
             if ($permissionArr) {
@@ -30,15 +34,15 @@ class AuthController extends BaseController
         }
     }
 
-    public function authorizeOperator(AuthLoginRequest $request)
+    public function authorizeOperator(AuthLoginRequest $request): RedirectResponse
     {
         if ($this->authService->authorizeOperator($request->validated())) {
-            return redirect("/login");
+            return redirect("/");
         }
-        return redirect()->back()->with("message", 'Invalid credentials');
+        return back()->with("error", 'Invalid credentials');
     }
 
-    public function logout()
+    public function logout(): RedirectResponse
     {
         $this->authService->logout();
         return redirect('/login');

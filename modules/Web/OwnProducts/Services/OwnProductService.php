@@ -27,7 +27,14 @@ class OwnProductService
         private OwnProduct $ownProduct,
         private FilesystemManager $fileSystemManager,
         private WebFileStoreAction $webFileStoreAction,
-    ){}
+    )
+    {
+    }
+
+    public function all()
+    {
+        return $this->ownProduct->with(['category', 'unit'])->orderBy('name')->get();
+    }
 
     public function paginate(array $request)
     {

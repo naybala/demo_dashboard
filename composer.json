@@ -12,6 +12,7 @@
         "davion190510/mini-crud-generator": "dev-main",
         "dedoc/scramble": "^0.12.34",
         "guzzlehttp/guzzle": "^7.2",
+        "inertiajs/inertia-laravel": "^2.0",
         "laravel-notification-channels/onesignal": "^2.8",
         "laravel-notification-channels/telegram": "^6.0",
         "laravel/framework": "^12.0",

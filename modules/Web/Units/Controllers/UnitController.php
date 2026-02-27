@@ -12,7 +12,8 @@ use BasicDashboard\Web\Units\Validation\DeleteUnitRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\ResponseFactory;
+use Inertia\Inertia;
+use Inertia\Response;
 use Throwable;
 
 
@@ -33,59 +34,62 @@ class UnitController extends BaseController
     const LANG_PATH = "unit.unit";
 
     public function __construct(
-        private UnitService $unitService,
-        private ResponseFactory $responseFactory
+        private UnitService $unitService
     ) {
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $unitList = $this->unitService->paginate($request->all());
         $unitList = UnitResource::collection($unitList)->response()->getData(true);
-        return $this->responseFactory->successView(self::VIEW . '.index', $unitList);
+        return Inertia::render('Units/Index', $unitList);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view(self::VIEW . '.create');
+        return Inertia::render('Units/CreateEdit');
     }
 
     public function store(StoreUnitRequest $request): RedirectResponse
     {
         try {
             $this->unitService->store($request->validated());
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_created'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_created'));
         } catch (Throwable $e) {
             $this->LogError("Unit store failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 
-    public function edit(string $id): View | RedirectResponse
+    public function edit(string $id): Response
     {
         $decodedId = customDecoder($id);
         $unit = $this->unitService->findOrFail($decodedId);
         $unit = new UnitResource($unit);
         $unit = $unit->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . ".edit", $unit);
+        return Inertia::render('Units/CreateEdit', [
+            'unit' => $unit
+        ]);
     }
 
-    public function show(string $id): View | RedirectResponse
+    public function show(string $id): Response
     {
         $unit = $this->unitService->findOrFail($id);
         $unit = new UnitResource($unit);
         $unit = $unit->response()->getData(true)['data'];
-        return $this->responseFactory->successView(self::VIEW . '.show', $unit);
+        return Inertia::render('Units/Show', [
+            'unit' => $unit
+        ]);
     }
 
     public function update(UpdateUnitRequest $request, string $id): RedirectResponse
     {
         try {
             $this->unitService->update($request->validated(), $id);
-            return $this->responseFactory->successShowRedirect(self::ROUTE, $id, __(self::LANG_PATH . '_updated'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("Unit update failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -93,12 +97,12 @@ class UnitController extends BaseController
     {
         try {
             $this->unitService->delete($request->validated()['id']);
-            return $this->responseFactory->successIndexRedirect(self::ROUTE, __(self::LANG_PATH . '_deleted'));
-        }catch (WarningException $e) {
-            return $this->responseFactory->redirectBackWithWarning(__($e->getMessage()));
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_deleted'));
+        } catch (WarningException $e) {
+            return back()->with('warning', __($e->getMessage()));
         } catch (Throwable $e) {
             $this->LogError("Unit destroy failed", $e);
-            return $this->responseFactory->redirectBackWithError($e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 }
