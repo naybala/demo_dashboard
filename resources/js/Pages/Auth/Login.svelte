@@ -84,7 +84,6 @@
               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#2cb699] focus:ring-2 focus:ring-[#2cb699]/20 outline-none transition-all duration-300"
               bind:value={$form.email}
               required
-              autofocus
             />
             <InputError class="mt-1" message={$form.errors.email} />
           </div>
