@@ -33,7 +33,7 @@ require __DIR__ . "/Web/Guest/guestRoute.php";
 require __DIR__ . "/Web/Localization/localizationRoute.php";
 
 Route::group(['middleware' => ['auth', 'permission.check']], function (): void {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::resource('categories', CategoryController::class);
     Route::resource('roles', RoleController::class);

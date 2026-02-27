@@ -5,6 +5,12 @@
 @tailwind utilities;
 @use 'preline/dist/preline.css';
 
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
 #btn-submit:disabled {
     background-color: #cccccc;
     cursor: not-allowed;

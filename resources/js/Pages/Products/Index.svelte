@@ -50,9 +50,11 @@
 
 <AdminLayout>
   <PageHeader title="Products">
-    <Link href="/products/create">
-      <PrimaryButton>Create Product</PrimaryButton>
-    </Link>
+    <div slot="actions">
+      <Link href="/products/create">
+        <PrimaryButton>Create Product</PrimaryButton>
+      </Link>
+    </div>
   </PageHeader>
 
   <div class="mb-6 flex justify-between items-center">

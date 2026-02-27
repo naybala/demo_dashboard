@@ -30,7 +30,7 @@ class PermissionMiddleware
             return $next($request);
         }
 
-        if ($request->route()->uri == "/") {
+        if ($request->route()->uri == "dashboard") {
             return $next($request);
         }
         if ($request->route()->uri == "profile") {

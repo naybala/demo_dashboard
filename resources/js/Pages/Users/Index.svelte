@@ -49,9 +49,11 @@
 
 <AdminLayout>
   <PageHeader title="Users">
-    <Link href="/users/create">
-      <PrimaryButton>Create User</PrimaryButton>
-    </Link>
+    <div slot="actions">
+      <Link href="/users/create">
+        <PrimaryButton>Create User</PrimaryButton>
+      </Link>
+    </div>
   </PageHeader>
 
   <div class="mb-6 flex justify-between items-center">

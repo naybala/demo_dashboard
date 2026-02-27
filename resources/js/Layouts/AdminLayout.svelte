@@ -1,8 +1,6 @@
 <script>
   import { page, router } from "@inertiajs/svelte";
   import { Link } from "@inertiajs/svelte";
-  import { onMount } from "svelte";
-
   export let user = $page.props.auth.user;
   let isMobileMenuOpen = false;
 
@@ -84,14 +82,14 @@
   };
 </script>
 
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
+<div class="h-dvh flex bg-gray-100 dark:bg-gray-900 overflow-hidden">
   <!-- Sidebar -->
   <aside
-    class={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+    class={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
   >
     <div class="h-full flex flex-col">
       <div
-        class="p-6 border-b dark:border-gray-700 flex items-center justify-between"
+        class="p-6 border-b dark:border-gray-700 flex items-center justify-between shrink-0"
       >
         <h1
           class="text-xl font-black tracking-tight text-indigo-600 dark:text-indigo-400"
@@ -100,7 +98,7 @@
         </h1>
         <button
           on:click={() => (isMobileMenuOpen = false)}
-          class="md:hidden text-gray-500"
+          class="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
         >
           <svg
             class="w-6 h-6"
@@ -118,7 +116,7 @@
         </button>
       </div>
 
-      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 custom-scrollbar">
+      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 no-scrollbar">
         {#each navigation as section}
           <div>
             {#if section.items}
@@ -184,19 +182,19 @@
       </nav>
 
       <div
-        class="p-4 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50"
+        class="p-4 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 shrink-0"
       >
         <div class="flex items-center gap-3">
           <div
-            class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-xs"
+            class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-xs shrink-0"
           >
-            {user?.name?.charAt(0).toUpperCase()}
+            {(user?.name || user?.username || "A").charAt(0).toUpperCase()}
           </div>
           <div class="flex-1 min-w-0">
             <p
               class="text-sm font-medium text-gray-900 dark:text-white truncate"
             >
-              {user?.name}
+              {user?.name || user?.username || "Admin"}
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
               {user?.email}
@@ -220,14 +218,15 @@
   {/if}
 
   <!-- Main Content -->
-  <div class="flex-1 flex flex-col min-w-0">
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
     <!-- Top Nav -->
     <header
-      class="bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex justify-between items-center border-b dark:border-gray-700 sticky top-0 z-30"
+      class="bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex justify-between items-center border-b dark:border-gray-700 shrink-0 z-30"
     >
       <button
         on:click={() => (isMobileMenuOpen = true)}
-        class="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
+        class="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none p-2"
+        aria-label="Open menu"
       >
         <svg
           class="h-6 w-6"
@@ -245,13 +244,13 @@
       </button>
 
       <div class="flex-1 px-4">
-        <!-- Breadcrumbs or Search could go here -->
+        <!-- Breadcrumbs could go here -->
       </div>
 
       <div class="flex items-center space-x-4">
         <button
           on:click={logout}
-          class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+          class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-2 rounded-lg"
         >
           <svg
             class="w-5 h-5"
@@ -272,24 +271,39 @@
     </header>
 
     <!-- Page Content -->
-    <main class="p-4 md:p-6 flex-1 overflow-x-hidden">
-      <slot />
+    <main
+      class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar bg-gray-50 dark:bg-gray-900/50"
+    >
+      <div class="max-w-7xl mx-auto w-full">
+        <slot />
+      </div>
     </main>
   </div>
 </div>
 
 <style>
   .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #e2e8f0;
+    background: #cbd5e1;
     border-radius: 10px;
   }
   .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: #475569;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 </style>

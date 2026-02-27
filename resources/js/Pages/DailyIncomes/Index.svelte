@@ -57,9 +57,11 @@
 
 <AdminLayout>
   <PageHeader title="Daily Incomes">
-    <Link href="/daily-incomes/create">
-      <PrimaryButton>Create Daily Income</PrimaryButton>
-    </Link>
+    <div slot="actions">
+      <Link href="/daily-incomes/create">
+        <PrimaryButton>Create Daily Income</PrimaryButton>
+      </Link>
+    </div>
   </PageHeader>
 
   <div

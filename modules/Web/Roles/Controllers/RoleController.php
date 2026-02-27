@@ -4,6 +4,7 @@ namespace BasicDashboard\Web\Roles\Controllers;
 
 use App\Exceptions\WarningException;
 use BasicDashboard\Web\Common\BaseController;
+use BasicDashboard\Web\Roles\Resources\RoleResource;
 use BasicDashboard\Web\Roles\Services\RoleService;
 use BasicDashboard\Web\Roles\Validation\StoreRoleRequest;
 use BasicDashboard\Web\Roles\Validation\UpdateRoleRequest;

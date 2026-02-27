@@ -46,9 +46,11 @@
 
 <AdminLayout>
   <PageHeader title="Units">
-    <Link href="/units/create">
-      <PrimaryButton>Create Unit</PrimaryButton>
-    </Link>
+    <div slot="actions">
+      <Link href="/units/create">
+        <PrimaryButton>Create Unit</PrimaryButton>
+      </Link>
+    </div>
   </PageHeader>
 
   <div class="mb-6 flex justify-between items-center">

@@ -47,9 +47,11 @@
 
 <AdminLayout>
   <PageHeader title="Roles">
-    <Link href="/roles/create">
-      <PrimaryButton>Create Role</PrimaryButton>
-    </Link>
+    <div slot="actions">
+      <Link href="/roles/create">
+        <PrimaryButton>Create Role</PrimaryButton>
+      </Link>
+    </div>
   </PageHeader>
 
   <div class="mb-6 flex justify-between items-center">

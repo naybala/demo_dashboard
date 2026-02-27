@@ -7,7 +7,6 @@
   import { router, Link } from "@inertiajs/svelte";
 
   export let data = [];
-  export let links = [];
   export let meta = {};
 
   let search = "";
@@ -76,7 +75,7 @@
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {audit.auditable_type.split("\\").pop()}
+          {audit.auditable_type?.split("\\").pop() || "---"}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
