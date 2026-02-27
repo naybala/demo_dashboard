@@ -22,35 +22,56 @@
 </script>
 
 <div
-  class="min-h-screen flex bg-[#e8f3f1] font-sans overflow-hidden items-center justify-center p-4"
+  class="min-h-screen flex bg-[#e8f3f1] font-sans items-center justify-center p-4 sm:p-6"
 >
   <div
-    class="w-full max-w-[1100px] h-[650px] flex bg-white rounded-[40px] shadow-2xl overflow-hidden relative border-8 border-white"
+    class="w-full max-w-[1100px] flex flex-col lg:flex-row bg-white rounded-[32px] lg:rounded-[40px] shadow-2xl overflow-hidden relative border-4 lg:border-8 border-white"
   >
     <!-- Left Side: Login Form -->
     <div
-      class="w-full lg:w-[45%] p-12 flex flex-col justify-center relative z-10 bg-white"
+      class="w-full lg:w-[45%] px-6 py-10 sm:px-10 sm:py-12 flex flex-col justify-center relative z-10 bg-white"
     >
       <!-- Decorative Circles -->
       <div
-        class="absolute -top-16 -left-16 w-48 h-48 bg-[#f9a472] rounded-full opacity-80"
+        class="absolute -top-10 -left-10 sm:-top-16 sm:-left-16 w-32 h-32 sm:w-48 sm:h-48 bg-[#f9a472] rounded-full opacity-80"
       ></div>
       <div
-        class="absolute -bottom-12 right-12 w-32 h-32 bg-[#fbd4c0] rounded-full opacity-60"
+        class="absolute -bottom-8 right-8 sm:-bottom-12 sm:right-12 w-20 h-20 sm:w-32 sm:h-32 bg-[#fbd4c0] rounded-full opacity-60"
       ></div>
       <div
-        class="absolute top-8 right-8 w-12 h-12 bg-[#2c7db6] rounded-full"
+        class="absolute top-5 right-5 sm:top-8 sm:right-8 w-8 h-8 sm:w-12 sm:h-12 bg-[#2c7db6] rounded-full"
       ></div>
 
-      <div class="relative z-20">
-        <h1 class="text-6xl font-serif text-[#1b1b1b] leading-tight mb-2">
+      <div class="relative z-20 max-w-sm mx-auto w-full">
+        <!-- Logo for mobile/tablet — shown above form on small screens -->
+        <div class="flex items-center gap-3 mb-6 lg:hidden">
+          <img
+            src={Logo}
+            alt="Logo"
+            class="w-12 h-12 rounded-xl object-cover"
+          />
+          <div>
+            <p
+              class="text-lg font-serif font-bold text-[#1b1b1b] leading-tight"
+            >
+              Tha Dar Aung
+            </p>
+            <p class="text-sm text-gray-500">Admin Portal</p>
+          </div>
+        </div>
+
+        <h1
+          class="hidden lg:block text-5xl xl:text-6xl font-serif text-[#1b1b1b] leading-tight mb-2"
+        >
           Tha Dar Aung
         </h1>
-        <h2 class="text-6xl font-serif text-[#1b1b1b] leading-tight mb-12">
+        <h2
+          class="hidden lg:block text-5xl xl:text-6xl font-serif text-[#1b1b1b] leading-tight mb-10"
+        >
           Admin Portal
         </h2>
 
-        <form on:submit|preventDefault={submit} class="space-y-6 max-w-[340px]">
+        <form on:submit|preventDefault={submit} class="space-y-5">
           <div>
             <label
               for="email"
@@ -133,7 +154,7 @@
             >
           </div>
 
-          <div class="pt-6">
+          <div class="pt-2">
             <button
               type="submit"
               disabled={$form.processing}
@@ -165,7 +186,7 @@
       </div>
     </div>
 
-    <!-- Right Side: Illustration -->
+    <!-- Right Side: Illustration (desktop only) -->
     <div
       class="hidden lg:flex w-[55%] bg-[#2cb699] relative items-center justify-center p-12"
     >
