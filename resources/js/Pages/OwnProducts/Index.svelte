@@ -35,6 +35,11 @@
     );
   };
 
+  const handleReset = () => {
+    search = "";
+    router.get("/own-products");
+  };
+
   const confirmDelete = (product) => {
     productToDelete = product;
     showDeleteModal = true;
@@ -72,6 +77,14 @@
       <SecondaryButton on:click={handleSearch}>
         {__("messages.search", "Search")}
       </SecondaryButton>
+      {#if search}
+        <SecondaryButton
+          class="bg-gray-100 dark:bg-gray-700"
+          on:click={handleReset}
+        >
+          {__("messages.reset", "Clear")}
+        </SecondaryButton>
+      {/if}
     </div>
     <Link href="/own-products/create">
       <PrimaryButton

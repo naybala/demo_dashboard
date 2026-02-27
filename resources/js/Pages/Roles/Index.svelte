@@ -34,6 +34,11 @@
     );
   };
 
+  const handleReset = () => {
+    search = "";
+    router.get("/roles");
+  };
+
   const confirmDelete = (role) => {
     roleToDelete = role;
     showDeleteModal = true;
@@ -70,6 +75,14 @@
       <SecondaryButton on:click={handleSearch}>
         {__("messages.search", "Search")}
       </SecondaryButton>
+      {#if search}
+        <SecondaryButton
+          class="bg-gray-100 dark:bg-gray-700"
+          on:click={handleReset}
+        >
+          {__("messages.reset", "Clear")}
+        </SecondaryButton>
+      {/if}
     </div>
     <Link href="/roles/create">
       <PrimaryButton>{__("messages.create", "Create Role")}</PrimaryButton>

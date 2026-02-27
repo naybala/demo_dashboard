@@ -35,6 +35,11 @@
       { preserveState: true, replace: true },
     );
   };
+
+  const handleReset = () => {
+    search = "";
+    router.get("/categories");
+  };
 </script>
 
 <AdminLayout>
@@ -58,6 +63,14 @@
       <SecondaryButton on:click={handleSearch}>
         {__("messages.search", "Search")}
       </SecondaryButton>
+      {#if search}
+        <SecondaryButton
+          class="bg-gray-100 dark:bg-gray-700"
+          on:click={handleReset}
+        >
+          {__("messages.reset", "Clear")}
+        </SecondaryButton>
+      {/if}
     </div>
     <PrimaryButton on:click={openCreateModal}>
       {__("messages.create", "Add Category")}

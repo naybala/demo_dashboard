@@ -30,6 +30,11 @@
     );
   };
 
+  const handleReset = () => {
+    search = "";
+    router.get("/audits");
+  };
+
   const getEventColor = (event) => {
     switch (event) {
       case "created":
@@ -54,14 +59,25 @@
   </svelte:fragment>
 
   <div class="mb-6 flex justify-between items-center">
-    <div class="w-1/3">
+    <div class="flex gap-2 w-1/2">
       <TextInput
         type="text"
         placeholder={__("messages.search_item", "Search logs...")}
         bind:value={search}
-        on:input={handleSearch}
+        on:keydown={(e) => e.key === "Enter" && handleSearch()}
         class="w-full"
       />
+      <SecondaryButton on:click={handleSearch}>
+        {__("messages.search", "Search")}
+      </SecondaryButton>
+      {#if search}
+        <SecondaryButton
+          class="bg-gray-100 dark:bg-gray-700"
+          on:click={handleReset}
+        >
+          {__("messages.reset", "Clear")}
+        </SecondaryButton>
+      {/if}
     </div>
   </div>
 
