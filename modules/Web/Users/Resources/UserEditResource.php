@@ -23,7 +23,7 @@ class UserEditResource extends JsonResource
             "status"          => $this->status,
             "status_text"     => $this->status->label(),
             "country_id"      => $this->country_id,
-            "role_marked"     => $this->roles->value("id"),
+            "role_id"         => $this->roles->value("id"),
         ];
     }
 }

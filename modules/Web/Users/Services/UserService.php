@@ -34,9 +34,11 @@ class UserService
     {
         return DB::transaction(function () use ($request) {
             $image    = $request['avatar'] ?? null;
-            $roleName = $this->getRoleName($request['role_marked']);
-            $payload  = Arr::except($request, ['avatar', 'role_marked']);
-            $payload['created_by'] = Auth::id();
+            $roleId   = $request['role_id'];
+            $roleName = $this->getRoleName($roleId);
+            $payload  = Arr::except($request, ['avatar', 'role_id']);
+            $payload['role_marked'] = $roleName;
+            $payload['created_by']  = Auth::id();
             $user = $this->user->create($payload);
             $user->assignRole($roleName);
 
@@ -65,8 +67,13 @@ class UserService
             $decodedId = customDecoder($id);
             $user      = $this->user->findOrFail($decodedId);
             $image     = $request['avatar'] ?? null;
-            $payload   = Arr::except($request, ['avatar', 'role_marked']);
-            $roleName  = $this->getRoleName($request['role_marked'] ?? null);
+            $roleId    = $request['role_id'] ?? null;
+            $payload   = Arr::except($request, ['avatar', 'role_id']);
+            $roleName  = $roleId ? $this->getRoleName($roleId) : null;
+
+            if ($roleName) {
+                $payload['role_marked'] = $roleName;
+            }
 
             if ($image) {
                 $fileData = $this->webFileStoreAction->update($user, $image,config('cache.file_system_disk'),'avatar',self::ROOT);

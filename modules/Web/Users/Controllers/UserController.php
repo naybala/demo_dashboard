@@ -57,7 +57,7 @@ class UserController extends BaseController
         $decodedId = customDecoder($id);  
         $user = $this->userService->findOrFail($decodedId);
         $user = new UserEditResource($user);
-        $user = $user->response()->getData(true);
+        $user = $user->response()->getData(true)['data'];
         
         $roles = app(RoleService::class)->all();
 

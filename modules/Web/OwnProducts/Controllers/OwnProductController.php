@@ -9,7 +9,6 @@ use BasicDashboard\Web\OwnProducts\Validation\StoreOwnProductRequest;
 use BasicDashboard\Web\OwnProducts\Validation\UpdateOwnProductRequest;
 use BasicDashboard\Web\OwnProducts\Validation\DeleteOwnProductRequest;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use BasicDashboard\Web\Categories\Services\CategoryService;
 use BasicDashboard\Web\Units\Services\UnitService;

@@ -26,17 +26,18 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "fullname"              => "required",
+            "fullname"          => "required",
             "email"             => [
                 "required",
                 "email",
-                Rule::unique('users', 'email')->ignore($this->id)
+                Rule::unique('users', 'email')->ignore(customDecoder($this->id))->where(fn($query) => $query->whereNull('deleted_at'))
             ],
-            "password"          => "",
+            "password"          => "nullable|confirmed",
             "status"            => "required",
-            "role_marked"       => "required",
+            "role_id"           => "required",
             "user_type"         => "required",
-            "phone_number"      => "",
+            "phone_number"      => "nullable",
+            "avatar"            => "nullable|image|max:2048",
         ];
     }
 

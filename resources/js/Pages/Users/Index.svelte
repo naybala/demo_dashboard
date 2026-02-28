@@ -99,7 +99,22 @@
         <td
           class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
         >
-          {user.fullname}
+          <div class="flex items-center gap-3">
+            <div
+              class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold overflow-hidden flex-shrink-0"
+            >
+              {#if user.avatar}
+                <img
+                  src={user.avatar}
+                  alt={user.fullname}
+                  class="w-full h-full object-cover"
+                />
+              {:else}
+                {user.fullname.charAt(0).toUpperCase()}
+              {/if}
+            </div>
+            <span>{user.fullname}</span>
+          </div>
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
@@ -112,7 +127,7 @@
           <span
             class="px-2 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-semibold"
           >
-            {user.role_marked}
+            {user.role_name}
           </span>
         </td>
         <td
@@ -121,9 +136,7 @@
           <span
             class={`px-2 py-1 rounded-full text-xs font-semibold ${user.status === 1 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
           >
-            {user.status === 1
-              ? __("messages.active", "Active")
-              : __("messages.inactive", "Inactive")}
+            {user.status_text}
           </span>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -134,14 +147,14 @@
             <Link href={`/users/${user.id}/edit`}>
               <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
             </Link>
-            {#if user.can_be_deleted}
+            <!-- {#if user.can_be_deleted}
               <button
                 on:click={() => confirmDelete(user)}
                 class="text-red-600 hover:text-red-900 font-medium ml-2"
               >
                 {__("messages.delete", "Delete")}
               </button>
-            {/if}
+            {/if} -->
           </div>
         </td>
       </tr>

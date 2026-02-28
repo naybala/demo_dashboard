@@ -30,11 +30,12 @@ class StoreUserRequest extends FormRequest
         return [
             "fullname"          => "required",
             "email"             => ["required", "email", Rule::unique('users', 'email')->where(fn($query) => $query->whereNull('deleted_at'))],
-            "password"          => "required",
+            "password"          => "required|confirmed",
             "status"            => "required",
-            "role_marked"       => "required",
+            "role_id"           => "required",
             "user_type"         => "required",
-            "phone_number"      => "",
+            "phone_number"      => "nullable",
+            "avatar"            => "nullable|image|max:2048",
         ];
     }
 

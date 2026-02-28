@@ -9,7 +9,7 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title={`User: ${user.name}`}>
+  <PageHeader title={`User: ${user.fullname}`}>
     <Link href="/users">
       <SecondaryButton>Back to List</SecondaryButton>
     </Link>
@@ -18,15 +18,23 @@
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6 max-w-2xl">
     <div class="flex items-center gap-6 mb-8">
       <div
-        class="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-3xl font-bold"
+        class="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-3xl font-bold overflow-hidden border-4 border-white shadow-sm"
       >
-        {user.name.charAt(0).toUpperCase()}
+        {#if user.avatar}
+          <img
+            src={user.avatar}
+            alt={user.fullname}
+            class="w-full h-full object-cover"
+          />
+        {:else}
+          {user.fullname.charAt(0).toUpperCase()}
+        {/if}
       </div>
       <div>
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {user.name}
+          {user.fullname}
         </h3>
-        <p class="text-gray-500 dark:text-gray-400">@{user.username}</p>
+        <p class="text-gray-500 dark:text-gray-400">{user.email}</p>
       </div>
     </div>
 
@@ -39,7 +47,7 @@
             Role
           </h4>
           <p class="mt-1 text-lg text-gray-900 dark:text-white font-medium">
-            {user.role}
+            {user.role_name}
           </p>
         </div>
         <div>
@@ -49,9 +57,9 @@
             Status
           </h4>
           <span
-            class={`mt-1 inline-flex px-2.5 py-0.5 rounded-full text-sm font-semibold ${user.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+            class={`mt-1 inline-flex px-2.5 py-0.5 rounded-full text-sm font-semibold ${user.status === 1 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
           >
-            {user.active ? "Active" : "Inactive"}
+            {user.status_text}
           </span>
         </div>
       </div>
