@@ -11,6 +11,7 @@
   import Quill from "quill";
   import "quill/dist/quill.snow.css";
   import { router } from "@inertiajs/svelte";
+  import CurrencyInput from "@/Components/CurrencyInput.svelte";
 
   export let product = null;
   export let categories = [];
@@ -73,6 +74,26 @@
     $form.existing_photos = $form.existing_photos.filter((p) => p !== path);
   };
 
+  // ── Price formatting ──────────────────────────────────────────────
+  const formatWithCommas = (val) =>
+    val === "" || val === null || val === undefined
+      ? ""
+      : Number(val).toLocaleString("en-US");
+
+  let displayPrice = formatWithCommas($form.price);
+
+  const handlePriceInput = (e) => {
+    // Strip everything except digits
+    const raw = e.target.value.replace(/[^0-9]/g, "");
+    $form.price = raw === "" ? "" : Number(raw);
+    displayPrice = raw === "" ? "" : Number(raw).toLocaleString("en-US");
+    // Keep cursor at end
+    e.target.value = displayPrice;
+  };
+  // ────────────────────────────────────────────────────────────────────
+
+  // ────────────────────────────────────────────────────────────────────
+
   const toggleCategory = (categoryId) => {
     if ($form.categories.includes(categoryId)) {
       $form.categories = $form.categories.filter((id) => id !== categoryId);
@@ -85,11 +106,15 @@
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2
-      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem] hidden md:block"
     >
       {product ? "Edit Product" : "Create Product"}
     </h2>
   </svelte:fragment>
+  <PageHeader
+    class="block md:hidden"
+    title={product ? "Edit Product" : "Create Product"}
+  />
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-6">
@@ -218,9 +243,8 @@
 
         <div>
           <InputLabel for="price" value="Price" />
-          <TextInput
+          <CurrencyInput
             id="price"
-            type="number"
             class="mt-1 block w-full"
             bind:value={$form.price}
             required

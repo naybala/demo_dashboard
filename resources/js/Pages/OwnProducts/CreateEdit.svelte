@@ -8,6 +8,7 @@
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import SearchableSelect from "@/Components/SearchableSelect.svelte";
   import { useForm, router } from "@inertiajs/svelte";
+  import CurrencyInput from "@/Components/CurrencyInput.svelte";
 
   export let ownProduct = null;
   export let categories = [];
@@ -20,9 +21,9 @@
     name: ownProduct?.name || "",
     category_id: ownProduct?.category_id || "",
     unit_id: ownProduct?.unit_id || "",
-    price: ownProduct?.price?.toString().replace(/,/g, "") || "",
-    investment: ownProduct?.investment?.toString().replace(/,/g, "") || "",
-    profit: ownProduct?.profit?.toString().replace(/,/g, "") || "",
+    price: ownProduct?.price || "",
+    investment: ownProduct?.investment || "",
+    profit: ownProduct?.profit || "",
     image: null,
   });
 
@@ -122,9 +123,8 @@
           </div>
           <div>
             <InputLabel for="price" value="Price" />
-            <TextInput
+            <CurrencyInput
               id="price"
-              type="number"
               class="mt-1 block w-full"
               bind:value={$form.price}
               required
@@ -134,9 +134,8 @@
 
           <div>
             <InputLabel for="investment" value="Investment" />
-            <TextInput
+            <CurrencyInput
               id="investment"
-              type="number"
               class="mt-1 block w-full"
               bind:value={$form.investment}
               required
@@ -146,9 +145,8 @@
 
           <div>
             <InputLabel for="profit" value="Profit" />
-            <TextInput
+            <CurrencyInput
               id="profit"
-              type="number"
               class="mt-1 block w-full"
               bind:value={$form.profit}
               required

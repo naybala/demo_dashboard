@@ -8,6 +8,8 @@
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import SearchableSelect from "@/Components/SearchableSelect.svelte";
   import { useForm, router } from "@inertiajs/svelte";
+  import CurrencyInput from "@/Components/CurrencyInput.svelte";
+  import { formatNumber } from "@/helpers.js";
 
   export let dailyIncome = null;
   export let products = [];
@@ -94,9 +96,10 @@
     }
   };
 
-  $: totalAmount = $form.items
-    .reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0)
-    .toFixed(2);
+  $: totalAmount = formatNumber(
+    $form.items.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0),
+    2,
+  );
 </script>
 
 <AdminLayout>
@@ -178,13 +181,12 @@
                       />
                     </td>
                     <td class="px-4 py-2">
-                      <input
+                      <CurrencyInput
                         id="amount_{i}"
-                        type="number"
                         bind:value={item.amount}
                         on:input={() => calculateProfit(i)}
-                        class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-sm"
-                        step="0.01"
+                        class="w-full text-sm"
+                        decimals={2}
                         required
                       />
                     </td>
@@ -192,14 +194,14 @@
                       <div
                         class="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono"
                       >
-                        {item.price || "0.00"}
+                        {formatNumber(item.price, 2) || "0.00"}
                       </div>
                     </td>
                     <td class="px-4 py-2 text-right">
                       <div
                         class="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono"
                       >
-                        {item.profit || "0.00"}
+                        {formatNumber(item.profit, 2) || "0.00"}
                       </div>
                     </td>
                     <td class="px-4 py-2">
@@ -268,12 +270,11 @@
                 <div class="grid grid-cols-2 gap-4">
                   <div class="space-y-2">
                     <InputLabel value="Amount" />
-                    <input
-                      type="number"
+                    <CurrencyInput
                       bind:value={item.amount}
                       on:input={() => calculateProfit(i)}
-                      class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-sm"
-                      step="0.01"
+                      class="w-full text-sm"
+                      decimals={2}
                       required
                     />
                   </div>
@@ -282,7 +283,7 @@
                     <div
                       class="px-3 py-2 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono truncate"
                     >
-                      {item.price || "0.00"}
+                      {formatNumber(item.price, 2) || "0.00"}
                     </div>
                   </div>
                 </div>
@@ -292,7 +293,7 @@
                 >
                   <span class="text-gray-500">Profit:</span>
                   <span class="font-bold text-indigo-600 dark:text-indigo-400"
-                    >{item.profit || "0.00"}</span
+                    >{formatNumber(item.profit, 2) || "0.00"}</span
                   >
                 </div>
               </div>

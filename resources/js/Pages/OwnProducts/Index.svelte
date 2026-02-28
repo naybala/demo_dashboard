@@ -1,6 +1,5 @@
 <script>
   import AdminLayout from "@/Layouts/AdminLayout.svelte";
-  import PageHeader from "@/Components/PageHeader.svelte";
   import BaseTable from "@/Components/BaseTable.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
@@ -8,7 +7,7 @@
   import { router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import Pagination from "@/Components/Pagination.svelte";
-  import { __ } from "@/helpers.js";
+  import { __, formatNumber } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
@@ -65,8 +64,10 @@
     </h2>
   </svelte:fragment>
 
-  <div class="mb-6 flex justify-between items-center">
-    <div class="flex gap-2 w-1/2">
+  <div
+    class="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between"
+  >
+    <div class="flex flex-1 gap-2 min-w-0">
       <TextInput
         type="text"
         placeholder={__("messages.search_item", "Search products...")}
@@ -86,11 +87,13 @@
         </SecondaryButton>
       {/if}
     </div>
-    <Link href="/own-products/create">
-      <PrimaryButton
-        >{__("messages.create", "Create Own Product")}</PrimaryButton
-      >
-    </Link>
+    <div class="flex-shrink-0">
+      <Link href="/own-products/create">
+        <PrimaryButton class="w-full sm:w-auto"
+          >{__("messages.create", "Create Own Product")}</PrimaryButton
+        >
+      </Link>
+    </div>
   </div>
 
   <BaseTable {headers}>
@@ -141,12 +144,12 @@
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {product.price}
+          {formatNumber(product.price)}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {product.profit}
+          {formatNumber(product.profit)}
         </td>
         <td class="flex gap-2">
           <Link href={`/own-products/${product.id}/edit`}>

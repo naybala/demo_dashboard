@@ -63,8 +63,10 @@
     </h2>
   </svelte:fragment>
 
-  <div class="mb-6 flex justify-between items-center">
-    <div class="flex gap-2 w-1/2">
+  <div
+    class="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between"
+  >
+    <div class="flex flex-1 gap-2 min-w-0">
       <TextInput
         type="text"
         placeholder={__("messages.search_item", "Search users...")}
@@ -84,9 +86,11 @@
         </SecondaryButton>
       {/if}
     </div>
-    <Link href="/users/create">
-      <PrimaryButton>{__("messages.create", "Create User")}</PrimaryButton>
-    </Link>
+    <div class="flex-shrink-0">
+      <Link href="/users/create">
+        <PrimaryButton>{__("messages.create", "Create User")}</PrimaryButton>
+      </Link>
+    </div>
   </div>
 
   <BaseTable {headers}>

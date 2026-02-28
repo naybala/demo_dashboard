@@ -3,6 +3,7 @@
   import PageHeader from "@/Components/PageHeader.svelte";
   import { Link } from "@inertiajs/svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
+  import { formatNumber } from "@/helpers.js";
 
   export let dailyIncome = {};
 </script>
@@ -81,13 +82,15 @@
         <tfoot class="bg-gray-50 dark:bg-gray-700 font-bold">
           <tr>
             <td colspan="3" class="px-6 py-4 text-right">Total Price:</td>
-            <td class="px-6 py-4 text-right text-indigo-600"
-              >{dailyIncome.items
-                .reduce(
-                  (sum, i) => sum + parseFloat(i.price.replace(/,/g, "")),
+            <td class="px-6 py-4 text-right text-gray-900 dark:text-white"
+              >{formatNumber(
+                dailyIncome.items.reduce(
+                  (sum, i) =>
+                    sum + parseFloat(i.price.toString().replace(/,/g, "")),
                   0,
-                )
-                .toLocaleString()}</td
+                ),
+                2,
+              )}</td
             >
           </tr>
         </tfoot>

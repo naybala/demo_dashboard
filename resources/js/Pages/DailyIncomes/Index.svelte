@@ -7,7 +7,7 @@
   import { router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import Pagination from "@/Components/Pagination.svelte";
-  import { __ } from "@/helpers.js";
+  import { __, formatNumber } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
@@ -153,18 +153,18 @@
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {income.amount}
+          {formatNumber(income.amount, 2)}
           {income.unit}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {income.price}
+          {formatNumber(income.price, 2)}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {income.profit}
+          {formatNumber(income.profit, 2)}
         </td>
         <td class="flex gap-2">
           <Link href={`/daily-incomes/${income.id}`}>

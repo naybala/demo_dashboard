@@ -23,3 +23,32 @@ export const __ = (key, defaultVal = "") => {
   }
   return result;
 };
+
+/**
+ * Format a number/string with thousand separators.
+ * @param {number|string} value
+ * @param {number} decimals
+ * @returns {string}
+ */
+export const formatNumber = (value, decimals = 0) => {
+  if (value === "" || value === null || value === undefined) return "";
+  const num =
+    typeof value === "string" ? parseFloat(value.replace(/,/g, "")) : value;
+  if (isNaN(num)) return value;
+
+  return num.toLocaleString("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+};
+
+/**
+ * Strip non-numeric characters (except decimal point) from a formatted string.
+ * @param {string} value
+ * @returns {number|string}
+ */
+export const unformatNumber = (value) => {
+  if (!value && value !== 0) return "";
+  const raw = value.toString().replace(/[^0-9.]/g, "");
+  return raw === "" ? "" : parseFloat(raw);
+};
