@@ -18,12 +18,12 @@
   let productToDelete = null;
 
   const headers = [
-    { key: "image", label: __("ownProduct.image", "Image") },
-    { key: "name", label: __("ownProduct.name", "Name") },
-    { key: "category", label: __("ownProduct.category", "Category") },
-    { key: "unit", label: __("ownProduct.unit", "Unit") },
-    { key: "price", label: __("ownProduct.price", "Price") },
-    { key: "profit", label: __("ownProduct.profit", "Profit") },
+    { key: "image", label: __("table.photo", "Image") },
+    { key: "name", label: __("table.name", "Name") },
+    { key: "category", label: __("table.category", "Category") },
+    { key: "unit", label: __("table.unit", "Unit") },
+    { key: "price", label: __("table.price", "Price") },
+    { key: "profit", label: __("table.profit", "Profit") },
     { key: "actions", label: __("table.action", "Actions") },
   ];
 

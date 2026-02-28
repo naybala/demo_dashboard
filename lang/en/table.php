@@ -47,6 +47,9 @@ return [
     "profit"                        => "Profit",
     "date"                          =>"Date",
     "own_product"                   =>"Own Product",
+    //Product
+    "photo"                         => "Photo",
+    
 
     "product_name"                  =>"Produt Name",
     "amount"                        =>"Amount",

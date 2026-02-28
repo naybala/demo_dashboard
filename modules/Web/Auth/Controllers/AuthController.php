@@ -37,6 +37,10 @@ class AuthController extends BaseController
     public function authorizeOperator(AuthLoginRequest $request): RedirectResponse
     {
         if ($this->authService->authorizeOperator($request->validated())) {
+            $permissionArr = $this->authService->getAuthPermissions();
+            if ($permissionArr) {
+                Session::put('permission_key', implode(',', $permissionArr));
+            }
             return redirect("/");
         }
         return back()->with("error", 'Invalid credentials');

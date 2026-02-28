@@ -1,6 +1,5 @@
 <script>
   import AdminLayout from "@/Layouts/AdminLayout.svelte";
-  import PageHeader from "@/Components/PageHeader.svelte";
   import BaseTable from "@/Components/BaseTable.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
@@ -18,10 +17,10 @@
   let productToDelete = null;
 
   const headers = [
-    { key: "primary_photo", label: __("product.photo", "Photo") },
-    { key: "name", label: __("product.name", "Name") },
-    { key: "price", label: __("product.price", "Price") },
-    { key: "category_names", label: __("product.category", "Categories") },
+    { key: "primary_photo", label: __("table.photo", "Photo") },
+    { key: "name", label: __("table.name", "Name") },
+    { key: "price", label: __("table.price", "Price") },
+    { key: "category_names", label: __("table.category", "Categories") },
     { key: "actions", label: __("table.action", "Actions") },
   ];
 

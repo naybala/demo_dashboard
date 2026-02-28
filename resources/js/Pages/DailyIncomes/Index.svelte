@@ -1,6 +1,5 @@
 <script>
   import AdminLayout from "@/Layouts/AdminLayout.svelte";
-  import PageHeader from "@/Components/PageHeader.svelte";
   import BaseTable from "@/Components/BaseTable.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
@@ -20,12 +19,12 @@
   let incomeToDelete = null;
 
   const headers = [
-    { key: "date", label: __("dailyIncome.date", "Date") },
-    { key: "voucher_no", label: __("dailyIncome.voucher_no", "Voucher No") },
-    { key: "own_product", label: __("sidebar.own_product", "Product") },
-    { key: "amount", label: __("dailyIncome.amount", "Amount") },
-    { key: "price", label: __("dailyIncome.price", "Price") },
-    { key: "profit", label: __("dailyIncome.profit", "Profit") },
+    { key: "date", label: __("table.date", "Date") },
+    { key: "voucher_no", label: __("table.voucher_no", "Voucher No") },
+    { key: "own_product", label: __("table.product_name", "Product") },
+    { key: "amount", label: __("table.amount", "Amount") },
+    { key: "price", label: __("table.price", "Price") },
+    { key: "profit", label: __("table.profit", "Profit") },
     { key: "actions", label: __("table.action", "Actions") },
   ];
 
@@ -124,12 +123,12 @@
             handleFilter();
           }}>{__("messages.reset", "Reset")}</SecondaryButton
         >
+        <Link href="/daily-incomes/create" class="md:ml-auto">
+          <PrimaryButton
+            >{__("messages.create", "Create Daily Income")}</PrimaryButton
+          >
+        </Link>
       </div>
-      <Link href="/daily-incomes/create" class="md:ml-auto">
-        <PrimaryButton
-          >{__("messages.create", "Create Daily Income")}</PrimaryButton
-        >
-      </Link>
     </div>
   </div>
 

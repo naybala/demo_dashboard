@@ -10,7 +10,7 @@
       <tr>
         {#each headers as header}
           <th scope="col" class="px-6 py-3">
-            {header}
+            {typeof header === "object" ? header.label : header}
           </th>
         {/each}
         {#if $$slots.actions}

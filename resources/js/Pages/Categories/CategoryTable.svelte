@@ -1,6 +1,8 @@
 <script>
   import { __ } from "@/helpers.js";
   import BaseTable from "@/Components/BaseTable.svelte";
+  import { Link } from "@inertiajs/svelte";
+  import SecondaryButton from "@/Components/SecondaryButton.svelte";
 
   export let categories = [];
   export let onEdit = () => {};
@@ -37,18 +39,13 @@
         </span>
       </td>
       <td class="px-6 py-4 space-x-2">
-        <button
-          on:click={() => onEdit(category)}
-          class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
+        <SecondaryButton on:click={() => onEdit(category)}>
           {__("messages.edit", "Edit")}
-        </button>
-        <button
-          on:click={() => onDelete(category)}
-          class="font-medium text-red-600 dark:text-red-500 hover:underline"
-        >
+        </SecondaryButton>
+
+        <SecondaryButton on:click={() => onDelete(category)}>
           {__("messages.delete", "Delete")}
-        </button>
+        </SecondaryButton>
       </td>
     </tr>
   {/each}
