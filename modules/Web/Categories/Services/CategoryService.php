@@ -20,6 +20,16 @@ class CategoryService
         return $this->category->orderBy('name')->get();
     }
 
+    public function getShowCategories()
+    {
+        return $this->category->where('is_show', true)->orderBy('name')->get();
+    }
+
+    public function getNotShowCategories()
+    {
+        return $this->category->where('is_show', false)->orderBy('name')->get();
+    }
+
     public function paginate(array $request) :LengthAwarePaginator
     {
         $categoryList = $this->category

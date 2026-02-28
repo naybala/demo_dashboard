@@ -11,10 +11,14 @@
   export let show = false;
   export let category = null;
 
-  let { form, submit } = useCategoryForm(category);
+  let { form, submit } = useCategoryForm(category, {
+    onSuccess: () => close(),
+  });
 
   $: if (show) {
-    ({ form, submit } = useCategoryForm(category));
+    ({ form, submit } = useCategoryForm(category, {
+      onSuccess: () => close(),
+    }));
   }
 
   const close = () => {

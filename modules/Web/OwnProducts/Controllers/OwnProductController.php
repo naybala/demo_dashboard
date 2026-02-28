@@ -35,7 +35,9 @@ class OwnProductController extends BaseController
     const LANG_PATH = "ownProduct.ownProduct";
 
     public function __construct(
-        private OwnProductService $ownProductService
+        private OwnProductService $ownProductService,
+        private CategoryService $categoryService,
+        private UnitService $unitService,
     ) {
     }
 
@@ -48,8 +50,8 @@ class OwnProductController extends BaseController
 
     public function create(): Response
     {
-        $categories = app(CategoryService::class)->all();
-        $units = app(UnitService::class)->all();
+        $categories = $this->categoryService->getNotShowCategories();
+        $units = $this->unitService->all();
         return Inertia::render('OwnProducts/CreateEdit', [
             'categories' => $categories,
             'units' => $units,

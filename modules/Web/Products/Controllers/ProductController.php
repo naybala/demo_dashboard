@@ -8,7 +8,6 @@ use BasicDashboard\Web\Products\Validation\StoreProductRequest;
 use BasicDashboard\Web\Products\Validation\UpdateProductRequest;
 use BasicDashboard\Web\Products\Validation\DeleteProductRequest;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
 use BasicDashboard\Web\Categories\Services\CategoryService;
@@ -35,7 +34,8 @@ class ProductController extends Controller
 
     public function __construct(
         private ProductService $productService,
-        private ResponseFactory $responseFactory
+        private ResponseFactory $responseFactory,
+        private CategoryService $categoryService,
     ) {
     }
 
@@ -48,7 +48,7 @@ class ProductController extends Controller
 
     public function create(): Response
     {
-        $categories = app(CategoryService::class)->all();
+        $categories = $this->categoryService->getShowCategories();
         return Inertia::render('Products/CreateEdit', [
             'categories' => $categories,
         ]);

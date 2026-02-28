@@ -1,7 +1,7 @@
 import { useForm } from "@inertiajs/svelte";
 import { get } from "svelte/store";
 
-export function useCategoryForm(category = null) {
+export function useCategoryForm(category = null, { onSuccess } = {}) {
   const form = useForm({
     id: category?.id || null,
     name: category?.name || "",
@@ -16,13 +16,14 @@ export function useCategoryForm(category = null) {
     if (formInstance.id) {
       formInstance.put(`/categories/${formInstance.id}`, {
         onSuccess: () => {
-          // Handle success
+          if (onSuccess) onSuccess();
         },
       });
     } else {
       formInstance.post("/categories", {
         onSuccess: () => {
           formInstance.reset();
+          if (onSuccess) onSuccess();
         },
       });
     }
