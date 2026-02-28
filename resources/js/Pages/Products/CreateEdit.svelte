@@ -7,11 +7,9 @@
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import { useProductForm } from "./useProductForm";
-  import { onMount } from "svelte";
-  import Quill from "quill";
-  import "quill/dist/quill.snow.css";
   import { router } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
+  import { onMount } from "svelte";
 
   export let product = null;
   export let categories = [];
@@ -22,7 +20,13 @@
   let quillOther;
   let fileInput;
 
-  onMount(() => {
+  onMount(async () => {
+    // Lazy-load Quill — only fetched when this page is visited
+    const [{ default: Quill }] = await Promise.all([
+      import("quill"),
+      import("quill/dist/quill.snow.css"),
+    ]);
+
     const toolbarOptions = [
       ["bold", "italic", "underline", "strike"],
       ["blockquote", "code-block"],

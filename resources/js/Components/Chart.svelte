@@ -1,6 +1,5 @@
 <script>
   import { onMount, onDestroy } from "svelte";
-  import ApexCharts from "apexcharts";
 
   export let options = {};
   export let type = "line";
@@ -33,7 +32,9 @@
     chart.updateOptions(chartOptions);
   }
 
-  onMount(() => {
+  onMount(async () => {
+    // Lazy-load ApexCharts — only fetched when this component is mounted
+    const { default: ApexCharts } = await import("apexcharts");
     chart = new ApexCharts(chartNode, chartOptions);
     chart.render();
   });
