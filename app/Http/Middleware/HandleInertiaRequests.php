@@ -37,7 +37,16 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'fullname' => $request->user()->fullname,
+                    'email' => $request->user()->email,
+                    'avatar' => (function($user) {
+                        $avatarCloudPhoto = $user->avatar ?: config('cache.default_profile_photo_cloud');
+                        $avatarLocalPhoto = $user->avatar ?: config('cache.default_profile_photo_local');
+                        return config('cache.file_system_disk') == 'local' ? $avatarLocalPhoto : \Illuminate\Support\Facades\Storage::url($avatarCloudPhoto);
+                    })($request->user()),
+                ] : null,
             ],
             'flash' => [
                 'message' => fn () => $request->session()->get('message'),

@@ -2,7 +2,7 @@
   import { page, router } from "@inertiajs/svelte";
   import { Link } from "@inertiajs/svelte";
   export let user = $page.props.auth.user;
-  let isMobileMenuOpen = false;
+  let isSidebarOpen = false;
   let isDarkMode = false;
   let currentLocale = $page.props.locale || "en";
 
@@ -24,6 +24,20 @@
       document.documentElement.classList.remove("dark");
       isDarkMode = false;
     }
+
+    // Initialize sidebar based on screen size
+    isSidebarOpen = window.innerWidth >= 1024;
+
+    // Auto-close sidebar on navigation for mobile/tablet
+    const unregisterFinish = router.on("finish", () => {
+      if (window.innerWidth < 1024) {
+        isSidebarOpen = false;
+      }
+    });
+
+    return () => {
+      unregisterFinish();
+    };
   });
 
   const toggleTheme = () => {
@@ -129,7 +143,7 @@
 <div class="h-dvh flex bg-gray-100 dark:bg-gray-900 overflow-hidden">
   <!-- Sidebar -->
   <aside
-    class={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+    class={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
   >
     <div class="h-full flex flex-col">
       <div
@@ -141,8 +155,8 @@
           DASHBOARD
         </h1>
         <button
-          on:click={() => (isMobileMenuOpen = false)}
-          class="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
+          on:click={() => (isSidebarOpen = false)}
+          class="lg:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
         >
           <svg
             class="w-6 h-6"
@@ -230,15 +244,21 @@
       >
         <div class="flex items-center gap-3">
           <div
-            class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-xs shrink-0"
+            class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-sm shrink-0 overflow-hidden border-2 border-white dark:border-gray-700 shadow-sm"
           >
-            {(user?.name || user?.username || "A").charAt(0).toUpperCase()}
+            {#if user?.avatar}
+              <img
+                src={user.avatar}
+                alt={user.fullname}
+                class="w-full h-full object-cover"
+              />
+            {:else}
+              {(user?.fullname || user?.name || "A").charAt(0).toUpperCase()}
+            {/if}
           </div>
           <div class="flex-1 min-w-0">
-            <p
-              class="text-sm font-medium text-gray-900 dark:text-white truncate"
-            >
-              {user?.name || user?.username || "Admin"}
+            <p class="text-sm font-bold text-gray-900 dark:text-white truncate">
+              {user?.fullname || user?.name || "Admin"}
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
               {user?.email}
@@ -249,12 +269,12 @@
     </div>
   </aside>
 
-  <!-- Mobile Overlay -->
-  {#if isMobileMenuOpen}
+  <!-- Overlay -->
+  {#if isSidebarOpen}
     <div
-      class="fixed inset-0 bg-gray-900/50 z-40 md:hidden"
-      on:click={() => (isMobileMenuOpen = false)}
-      on:keydown={(e) => e.key === "Escape" && (isMobileMenuOpen = false)}
+      class="fixed inset-0 bg-gray-900/50 z-40 lg:hidden"
+      on:click={() => (isSidebarOpen = false)}
+      on:keydown={(e) => e.key === "Escape" && (isSidebarOpen = false)}
       role="button"
       tabindex="0"
       aria-label="Close menu"
@@ -262,14 +282,16 @@
   {/if}
 
   <!-- Main Content -->
-  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+  <div
+    class={`flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-300 ${isSidebarOpen ? "lg:pl-64" : ""}`}
+  >
     <!-- Top Nav -->
     <header
       class="bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex justify-between items-center border-b dark:border-gray-700 shrink-0 z-30"
     >
       <button
-        on:click={() => (isMobileMenuOpen = true)}
-        class="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none p-2"
+        on:click={() => (isSidebarOpen = !isSidebarOpen)}
+        class="text-gray-500 hover:text-gray-700 focus:outline-none p-2"
         aria-label="Open menu"
       >
         <svg

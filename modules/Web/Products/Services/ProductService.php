@@ -30,6 +30,7 @@ class ProductService
     public function paginate(array $request)
     {
         return $this->product
+            ->with(['categories'])
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
             ->paginate($request['paginate'] ?? config('numbers.paginate'));
