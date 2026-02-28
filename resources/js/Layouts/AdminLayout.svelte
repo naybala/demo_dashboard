@@ -2,7 +2,9 @@
   import { page, router } from "@inertiajs/svelte";
   import { Link } from "@inertiajs/svelte";
   export let user = $page.props.auth.user;
-  let isSidebarOpen = false;
+  // Initialize synchronously to avoid flash — safe since Inertia is client-side only (no SSR)
+  let isSidebarOpen =
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true;
   let isDarkMode = false;
   let currentLocale = $page.props.locale || "en";
 
@@ -12,7 +14,7 @@
   let showLogoutModal = false;
 
   onMount(() => {
-    // Initialize theme
+    // Theme initialization
     if (
       localStorage.theme === "dark" ||
       (!("theme" in localStorage) &&
@@ -24,9 +26,6 @@
       document.documentElement.classList.remove("dark");
       isDarkMode = false;
     }
-
-    // Initialize sidebar based on screen size
-    isSidebarOpen = window.innerWidth >= 1024;
 
     // Auto-close sidebar on navigation for mobile/tablet
     const unregisterFinish = router.on("finish", () => {

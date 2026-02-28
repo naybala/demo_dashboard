@@ -66,7 +66,7 @@
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="flex flex-col items-center justify-center mb-6">
           <div
             class="relative group w-72 h-72 rounded-md overflow-hidden border-2 border-gray-300 dark:border-gray-700"

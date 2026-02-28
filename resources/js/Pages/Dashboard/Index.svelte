@@ -3,7 +3,7 @@
   import PageHeader from "@/Components/PageHeader.svelte";
   import Chart from "@/Components/Chart.svelte";
   import { router } from "@inertiajs/svelte";
-  import { __ } from "@/helpers.js";
+  import { __, formatNumber } from "@/helpers.js";
 
   export let stats = {};
   export let filters = {};
@@ -101,7 +101,7 @@
           {__("dashboard.total_own_product", "Own Product Types")}
         </p>
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
-          {stats.total_products?.toLocaleString() || 0}
+          {formatNumber(stats.total_products) || 0}
         </h4>
       </div>
       <div
@@ -111,7 +111,7 @@
           {__("dashboard.total_price", "Total Price")}
         </p>
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
-          {stats.total_price?.toLocaleString() || 0}
+          {formatNumber(stats.total_price) || 0}
         </h4>
       </div>
       <div
@@ -121,7 +121,7 @@
           {__("dashboard.total_investment", "Total Investment")}
         </p>
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
-          {stats.total_investment?.toLocaleString() || 0}
+          {formatNumber(stats.total_investment) || 0}
         </h4>
       </div>
       <div
@@ -131,7 +131,7 @@
           {__("dashboard.total_profit", "Total Profit")}
         </p>
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
-          {stats.total_profit?.toLocaleString() || 0}
+          {formatNumber(stats.total_profit) || 0}
         </h4>
       </div>
     </div>
