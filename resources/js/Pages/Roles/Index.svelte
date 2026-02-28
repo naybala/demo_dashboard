@@ -106,21 +106,19 @@
             {role.allow_panel_status}
           </span>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div class="flex gap-2">
-            <Link href={`/roles/${role.id}`}>
-              <SecondaryButton>View</SecondaryButton>
-            </Link>
-            <Link href={`/roles/${role.id}/edit`}>
-              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
-            </Link>
-            <button
-              on:click={() => confirmDelete(role)}
-              class="text-red-600 hover:text-red-900 font-medium"
-            >
-              {__("messages.delete", "Delete")}
-            </button>
-          </div>
+        <td class="flex gap-2">
+          <Link href={`/roles/${role.id}`}>
+            <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
+          </Link>
+          <Link href={`/roles/${role.id}/edit`}>
+            <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+          </Link>
+          <SecondaryButton
+            variant="danger"
+            on:click={() => confirmDelete(role)}
+          >
+            {__("messages.delete", "Delete")}
+          </SecondaryButton>
         </td>
       </tr>
     {/each}

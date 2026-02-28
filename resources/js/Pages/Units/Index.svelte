@@ -94,18 +94,16 @@
         >
           {unit.name}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div class="flex gap-2">
-            <Link href={`/units/${unit.id}/edit`}>
-              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
-            </Link>
-            <button
-              on:click={() => confirmDelete(unit)}
-              class="text-red-600 hover:text-red-900 font-medium"
-            >
-              {__("messages.delete", "Delete")}
-            </button>
-          </div>
+        <td class="flex gap-2">
+          <Link href={`/units/${unit.id}/edit`}>
+            <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+          </Link>
+          <SecondaryButton
+            variant="danger"
+            on:click={() => confirmDelete(unit)}
+          >
+            {__("messages.delete", "Delete")}
+          </SecondaryButton>
         </td>
       </tr>
     {/each}

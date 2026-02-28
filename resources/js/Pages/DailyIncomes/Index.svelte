@@ -58,7 +58,7 @@
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2
-      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+      class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
     >
       {__("sidebar.daily_income", "Daily Incomes")}
     </h2>
@@ -166,21 +166,19 @@
         >
           {income.profit}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div class="flex gap-2">
-            <Link href={`/daily-incomes/${income.id}`}>
-              <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
-            </Link>
-            <Link href={`/daily-incomes/${income.id}/edit`}>
-              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
-            </Link>
-            <button
-              on:click={() => confirmDelete(income)}
-              class="text-red-600 hover:text-red-900 font-medium"
-            >
-              {__("messages.delete", "Delete")}
-            </button>
-          </div>
+        <td class="flex gap-2">
+          <Link href={`/daily-incomes/${income.id}`}>
+            <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
+          </Link>
+          <Link href={`/daily-incomes/${income.id}/edit`}>
+            <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+          </Link>
+          <SecondaryButton
+            variant="danger"
+            on:click={() => confirmDelete(income)}
+          >
+            {__("messages.delete", "Delete")}
+          </SecondaryButton>
         </td>
       </tr>
     {/each}

@@ -1,7 +1,6 @@
 <script>
   import { __ } from "@/helpers.js";
   import BaseTable from "@/Components/BaseTable.svelte";
-  import { Link } from "@inertiajs/svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
 
   export let categories = [];
@@ -38,12 +37,12 @@
           {category.is_show ? "Yes" : "No"}
         </span>
       </td>
-      <td class="px-6 py-4 space-x-2">
+      <td class="flex gap-2">
         <SecondaryButton on:click={() => onEdit(category)}>
           {__("messages.edit", "Edit")}
         </SecondaryButton>
 
-        <SecondaryButton on:click={() => onDelete(category)}>
+        <SecondaryButton variant="danger" on:click={() => onDelete(category)}>
           {__("messages.delete", "Delete")}
         </SecondaryButton>
       </td>

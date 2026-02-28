@@ -10,6 +10,7 @@
   import { onMount } from "svelte";
   import Quill from "quill";
   import "quill/dist/quill.snow.css";
+  import { router } from "@inertiajs/svelte";
 
   export let product = null;
   export let categories = [];
@@ -82,7 +83,13 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title={product ? "Edit Product" : "Create Product"} />
+  <svelte:fragment slot="header">
+    <h2
+      class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+    >
+      {product ? "Edit Product" : "Create Product"}
+    </h2>
+  </svelte:fragment>
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-6">
@@ -182,7 +189,9 @@
         <InputError message={$form.errors.photos} />
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-6 border border-gray-200 p-3 rounded-2xl"
+      >
         <div>
           <InputLabel for="name" value="Name (EN)" />
           <TextInput
@@ -218,22 +227,21 @@
           />
           <InputError message={$form.errors.price} />
         </div>
-
-        <div>
-          <InputLabel value="Categories" />
-          <div class="mt-2 flex flex-wrap gap-2">
-            {#each categories as category}
-              <button
-                type="button"
-                on:click={() => toggleCategory(category.id)}
-                class={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${$form.categories.includes(category.id) ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"}`}
-              >
-                {category.name}
-              </button>
-            {/each}
-          </div>
-          <InputError message={$form.errors.categories} />
+      </div>
+      <div class="border border-gray-200 p-3 rounded-2xl">
+        <InputLabel value="Categories" />
+        <div class="mt-2 flex flex-wrap gap-2">
+          {#each categories as category}
+            <button
+              type="button"
+              on:click={() => toggleCategory(category.id)}
+              class={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${$form.categories.includes(category.id) ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"}`}
+            >
+              {category.name}
+            </button>
+          {/each}
         </div>
+        <InputError message={$form.errors.categories} />
       </div>
 
       <div class="flex gap-6">

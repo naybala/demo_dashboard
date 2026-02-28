@@ -51,14 +51,16 @@
     </h2>
   </svelte:fragment>
 
-  <div class="mb-6 flex justify-between items-center">
-    <div class="flex gap-2 w-1/2">
+  <div
+    class="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between"
+  >
+    <div class="flex flex-1 gap-2 min-w-0">
       <TextInput
         type="text"
         placeholder={__("messages.search_item", "Search categories...")}
         bind:value={search}
         on:keydown={(e) => e.key === "Enter" && handleSearch()}
-        class="w-full"
+        class="flex-1 min-w-0"
       />
       <SecondaryButton on:click={handleSearch}>
         {__("messages.search", "Search")}
@@ -72,9 +74,11 @@
         </SecondaryButton>
       {/if}
     </div>
-    <PrimaryButton on:click={openCreateModal}>
-      {__("messages.create", "Add Category")}
-    </PrimaryButton>
+    <div class="flex-shrink-0">
+      <PrimaryButton on:click={openCreateModal} class="w-full sm:w-auto">
+        {__("messages.create", "Add Category")}
+      </PrimaryButton>
+    </div>
   </div>
 
   <div class="mt-6">

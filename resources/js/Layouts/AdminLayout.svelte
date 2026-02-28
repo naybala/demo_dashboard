@@ -267,13 +267,6 @@
     <header
       class="bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex justify-between items-center border-b dark:border-gray-700 shrink-0 z-30"
     >
-      <!-- Page Header Slot -->
-      {#if $$slots.header}
-        <div class="px-6 py-[10px]">
-          <slot name="header" />
-        </div>
-      {/if}
-
       <button
         on:click={() => (isMobileMenuOpen = true)}
         class="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none p-2"
@@ -293,6 +286,12 @@
           />
         </svg>
       </button>
+      <!-- Page Header Slot -->
+      {#if $$slots.header}
+        <div class="px-1 md:px-6 py-[10px]">
+          <slot name="header" />
+        </div>
+      {/if}
 
       <div class="flex-1 px-4">
         <!-- Breadcrumbs could go here -->

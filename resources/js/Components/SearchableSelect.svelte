@@ -113,9 +113,7 @@
       style={dropdownStyle}
       class="bg-white dark:bg-gray-800 shadow-xl max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-hidden focus:outline-none sm:text-sm"
     >
-      <div
-        class="sticky top-0 bg-white dark:bg-gray-800 p-2 border-b border-gray-200 dark:border-gray-700"
-      >
+      <div class="sticky top-0 bg-white dark:bg-gray-800 p-2">
         <input
           bind:this={inputElement}
           bind:value={searchTerm}

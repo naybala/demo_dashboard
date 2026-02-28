@@ -20,8 +20,8 @@
 </script>
 
 {#if meta && meta.links && meta.links.length > 0}
-  <div class="mt-6 flex items-center justify-between">
-    <div class="text-sm text-gray-700 dark:text-gray-400">
+  <div class="mt-6 flex items-center justify-center md:justify-between">
+    <div class="text-sm text-gray-700 dark:text-gray-400 hidden md:block">
       {__("messages.showing", "Showing")}
       {meta.from}
       {__("messages.to", "to")}
