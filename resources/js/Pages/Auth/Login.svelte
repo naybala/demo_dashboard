@@ -1,5 +1,5 @@
 <script>
-  import { useForm } from "@inertiajs/svelte";
+  import { useForm, page } from "@inertiajs/svelte";
   import InputError from "@/Components/InputError.svelte";
   import Logo from "../../../../public/images/logo.png";
 
@@ -70,6 +70,14 @@
         >
           Admin Portal
         </h2>
+
+        {#if $page.props.flash.error}
+          <div
+            class="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm font-medium animate-shake"
+          >
+            {$page.props.flash.error}
+          </div>
+        {/if}
 
         <form on:submit|preventDefault={submit} class="space-y-5">
           <div>
@@ -209,5 +217,29 @@
 
   :global(.font-sans) {
     font-family: "Inter", sans-serif;
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-5px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(5px);
+    }
+  }
+
+  .animate-shake {
+    animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   }
 </style>

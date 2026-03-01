@@ -43,7 +43,7 @@ class AuthController extends BaseController
             }
             return redirect("/");
         }
-        return back()->with("error", 'Invalid credentials');
+        return back()->withErrors(["email" => "Invalid credentials"]);
     }
 
     public function logout(): RedirectResponse
