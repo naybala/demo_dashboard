@@ -4,13 +4,15 @@
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import TextInput from "@/Components/TextInput.svelte";
-  import { router, Link } from "@inertiajs/svelte";
+  import { page, router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import Pagination from "@/Components/Pagination.svelte";
   import { __, formatNumber } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
+
+  $: permissions = $page.props.permissions || [];
 
   let search = "";
   let fromDate = "";
@@ -123,11 +125,13 @@
             handleFilter();
           }}>{__("messages.reset", "Reset")}</SecondaryButton
         >
-        <Link href="/daily-incomes/create" class="md:ml-auto">
-          <PrimaryButton
-            >{__("messages.create", "Create Daily Income")}</PrimaryButton
-          >
-        </Link>
+        {#if permissions.includes("create daily-incomes")}
+          <Link href="/daily-incomes/create" class="md:ml-auto">
+            <PrimaryButton
+              >{__("messages.create", "Create Daily Income")}</PrimaryButton
+            >
+          </Link>
+        {/if}
       </div>
     </div>
   </div>
@@ -170,15 +174,19 @@
           <Link href={`/daily-incomes/${income.id}`}>
             <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
           </Link>
-          <Link href={`/daily-incomes/${income.id}/edit`}>
-            <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
-          </Link>
-          <SecondaryButton
-            variant="danger"
-            on:click={() => confirmDelete(income)}
-          >
-            {__("messages.delete", "Delete")}
-          </SecondaryButton>
+          {#if permissions.includes("edit daily-incomes")}
+            <Link href={`/daily-incomes/${income.id}/edit`}>
+              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+            </Link>
+          {/if}
+          {#if permissions.includes("delete daily-incomes")}
+            <SecondaryButton
+              variant="danger"
+              on:click={() => confirmDelete(income)}
+            >
+              {__("messages.delete", "Delete")}
+            </SecondaryButton>
+          {/if}
         </td>
       </tr>
     {/each}

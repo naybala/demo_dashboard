@@ -4,13 +4,15 @@
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import TextInput from "@/Components/TextInput.svelte";
-  import { router, Link } from "@inertiajs/svelte";
+  import { page, router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import Pagination from "@/Components/Pagination.svelte";
   import { __, formatNumber } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
+
+  $: permissions = $page.props.permissions || [];
 
   let search = "";
   let showDeleteModal = false;
@@ -86,11 +88,13 @@
       {/if}
     </div>
     <div class="flex-shrink-0">
-      <Link href="/products/create">
-        <PrimaryButton class="w-full sm:w-auto"
-          >{__("messages.create", "Create Product")}</PrimaryButton
-        >
-      </Link>
+      {#if permissions.includes("create products")}
+        <Link href="/products/create">
+          <PrimaryButton class="w-full sm:w-auto"
+            >{__("messages.create", "Create Product")}</PrimaryButton
+          >
+        </Link>
+      {/if}
     </div>
   </div>
 
@@ -147,15 +151,19 @@
           </div>
         </td>
         <td class="flex gap-2">
-          <Link href={`/products/${product.id}/edit`}>
-            <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
-          </Link>
-          <SecondaryButton
-            variant="danger"
-            on:click={() => confirmDelete(product)}
-          >
-            {__("messages.delete", "Delete")}
-          </SecondaryButton>
+          {#if permissions.includes("edit products")}
+            <Link href={`/products/${product.id}/edit`}>
+              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+            </Link>
+          {/if}
+          {#if permissions.includes("delete products")}
+            <SecondaryButton
+              variant="danger"
+              on:click={() => confirmDelete(product)}
+            >
+              {__("messages.delete", "Delete")}
+            </SecondaryButton>
+          {/if}
         </td>
       </tr>
     {/each}

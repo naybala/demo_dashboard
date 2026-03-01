@@ -7,12 +7,14 @@
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import { useProductForm } from "./useProductForm";
-  import { router } from "@inertiajs/svelte";
+  import { page, router } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
   import { onMount } from "svelte";
 
   export let product = null;
   export let categories = [];
+
+  $: permissions = $page.props.permissions || [];
 
   const { form, submit } = useProductForm(product);
 
@@ -317,9 +319,11 @@
         <SecondaryButton on:click={() => router.get("/products")}
           >Cancel</SecondaryButton
         >
-        <PrimaryButton type="submit" disabled={$form.processing}>
-          {product ? "Update Product" : "Create Product"}
-        </PrimaryButton>
+        {#if (product && permissions.includes("edit products")) || (!product && permissions.includes("create products"))}
+          <PrimaryButton type="submit" disabled={$form.processing}>
+            {product ? "Update Product" : "Create Product"}
+          </PrimaryButton>
+        {/if}
       </div>
     </form>
   </div>

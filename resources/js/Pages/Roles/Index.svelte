@@ -5,13 +5,15 @@
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import TextInput from "@/Components/TextInput.svelte";
-  import { router, Link } from "@inertiajs/svelte";
+  import { page, router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import Pagination from "@/Components/Pagination.svelte";
   import { __ } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
+
+  $: permissions = $page.props.permissions || [];
 
   let search = "";
   let showDeleteModal = false;
@@ -87,9 +89,11 @@
       {/if}
     </div>
     <div class="flex-shrink-0">
-      <Link href="/roles/create">
-        <PrimaryButton>{__("messages.create", "Create Role")}</PrimaryButton>
-      </Link>
+      {#if permissions.includes("create roles")}
+        <Link href="/roles/create">
+          <PrimaryButton>{__("messages.create", "Create Role")}</PrimaryButton>
+        </Link>
+      {/if}
     </div>
   </div>
 
@@ -114,15 +118,19 @@
           <Link href={`/roles/${role.id}`}>
             <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
           </Link>
-          <Link href={`/roles/${role.id}/edit`}>
-            <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
-          </Link>
-          <SecondaryButton
-            variant="danger"
-            on:click={() => confirmDelete(role)}
-          >
-            {__("messages.delete", "Delete")}
-          </SecondaryButton>
+          {#if permissions.includes("edit roles")}
+            <Link href={`/roles/${role.id}/edit`}>
+              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+            </Link>
+          {/if}
+          {#if permissions.includes("delete roles")}
+            <SecondaryButton
+              variant="danger"
+              on:click={() => confirmDelete(role)}
+            >
+              {__("messages.delete", "Delete")}
+            </SecondaryButton>
+          {/if}
         </td>
       </tr>
     {/each}

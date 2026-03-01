@@ -6,9 +6,11 @@
   import InputError from "@/Components/InputError.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
-  import { useForm, router } from "@inertiajs/svelte";
+  import { useForm, router, page } from "@inertiajs/svelte";
 
   export let unit = null;
+
+  $: permissions = $page.props.permissions || [];
 
   const form = useForm({
     name: unit?.name || "",
@@ -44,9 +46,11 @@
         <SecondaryButton on:click={() => router.get("/units")}
           >Cancel</SecondaryButton
         >
-        <PrimaryButton type="submit" disabled={$form.processing}>
-          {unit ? "Update Unit" : "Create Unit"}
-        </PrimaryButton>
+        {#if (unit && permissions.includes("edit units")) || (!unit && permissions.includes("create units"))}
+          <PrimaryButton type="submit" disabled={$form.processing}>
+            {unit ? "Update Unit" : "Create Unit"}
+          </PrimaryButton>
+        {/if}
       </div>
     </form>
   </div>

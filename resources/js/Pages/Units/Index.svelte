@@ -5,13 +5,15 @@
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import TextInput from "@/Components/TextInput.svelte";
-  import { router, Link } from "@inertiajs/svelte";
+  import { page, router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import Pagination from "@/Components/Pagination.svelte";
   import { __ } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
+
+  $: permissions = $page.props.permissions || [];
 
   let search = "";
   let showDeleteModal = false;
@@ -81,9 +83,11 @@
         </SecondaryButton>
       {/if}
     </div>
-    <Link href="/units/create">
-      <PrimaryButton>{__("messages.create", "Create Unit")}</PrimaryButton>
-    </Link>
+    {#if permissions.includes("create units")}
+      <Link href="/units/create">
+        <PrimaryButton>{__("messages.create", "Create Unit")}</PrimaryButton>
+      </Link>
+    {/if}
   </div>
 
   <BaseTable {headers}>
@@ -95,15 +99,19 @@
           {unit.name}
         </td>
         <td class="flex gap-2">
-          <Link href={`/units/${unit.id}/edit`}>
-            <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
-          </Link>
-          <SecondaryButton
-            variant="danger"
-            on:click={() => confirmDelete(unit)}
-          >
-            {__("messages.delete", "Delete")}
-          </SecondaryButton>
+          {#if permissions.includes("edit units")}
+            <Link href={`/units/${unit.id}/edit`}>
+              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+            </Link>
+          {/if}
+          {#if permissions.includes("delete units")}
+            <SecondaryButton
+              variant="danger"
+              on:click={() => confirmDelete(unit)}
+            >
+              {__("messages.delete", "Delete")}
+            </SecondaryButton>
+          {/if}
         </td>
       </tr>
     {/each}

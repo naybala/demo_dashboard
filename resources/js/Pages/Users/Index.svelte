@@ -5,13 +5,15 @@
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import TextInput from "@/Components/TextInput.svelte";
-  import { router, Link } from "@inertiajs/svelte";
+  import { page, router, Link } from "@inertiajs/svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import Pagination from "@/Components/Pagination.svelte";
   import { __ } from "@/helpers.js";
 
   export let data = [];
   export let meta = {};
+
+  $: permissions = $page.props.permissions || [];
 
   let search = "";
   let showDeleteModal = false;
@@ -87,9 +89,11 @@
       {/if}
     </div>
     <div class="flex-shrink-0">
-      <Link href="/users/create">
-        <PrimaryButton>{__("messages.create", "Create User")}</PrimaryButton>
-      </Link>
+      {#if permissions.includes("create users")}
+        <Link href="/users/create">
+          <PrimaryButton>{__("messages.create", "Create User")}</PrimaryButton>
+        </Link>
+      {/if}
     </div>
   </div>
 
@@ -144,17 +148,21 @@
             <Link href={`/users/${user.id}`}>
               <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
             </Link>
-            <Link href={`/users/${user.id}/edit`}>
-              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
-            </Link>
-            <!-- {#if user.can_be_deleted}
-              <button
-                on:click={() => confirmDelete(user)}
-                class="text-red-600 hover:text-red-900 font-medium ml-2"
-              >
-                {__("messages.delete", "Delete")}
-              </button>
-            {/if} -->
+            {#if permissions.includes("edit users")}
+              <Link href={`/users/${user.id}/edit`}>
+                <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+              </Link>
+            {/if}
+            {#if permissions.includes("delete users")}
+              {#if user.can_be_deleted}
+                <button
+                  on:click={() => confirmDelete(user)}
+                  class="text-red-600 hover:text-red-900 font-medium ml-2"
+                >
+                  {__("messages.delete", "Delete")}
+                </button>
+              {/if}
+            {/if}
           </div>
         </td>
       </tr>

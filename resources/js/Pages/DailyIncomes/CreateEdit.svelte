@@ -7,12 +7,14 @@
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import SearchableSelect from "@/Components/SearchableSelect.svelte";
-  import { useForm, router } from "@inertiajs/svelte";
+  import { useForm, router, page } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
   import { formatNumber } from "@/helpers.js";
 
   export let dailyIncome = null;
   export let products = [];
+
+  $: permissions = $page.props.permissions || [];
 
   $: productOptions = products.map((p) => ({
     id: p.id,
@@ -332,9 +334,11 @@
         <SecondaryButton on:click={() => router.get("/daily-incomes")}
           >Cancel</SecondaryButton
         >
-        <PrimaryButton type="submit" disabled={$form.processing}>
-          {dailyIncome ? "Update Record" : "Save Record"}
-        </PrimaryButton>
+        {#if (dailyIncome && permissions.includes("edit daily-incomes")) || (!dailyIncome && permissions.includes("create daily-incomes"))}
+          <PrimaryButton type="submit" disabled={$form.processing}>
+            {dailyIncome ? "Update Record" : "Save Record"}
+          </PrimaryButton>
+        {/if}
       </div>
     </form>
   </div>

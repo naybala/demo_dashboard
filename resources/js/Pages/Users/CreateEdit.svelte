@@ -6,11 +6,13 @@
   import InputError from "@/Components/InputError.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
-  import { useForm, router } from "@inertiajs/svelte";
+  import { useForm, router, page } from "@inertiajs/svelte";
   import { __ } from "@/helpers.js";
 
   export let user = null;
   export let roles = [];
+
+  $: permissions = $page.props.permissions || [];
 
   const form = useForm({
     fullname: user?.fullname || "",
@@ -208,9 +210,11 @@
         <SecondaryButton on:click={() => router.get("/users")}
           >Cancel</SecondaryButton
         >
-        <PrimaryButton type="submit" disabled={$form.processing}>
-          {user ? "Update User" : "Create User"}
-        </PrimaryButton>
+        {#if (user && permissions.includes("edit users")) || (!user && permissions.includes("create users"))}
+          <PrimaryButton type="submit" disabled={$form.processing}>
+            {user ? "Update User" : "Create User"}
+          </PrimaryButton>
+        {/if}
       </div>
     </form>
   </div>

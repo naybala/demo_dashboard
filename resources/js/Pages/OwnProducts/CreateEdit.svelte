@@ -7,12 +7,14 @@
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import SearchableSelect from "@/Components/SearchableSelect.svelte";
-  import { useForm, router } from "@inertiajs/svelte";
+  import { useForm, router, page } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
 
   export let ownProduct = null;
   export let categories = [];
   export let units = [];
+
+  $: permissions = $page.props.permissions || [];
 
   $: categoryOptions = categories.map((c) => ({ id: c.id, label: c.name }));
   $: unitOptions = units.map((u) => ({ id: u.id, label: u.name }));
@@ -185,9 +187,11 @@
         <SecondaryButton on:click={() => router.get("/own-products")}
           >Cancel</SecondaryButton
         >
-        <PrimaryButton type="submit" disabled={$form.processing}>
-          {ownProduct ? "Update Own Product" : "Create Own Product"}
-        </PrimaryButton>
+        {#if (ownProduct && permissions.includes("edit own-products")) || (!ownProduct && permissions.includes("create own-products"))}
+          <PrimaryButton type="submit" disabled={$form.processing}>
+            {ownProduct ? "Update Own Product" : "Create Own Product"}
+          </PrimaryButton>
+        {/if}
       </div>
     </form>
   </div>
