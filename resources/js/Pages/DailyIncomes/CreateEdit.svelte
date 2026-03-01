@@ -2,12 +2,12 @@
   import AdminLayout from "@/Layouts/AdminLayout.svelte";
   import PageHeader from "@/Components/PageHeader.svelte";
   import InputLabel from "@/Components/InputLabel.svelte";
-  import TextInput from "@/Components/TextInput.svelte";
   import InputError from "@/Components/InputError.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import SearchableSelect from "@/Components/SearchableSelect.svelte";
-  import { useForm, router, page } from "@inertiajs/svelte";
+  import { useDailyIncomeForm } from "./useDailyIncomeForm";
+  import { router, page } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
   import { formatNumber } from "@/helpers.js";
 
@@ -22,86 +22,17 @@
     searchKey: p.name,
   }));
 
-  const form = useForm({
-    date: dailyIncome?.date || new Date().toISOString().split("T")[0],
-    is_instant: dailyIncome?.is_instant ?? true,
-    note: dailyIncome?.note || "",
-    items: dailyIncome?.items?.map((item) => ({
-      own_product_id: item.own_product_id,
-      amount: item.amount.toString().replace(/,/g, ""),
-      price: item.price.toString().replace(/,/g, ""),
-      investment: item.investment.toString().replace(/,/g, ""),
-      profit: item.profit.toString().replace(/,/g, ""),
-      id: item.id,
-    })) || [
-      { own_product_id: "", amount: "", price: "", investment: "", profit: "" },
-    ],
-  });
+  const {
+    form,
+    addItem,
+    removeItem,
+    handleProductChange,
+    calculateProfit,
+    submit,
+    totalAmount: totalAmountStore,
+  } = useDailyIncomeForm(dailyIncome, products);
 
-  const addItem = () => {
-    $form.items = [
-      ...$form.items,
-      { own_product_id: "", amount: "", price: "", investment: "", profit: "" },
-    ];
-  };
-
-  const removeItem = (index) => {
-    if ($form.items.length > 1) {
-      $form.items = $form.items.filter((_, i) => i !== index);
-    }
-  };
-
-  const handleProductChange = (index) => {
-    const product = products.find(
-      (p) => p.id === $form.items[index].own_product_id,
-    );
-    if (product) {
-      // Default amount to 1 if it's empty or 0
-      if (
-        !$form.items[index].amount ||
-        parseFloat($form.items[index].amount) === 0
-      ) {
-        $form.items[index].amount = "1";
-      }
-
-      $form.items[index].price = product.price.toString().replace(/,/g, "");
-      $form.items[index].investment = product.investment
-        .toString()
-        .replace(/,/g, "");
-      $form.items[index].profit = product.profit.toString().replace(/,/g, "");
-      calculateProfit(index);
-    }
-  };
-
-  const calculateProfit = (index) => {
-    const item = $form.items[index];
-    const amount = parseFloat(item.amount) || 0;
-    const product = products.find((p) => p.id === item.own_product_id);
-
-    if (product) {
-      const unitPrice =
-        parseFloat(product.price.toString().replace(/,/g, "")) || 0;
-      const unitInv =
-        parseFloat(product.investment.toString().replace(/,/g, "")) || 0;
-
-      $form.items[index].price = (amount * unitPrice).toFixed(2);
-      $form.items[index].investment = (amount * unitInv).toFixed(2);
-      $form.items[index].profit = (amount * (unitPrice - unitInv)).toFixed(2);
-    }
-  };
-
-  const submit = () => {
-    if (dailyIncome) {
-      $form.put(`/daily-incomes/${dailyIncome.id}`);
-    } else {
-      $form.post("/daily-incomes");
-    }
-  };
-
-  $: totalAmount = formatNumber(
-    $form.items.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0),
-    2,
-  );
+  $: totalAmount = formatNumber($totalAmountStore, 0);
 </script>
 
 <AdminLayout>
@@ -188,7 +119,7 @@
                         bind:value={item.amount}
                         on:input={() => calculateProfit(i)}
                         class="w-full text-sm"
-                        decimals={2}
+                        decimals={0}
                         required
                       />
                     </td>
@@ -196,14 +127,14 @@
                       <div
                         class="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono"
                       >
-                        {formatNumber(item.price, 2) || "0.00"}
+                        {formatNumber(item.price, 0) || "0.00"}
                       </div>
                     </td>
                     <td class="px-4 py-2 text-right">
                       <div
                         class="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono"
                       >
-                        {formatNumber(item.profit, 2) || "0.00"}
+                        {formatNumber(item.profit, 0) || "0.00"}
                       </div>
                     </td>
                     <td class="px-4 py-2">
@@ -276,7 +207,7 @@
                       bind:value={item.amount}
                       on:input={() => calculateProfit(i)}
                       class="w-full text-sm"
-                      decimals={2}
+                      decimals={0}
                       required
                     />
                   </div>

@@ -157,18 +157,18 @@
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {formatNumber(income.amount, 2)}
+          {formatNumber(income.amount, 0)}
           {income.unit}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {formatNumber(income.price, 2)}
+          {formatNumber(income.price, 0)}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
-          {formatNumber(income.profit, 2)}
+          {formatNumber(income.profit, 0)}
         </td>
         <td class="flex gap-2">
           <Link href={`/daily-incomes/${income.id}`}>

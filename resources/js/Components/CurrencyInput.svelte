@@ -1,7 +1,8 @@
 <script>
   import { formatNumber, unformatNumber } from "@/helpers.js";
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
+  const dispatch = createEventDispatcher();
   export let value = "";
   export let placeholder = "";
   export let required = false;
@@ -41,6 +42,8 @@
 
     // Set selection back
     el.setSelectionRange(newStart, newStart);
+
+    dispatch("input", numericValue);
   };
 
   export const focus = () => input.focus();
