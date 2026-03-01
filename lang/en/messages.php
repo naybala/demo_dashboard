@@ -38,6 +38,8 @@ return [
     'reset' => "Reset",
     'start_date' => "Start Date",
     'end_date' => "End Date",
+    'year' => 'Year',
+    'last_12_months' => 'Last 12 Months',
     'from_date' => "From Date",
     'to_date' => "To Date",
    

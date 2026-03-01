@@ -47,6 +47,7 @@
 
   let startDate = filters.start_date || "";
   let endDate = filters.end_date || "";
+  let selectedYear = filters.year || "";
 
   const handleFilter = () => {
     router.get(
@@ -54,6 +55,7 @@
       {
         start_date: startDate,
         end_date: endDate,
+        year: selectedYear,
       },
       {
         preserveState: true,
@@ -65,6 +67,7 @@
   const handleReset = () => {
     startDate = "";
     endDate = "";
+    selectedYear = "";
     router.get("/dashboard");
   };
 </script>
@@ -85,7 +88,7 @@
     >
       <form
         on:submit|preventDefault={handleFilter}
-        class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
+        class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end"
       >
         <div>
           <label
@@ -113,6 +116,7 @@
             class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
+
         <div class="flex gap-2">
           <button
             type="submit"
@@ -192,6 +196,27 @@
         labels={stats.sales_distribution?.labels || []}
         height={320}
       />
+    </div>
+
+    <div class="w-4/12">
+      <label
+        for="year"
+        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+        >{__("messages.year", "Year")}</label
+      >
+      <select
+        id="year"
+        bind:value={selectedYear}
+        on:change={handleFilter}
+        class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
+      >
+        <option value=""
+          >{__("messages.last_12_months", "Last 12 Months")}</option
+        >
+        {#each monthly_revenue.available_years as year}
+          <option value={year}>{year}</option>
+        {/each}
+      </select>
     </div>
 
     <!-- Revenue Chart -->

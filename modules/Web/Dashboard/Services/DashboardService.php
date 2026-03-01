@@ -19,7 +19,7 @@ class DashboardService extends BaseController
     public function getDashboardData(array $filters = []): array
     {        
         $stats = $this->getDashboardStats($filters);
-        $monthlyRevenue = $this->getMonthlyRevenueData();
+        $monthlyRevenue = $this->getMonthlyRevenueData($filters);
         return [
             'stats' => $stats,
             'monthly_revenue' => $monthlyRevenue,
@@ -86,13 +86,23 @@ class DashboardService extends BaseController
         ];
     }
 
-    public function getMonthlyRevenueData(): array
+    public function getMonthlyRevenueData(array $filters = []): array
     {
+        $year = $filters['year'] ?? null;
+        
+        if ($year) {
+            $startDate = \Carbon\Carbon::createFromDate($year, 1, 1)->startOfDay();
+            $endDate = \Carbon\Carbon::createFromDate($year, 12, 31)->endOfDay();
+        } else {
+            $startDate = now()->subMonths(11)->startOfMonth();
+            $endDate = now()->endOfDay();
+        }
+
         $monthlyData = DailyIncome::select(
             DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
             DB::raw('SUM(price) as total_revenue')
         )
-            ->where('date', '>=', now()->subMonths(11)->startOfMonth())
+            ->whereBetween('date', [$startDate, $endDate])
             ->groupBy('month')
             ->orderBy('month', 'asc')
             ->get();
@@ -100,13 +110,36 @@ class DashboardService extends BaseController
         $labels = [];
         $seriesData = [];
 
-        // Fill in missing months with 0
-        for ($i = 11; $i >= 0; $i--) {
-            $month = now()->subMonths($i)->format('Y-m');
-            $labels[] = now()->subMonths($i)->format('M');
+        if ($year) {
+            // Jan to Dec for the selected year
+            for ($m = 1; $m <= 12; $m++) {
+                $monthStr = sprintf('%04d-%02d', $year, $m);
+                $labels[] = \Carbon\Carbon::createFromDate($year, $m, 1)->format('M');
 
-            $match = $monthlyData->firstWhere('month', $month);
-            $seriesData[] = $match ? (float)$match->total_revenue : 0;
+                $match = $monthlyData->firstWhere('month', $monthStr);
+                $seriesData[] = $match ? (float)$match->total_revenue : 0;
+            }
+        } else {
+            // Last 12 months
+            for ($i = 11; $i >= 0; $i--) {
+                $month = now()->subMonths($i)->format('Y-m');
+                $labels[] = now()->subMonths($i)->format('M');
+
+                $match = $monthlyData->firstWhere('month', $month);
+                $seriesData[] = $match ? (float)$match->total_revenue : 0;
+            }
+        }
+
+        // Available years for filter (from DailyIncome dates)
+        $availableYears = DailyIncome::selectRaw('YEAR(date) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+            
+        // Ensure current year is always there
+        if (!in_array(now()->year, $availableYears)) {
+            array_unshift($availableYears, now()->year);
         }
 
         return [
@@ -117,6 +150,8 @@ class DashboardService extends BaseController
                     'data' => $seriesData,
                 ],
             ],
+            'available_years' => $availableYears,
+            'selected_year' => $year
         ];
     }
 }
