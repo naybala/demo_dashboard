@@ -1,4 +1,5 @@
 <script>
+  import { page } from "@inertiajs/svelte";
   import { __ } from "@/helpers.js";
   import BaseTable from "@/Components/BaseTable.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
@@ -14,6 +15,8 @@
     __("category.is_show", "Show"),
     __("table.action", "Action"),
   ];
+
+  $: permissions = $page.props.permissions || [];
 </script>
 
 <BaseTable {headers}>
@@ -38,13 +41,17 @@
         </span>
       </td>
       <td class="flex gap-2">
-        <SecondaryButton on:click={() => onEdit(category)}>
-          {__("messages.edit", "Edit")}
-        </SecondaryButton>
+        {#if permissions.includes("edit categories")}
+          <SecondaryButton on:click={() => onEdit(category)}>
+            {__("messages.edit", "Edit")}
+          </SecondaryButton>
+        {/if}
 
-        <SecondaryButton variant="danger" on:click={() => onDelete(category)}>
-          {__("messages.delete", "Delete")}
-        </SecondaryButton>
+        {#if permissions.includes("delete categories")}
+          <SecondaryButton variant="danger" on:click={() => onDelete(category)}>
+            {__("messages.delete", "Delete")}
+          </SecondaryButton>
+        {/if}
       </td>
     </tr>
   {/each}

@@ -55,6 +55,9 @@ class HandleInertiaRequests extends Middleware
             ],
             'locale' => app()->getLocale(),
             'translations' => $this->getTranslations(),
+            'permissions' => $request->session()->get('permission_key')
+                ? array_map('trim', explode(',', $request->session()->get('permission_key')))
+                : [],
         ]);
     }
 

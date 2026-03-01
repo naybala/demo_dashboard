@@ -1,19 +1,20 @@
 <script>
   import AdminLayout from "@/Layouts/AdminLayout.svelte";
-  import PageHeader from "@/Components/PageHeader.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import CategoryTable from "./CategoryTable.svelte";
   import CategoryModal from "./CategoryModal.svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
   import Pagination from "@/Components/Pagination.svelte";
   import { useCategoryActions } from "./useCategoryActions";
-  import { router } from "@inertiajs/svelte";
+  import { page, router } from "@inertiajs/svelte";
   import TextInput from "@/Components/TextInput.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import { __ } from "@/helpers.js";
 
   export let data = []; // Categories data
   export let meta = {};
+
+  $: permissions = $page.props.permissions || [];
 
   const {
     showModal,
@@ -75,9 +76,11 @@
       {/if}
     </div>
     <div class="flex-shrink-0">
-      <PrimaryButton on:click={openCreateModal} class="w-full sm:w-auto">
-        {__("messages.create", "Add Category")}
-      </PrimaryButton>
+      {#if permissions.includes("create categories")}
+        <PrimaryButton on:click={openCreateModal} class="w-full sm:w-auto">
+          {__("messages.create", "Add Category")}
+        </PrimaryButton>
+      {/if}
     </div>
   </div>
 

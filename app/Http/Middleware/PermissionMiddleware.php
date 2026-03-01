@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
@@ -38,6 +39,15 @@ class PermissionMiddleware
         }
 
         $sessionPermission = Session::get('permission_key'); //"manage users,create users,manage countries,create countries"
+
+        // If there is no session permission, the session has expired — redirect to login
+        if (empty($sessionPermission)) {
+            Auth::logout();
+            Session::invalidate();
+            Session::regenerateToken();
+            return Redirect::route('login')->with('message', 'Your session has expired. Please log in again.');
+        }
+
         $arrPermission = explode(",", $sessionPermission); //['manage users','create users','manage countries','create countries']
         $getRouteName = request()->route()->getName(); // Eg."users.index"
         $arrRouteName = explode('.', $getRouteName); // ['users','index']
@@ -65,10 +75,7 @@ class PermissionMiddleware
         }
 
         if (!in_array($permissionName, $arrPermission)) {
-            // \Log::info($sessionPermission);
-            // \Log::info($permissionName);
-            // \Log::info($arrPermission);
-            abort(403);
+             abort(403);
         }
 
 

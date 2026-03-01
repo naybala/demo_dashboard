@@ -5,11 +5,14 @@
   import InputError from "@/Components/InputError.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
+  import { page } from "@inertiajs/svelte";
   import { useCategoryForm } from "./useCategoryForm";
   import { __ } from "@/helpers.js";
 
   export let show = false;
   export let category = null;
+
+  $: permissions = $page.props.permissions || [];
 
   let { form, submit } = useCategoryForm(category, {
     onSuccess: () => close(),
@@ -86,9 +89,11 @@
 
     <div class="mt-6 flex justify-end gap-3">
       <SecondaryButton on:click={close}>Cancel</SecondaryButton>
-      <PrimaryButton disabled={$form.processing}>
-        {category ? "Update" : "Save"}
-      </PrimaryButton>
+      {#if (category && permissions.includes("edit categories")) || (!category && permissions.includes("create categories"))}
+        <PrimaryButton disabled={$form.processing}>
+          {category ? "Update" : "Save"}
+        </PrimaryButton>
+      {/if}
     </div>
   </form>
 </Modal>
