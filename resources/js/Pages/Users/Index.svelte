@@ -1,6 +1,5 @@
 <script>
   import AdminLayout from "@/Layouts/AdminLayout.svelte";
-  import PageHeader from "@/Components/PageHeader.svelte";
   import BaseTable from "@/Components/BaseTable.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
@@ -154,14 +153,14 @@
               </Link>
             {/if}
             {#if permissions.includes("delete users")}
-              {#if user.can_be_deleted}
-                <button
-                  on:click={() => confirmDelete(user)}
-                  class="text-red-600 hover:text-red-900 font-medium ml-2"
-                >
-                  {__("messages.delete", "Delete")}
-                </button>
-              {/if}
+              <!-- {#if user.can_be_deleted} -->
+              <button
+                on:click={() => confirmDelete(user)}
+                class="text-red-600 hover:text-red-900 font-medium ml-2"
+              >
+                {__("messages.delete", "Delete")}
+              </button>
+              <!-- {/if} -->
             {/if}
           </div>
         </td>

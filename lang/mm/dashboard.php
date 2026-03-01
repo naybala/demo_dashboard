@@ -6,4 +6,5 @@ return [
     'total_profit' => "စုစုပေါင်းအမြတ်",
     'own_product_by_category' => "အမျိုးအစားအလိုက်ကိုယ်ပိုင်ထုတ်ကုန်များ",
     'sales_by_category' => "အမျိုးအစားအလိုက်ရောင်းအား",
+    'monthly_revenue' => "လစဉ်ဝင်ငွေ",
 ];

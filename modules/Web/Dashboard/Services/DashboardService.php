@@ -19,8 +19,10 @@ class DashboardService extends BaseController
     public function getDashboardData(array $filters = []): array
     {        
         $stats = $this->getDashboardStats($filters);
+        $monthlyRevenue = $this->getMonthlyRevenueData();
         return [
             'stats' => $stats,
+            'monthly_revenue' => $monthlyRevenue,
             'filters' => $filters
         ];
     }
@@ -84,5 +86,37 @@ class DashboardService extends BaseController
         ];
     }
 
-   
+    public function getMonthlyRevenueData(): array
+    {
+        $monthlyData = DailyIncome::select(
+            DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
+            DB::raw('SUM(price) as total_revenue')
+        )
+            ->where('date', '>=', now()->subMonths(11)->startOfMonth())
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        $labels = [];
+        $seriesData = [];
+
+        // Fill in missing months with 0
+        for ($i = 11; $i >= 0; $i--) {
+            $month = now()->subMonths($i)->format('Y-m');
+            $labels[] = now()->subMonths($i)->format('M');
+
+            $match = $monthlyData->firstWhere('month', $month);
+            $seriesData[] = $match ? (float)$match->total_revenue : 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'series' => [
+                [
+                    'name' => 'Revenue',
+                    'data' => $seriesData,
+                ],
+            ],
+        ];
+    }
 }

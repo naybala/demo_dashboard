@@ -6,4 +6,5 @@ return [
     'total_profit' => "Total Profit",
     'own_product_by_category' => "Own Product By Category",
     'sales_by_category' => "Sales By Category",
+    'monthly_revenue' => "Monthly Revenue",
 ];

@@ -7,5 +7,5 @@ return [
     'product' => "ပစ္စည်းများ",
     'own_product' => 'အားပေးသွားပစ္စည်း',
     'unit' => 'ယူနစ်',
-    'daily_income' => 'ဒေသဝင်မှု',
+    'daily_income' => 'နေ့စဥ်ဝင်ငွေ',
 ];

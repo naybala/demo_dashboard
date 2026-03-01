@@ -6,7 +6,44 @@
   import { __, formatNumber } from "@/helpers.js";
 
   export let stats = {};
+  export let monthly_revenue = { labels: [], series: [] };
   export let filters = {};
+
+  $: revenueChartOptions = {
+    stroke: {
+      curve: "smooth",
+      width: 3,
+    },
+    colors: ["#4f46e5"],
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [50, 100, 100],
+      },
+    },
+    xaxis: {
+      categories: monthly_revenue.labels,
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+    },
+    yaxis: {
+      labels: {
+        formatter: (val) => formatNumber(val, 0),
+      },
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => formatNumber(val, 0),
+      },
+    },
+    grid: {
+      borderColor: "#f1f1f1",
+      strokeDashArray: 4,
+    },
+  };
 
   let startDate = filters.start_date || "";
   let endDate = filters.end_date || "";
@@ -154,6 +191,17 @@
         series={stats.sales_distribution?.series || []}
         labels={stats.sales_distribution?.labels || []}
         height={320}
+      />
+    </div>
+
+    <!-- Revenue Chart -->
+    <div class="w-full">
+      <Chart
+        title={__("dashboard.monthly_revenue", "Monthly Revenue")}
+        type="area"
+        series={monthly_revenue.series}
+        options={revenueChartOptions}
+        height={350}
       />
     </div>
   </main>
