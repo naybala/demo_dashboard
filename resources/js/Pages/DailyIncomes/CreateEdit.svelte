@@ -96,7 +96,7 @@
               >
                 <tr>
                   <th class="px-4 py-2 w-1/4">Product</th>
-                  <th class="px-4 py-2 w-24">Amount</th>
+                  <th class="px-4 py-2 w-24 text-center">Amount</th>
                   <th class="px-4 py-2 w-32">Price</th>
                   <th class="px-4 py-2 w-32">Profit</th>
                   <th class="px-4 py-2 w-16"></th>
@@ -120,6 +120,7 @@
                         on:input={() => calculateProfit(i)}
                         class="w-full text-sm"
                         decimals={0}
+                        showButtons={true}
                         required
                       />
                     </td>
@@ -208,6 +209,7 @@
                       on:input={() => calculateProfit(i)}
                       class="w-full text-sm"
                       decimals={0}
+                      showButtons={true}
                       required
                     />
                   </div>
