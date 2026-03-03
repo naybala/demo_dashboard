@@ -75,7 +75,7 @@
       {#if permissions.includes("create products")}
         <Link href="/products/create">
           <PrimaryButton class="w-full sm:w-auto"
-            >{__("messages.create", "Create Product")}</PrimaryButton
+            >{__("product.create_product", "Create Product")}</PrimaryButton
           >
         </Link>
       {/if}

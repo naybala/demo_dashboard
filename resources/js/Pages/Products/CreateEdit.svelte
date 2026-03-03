@@ -11,6 +11,7 @@
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
   import { onMount } from "svelte";
   import MultiSelectUi from "../../Components/MultiSelectUi.svelte";
+  import { __ } from "@/helpers";
 
   export let product = null;
   export let categories = [];
@@ -80,19 +81,22 @@
     <h2
       class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem] hidden md:block"
     >
-      {product ? "Edit Product" : "Create Product"}
+      {__("sidebar.product", "Products")}
     </h2>
   </svelte:fragment>
   <PageHeader
     class="block md:hidden"
-    title={product ? "Edit Product" : "Create Product"}
+    title={__(
+      product ? "product.edit_product" : "product.create_product",
+      product ? "Edit Product" : "Create Product",
+    )}
   />
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-6">
       <!-- Image Upload -->
       <div>
-        <InputLabel value="Product Photos" />
+        <InputLabel value={__("product.photo", "Product Photos")} />
         <div class="mt-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {#each $form.existing_photos as path}
             <div
@@ -172,7 +176,9 @@
                 d="M12 4v16m8-8H4"
               /></svg
             >
-            <span class="mt-1 text-xs">Add Photo</span>
+            <span class="mt-1 text-xs"
+              >{__("product.add_photo", "Add Photo")}</span
+            >
           </button>
           <input
             type="file"
@@ -190,7 +196,7 @@
         class="grid grid-cols-1 md:grid-cols-3 gap-6 border border-gray-200 p-3 rounded-2xl"
       >
         <div>
-          <InputLabel for="name" value="Name (EN)" />
+          <InputLabel for="name" value={__("product.name", "Name (EN)")} />
           <TextInput
             id="name"
             type="text"
@@ -202,7 +208,10 @@
         </div>
 
         <div>
-          <InputLabel for="name_other" value="Name (Other)" />
+          <InputLabel
+            for="name_other"
+            value={__("product.name_other", "Name (Other)")}
+          />
           <TextInput
             id="name_other"
             type="text"
@@ -214,7 +223,7 @@
         </div>
 
         <div>
-          <InputLabel for="price" value="Price" />
+          <InputLabel for="price" value={__("product.price", "Price")} />
           <CurrencyInput
             id="price"
             class="mt-1 block w-full"
@@ -226,9 +235,10 @@
       </div>
       <MultiSelectUi
         options={categories}
+        label={__("product.category", "Categories")}
         bind:value={$form.categories}
         error={$form.errors.categories}
-        placeholder="Select categories..."
+        placeholder={__("messages.search_item", "Select categories...")}
       />
 
       <div class="flex gap-6">
@@ -239,7 +249,7 @@
             bind:checked={$form.is_banner}
           />
           <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-            >Is Banner</span
+            >{__("product.is_banner", "Is Banner")}</span
           >
         </label>
         <label class="inline-flex items-center">
@@ -249,13 +259,13 @@
             bind:checked={$form.is_mini_banner}
           />
           <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-            >Is Mini Banner</span
+            >{__("product.is_mini_banner", "Is Mini Banner")}</span
           >
         </label>
       </div>
 
       <div>
-        <InputLabel value="Description (EN)" />
+        <InputLabel value={__("product.description", "Description (EN)")} />
         <div
           class="mt-1 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 min-h-[200px]"
           id="editor-en"
@@ -264,7 +274,9 @@
       </div>
 
       <div>
-        <InputLabel value="Description (Other)" />
+        <InputLabel
+          value={__("product.description_other", "Description (Other)")}
+        />
         <div
           class="mt-1 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 min-h-[200px]"
           id="editor-other"
@@ -274,11 +286,13 @@
 
       <div class="flex items-center justify-end gap-4">
         <SecondaryButton on:click={() => router.get("/products")}
-          >Cancel</SecondaryButton
+          >{__("messages.cancel", "Cancel")}</SecondaryButton
         >
         {#if (product && permissions.includes("edit products")) || (!product && permissions.includes("create products"))}
           <PrimaryButton type="submit" disabled={$form.processing}>
-            {product ? "Update Product" : "Create Product"}
+            {product
+              ? __("product.edit_product", "Update Product")
+              : __("product.create_product", "Create Product")}
           </PrimaryButton>
         {/if}
       </div>

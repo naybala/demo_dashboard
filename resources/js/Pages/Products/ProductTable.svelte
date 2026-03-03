@@ -10,10 +10,10 @@
   $: permissions = $page.props.permissions || [];
 
   const headers = [
-    { key: "primary_photo", label: __("table.photo", "Photo") },
-    { key: "name", label: __("table.name", "Name") },
-    { key: "price", label: __("table.price", "Price") },
-    { key: "category_names", label: __("table.category", "Categories") },
+    { key: "primary_photo", label: __("product.photo", "Photo") },
+    { key: "name", label: __("product.name", "Name") },
+    { key: "price", label: __("product.price", "Price") },
+    { key: "category_names", label: __("product.category", "Categories") },
     { key: "actions", label: __("table.action", "Actions") },
   ];
 </script>
