@@ -5,7 +5,7 @@ export function useProductForm(product = null) {
   const form = useForm({
     name: product?.name || "",
     name_other: product?.name_other || "",
-    price: product?.price?.toString().replace(/,/g, "") || "",
+    price: product?.price || "",
     description: product?.description || "",
     description_other: product?.description_other || "",
     categories: product?.category_ids || [],
@@ -14,6 +14,28 @@ export function useProductForm(product = null) {
     photos: [],
     existing_photos: product?.photo_paths || [],
   });
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    form.update((data) => ({
+      ...data,
+      photos: [...data.photos, ...files],
+    }));
+  };
+
+  const removeNewPhoto = (index) => {
+    form.update((data) => ({
+      ...data,
+      photos: data.photos.filter((_, i) => i !== index),
+    }));
+  };
+
+  const removeExistingPhoto = (path) => {
+    form.update((data) => ({
+      ...data,
+      existing_photos: data.existing_photos.filter((p) => p !== path),
+    }));
+  };
 
   const submit = () => {
     const formInstance = get(form);
@@ -29,5 +51,11 @@ export function useProductForm(product = null) {
     }
   };
 
-  return { form, submit };
+  return {
+    form,
+    handleFileChange,
+    removeNewPhoto,
+    removeExistingPhoto,
+    submit,
+  };
 }

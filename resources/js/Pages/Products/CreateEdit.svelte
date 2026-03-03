@@ -10,13 +10,20 @@
   import { page, router } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
   import { onMount } from "svelte";
+  import MultiSelectUi from "../../Components/MultiSelectUi.svelte";
 
   export let product = null;
   export let categories = [];
 
   $: permissions = $page.props.permissions || [];
 
-  const { form, submit } = useProductForm(product);
+  const {
+    form,
+    handleFileChange,
+    removeNewPhoto,
+    removeExistingPhoto,
+    submit,
+  } = useProductForm(product);
 
   let quillEn;
   let quillOther;
@@ -66,47 +73,6 @@
       $form.description_other = quillOther.root.innerHTML;
     });
   });
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    $form.photos = [...$form.photos, ...files];
-  };
-
-  const removeNewPhoto = (index) => {
-    $form.photos = $form.photos.filter((_, i) => i !== index);
-  };
-
-  const removeExistingPhoto = (path) => {
-    $form.existing_photos = $form.existing_photos.filter((p) => p !== path);
-  };
-
-  // ── Price formatting ──────────────────────────────────────────────
-  const formatWithCommas = (val) =>
-    val === "" || val === null || val === undefined
-      ? ""
-      : Number(val).toLocaleString("en-US");
-
-  let displayPrice = formatWithCommas($form.price);
-
-  const handlePriceInput = (e) => {
-    // Strip everything except digits
-    const raw = e.target.value.replace(/[^0-9]/g, "");
-    $form.price = raw === "" ? "" : Number(raw);
-    displayPrice = raw === "" ? "" : Number(raw).toLocaleString("en-US");
-    // Keep cursor at end
-    e.target.value = displayPrice;
-  };
-  // ────────────────────────────────────────────────────────────────────
-
-  // ────────────────────────────────────────────────────────────────────
-
-  const toggleCategory = (categoryId) => {
-    if ($form.categories.includes(categoryId)) {
-      $form.categories = $form.categories.filter((id) => id !== categoryId);
-    } else {
-      $form.categories = [...$form.categories, categoryId];
-    }
-  };
 </script>
 
 <AdminLayout>
@@ -258,21 +224,11 @@
           <InputError message={$form.errors.price} />
         </div>
       </div>
-      <div class="border border-gray-200 p-3 rounded-2xl">
-        <InputLabel value="Categories" />
-        <div class="mt-2 flex flex-wrap gap-2">
-          {#each categories as category}
-            <button
-              type="button"
-              on:click={() => toggleCategory(category.id)}
-              class={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${$form.categories.includes(category.id) ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"}`}
-            >
-              {category.name}
-            </button>
-          {/each}
-        </div>
-        <InputError message={$form.errors.categories} />
-      </div>
+      <MultiSelectUi
+        options={categories}
+        bind:value={$form.categories}
+        error={$form.errors.categories}
+      />
 
       <div class="flex gap-6">
         <label class="inline-flex items-center">
