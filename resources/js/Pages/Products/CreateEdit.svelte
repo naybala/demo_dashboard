@@ -10,7 +10,7 @@
   import { page, router } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
   import { onMount } from "svelte";
-  import MultiSelectUi from "../../Components/MultiSelectUi.svelte";
+  import MultiSelect from "../../Components/MultiSelect.svelte";
 
   export let product = null;
   export let categories = [];
@@ -224,10 +224,11 @@
           <InputError message={$form.errors.price} />
         </div>
       </div>
-      <MultiSelectUi
+      <MultiSelect
         options={categories}
         bind:value={$form.categories}
         error={$form.errors.categories}
+        placeholder="Select categories..."
       />
 
       <div class="flex gap-6">
