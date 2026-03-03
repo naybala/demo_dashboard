@@ -7,8 +7,9 @@
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import SearchableSelect from "@/Components/SearchableSelect.svelte";
-  import { useForm, router, page } from "@inertiajs/svelte";
+  import { router, page } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
+  import { useOwnProductForm } from "./useOwnProductForm";
 
   export let ownProduct = null;
   export let categories = [];
@@ -19,38 +20,8 @@
   $: categoryOptions = categories.map((c) => ({ id: c.id, label: c.name }));
   $: unitOptions = units.map((u) => ({ id: u.id, label: u.name }));
 
-  const form = useForm({
-    name: ownProduct?.name || "",
-    category_id: ownProduct?.category_id || "",
-    unit_id: ownProduct?.unit_id || "",
-    price: ownProduct?.price || "",
-    investment: ownProduct?.investment || "",
-    profit: ownProduct?.profit || "",
-    image: null,
-  });
-
-  let imagePreview = ownProduct?.image || null;
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      $form.image = file;
-      imagePreview = URL.createObjectURL(file);
-    }
-  };
-
-  const submit = () => {
-    if (ownProduct) {
-      $form
-        .transform((data) => ({
-          ...data,
-          _method: "PUT",
-        }))
-        .post(`/own-products/${ownProduct.id}`);
-    } else {
-      $form.post("/own-products");
-    }
-  };
+  const { form, imagePreview, handleImageChange, submit } =
+    useOwnProductForm(ownProduct);
 </script>
 
 <AdminLayout>
@@ -73,9 +44,9 @@
           <div
             class="relative group w-72 h-72 rounded-md overflow-hidden border-2 border-gray-300 dark:border-gray-700"
           >
-            {#if imagePreview}
+            {#if $imagePreview}
               <img
-                src={imagePreview}
+                src={$imagePreview}
                 alt="preview"
                 class="w-72 h-72 object-cover"
               />
