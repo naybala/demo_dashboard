@@ -6,6 +6,7 @@
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
 
   export let user = $page.props.auth.user;
+
   $: permissions = $page.props.permissions || [];
   // Initialize synchronously to avoid flash — safe since Inertia is client-side only (no SSR)
   let isSidebarOpen =

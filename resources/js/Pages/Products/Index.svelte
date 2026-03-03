@@ -39,6 +39,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__("sidebar.product", "Products")}</title>
+</svelte:head>
+
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2

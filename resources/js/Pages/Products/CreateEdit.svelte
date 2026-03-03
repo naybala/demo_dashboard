@@ -76,6 +76,15 @@
   });
 </script>
 
+<svelte:head>
+  <title
+    >{__(
+      product ? "product.edit_product" : "product.create_product",
+      product ? "Edit Product" : "Create Product",
+    )} - Demo</title
+  >
+</svelte:head>
+
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2

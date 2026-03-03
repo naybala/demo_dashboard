@@ -22,4 +22,8 @@ export default defineConfig({
     }),
     svelte(),
   ],
+  compilerOptions: {
+    dev: true,
+    accessors: false,
+  },
 });
