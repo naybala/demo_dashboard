@@ -72,6 +72,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__("sidebar.dashboard")}</title>
+</svelte:head>
+
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2
