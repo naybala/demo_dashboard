@@ -1,9 +1,11 @@
 <script>
   import { page, router } from "@inertiajs/svelte";
-  import { Link } from "@inertiajs/svelte";
   import { __ } from "@/helpers.js";
   import { onMount } from "svelte";
   import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.svelte";
+  import Sidebar from "./Parts/Sidebar.svelte";
+  import TopBar from "./Parts/TopBar.svelte";
+  import { navigations } from "./Parts/navigation.js";
 
   export let user = $page.props.auth.user;
 
@@ -75,217 +77,18 @@
   const canSee = (item) =>
     !item.permission || permissions.includes(item.permission);
 
-  $: navigation = [
-    {
-      name: __("sidebar.dashboard", "Dashboard"),
-      href: "/dashboard",
-      icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
-    },
-    {
-      name: __("sidebar.inventory", "Inventory"),
-      items: [
-        {
-          name: __("sidebar.category", "Categories"),
-          href: "/categories",
-          icon: "M4 6h16M4 10h16M4 14h16M4 18h16",
-          permission: "manage categories",
-        },
-        {
-          name: __("sidebar.product", "Products"),
-          href: "/products",
-          icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
-          permission: "manage products",
-        },
-        {
-          name: __("sidebar.own_product", "Own Products"),
-          href: "/own-products",
-          icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01",
-          permission: "manage own-products",
-        },
-      ],
-    },
-    {
-      name: __("sidebar.sales", "Sales"),
-      items: [
-        {
-          name: __("sidebar.daily_income", "Daily Incomes"),
-          href: "/daily-incomes",
-          icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-          permission: "manage daily-incomes",
-        },
-      ],
-    },
-    {
-      name: __("sidebar.user_management", "User Management"),
-      items: [
-        {
-          name: __("sidebar.user", "Users"),
-          href: "/users",
-          icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
-          permission: "manage users",
-        },
-        {
-          name: __("sidebar.role", "Roles"),
-          href: "/roles",
-          icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
-          permission: "manage roles",
-        },
-      ],
-    },
-    {
-      name: __("sidebar.maintenance", "Maintenance"),
-      items: [
-        {
-          name: __("sidebar.unit", "Units"),
-          href: "/units",
-          icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
-          permission: "manage units",
-        },
-        {
-          name: __("sidebar.audit", "Activity Logs"),
-          href: "/audits",
-          icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
-          permission: "manage audits",
-        },
-      ],
-    },
-  ];
+  $: navigation = navigations;
 </script>
 
 <div class="h-dvh flex bg-gray-100 dark:bg-gray-900 overflow-hidden">
-  <!-- Sidebar -->
-  <aside
-    class={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
-  >
-    <div class="h-full flex flex-col">
-      <div
-        class="p-6 border-b dark:border-gray-700 flex items-center justify-between shrink-0"
-      >
-        <h1
-          class="text-xl font-black tracking-tight text-indigo-600 dark:text-indigo-400"
-        >
-          DASHBOARD
-        </h1>
-        <button
-          on:click={() => (isSidebarOpen = false)}
-          class="lg:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-
-      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 no-scrollbar">
-        {#each navigation as section}
-          {#if section.items}
-            <!-- Only show the grouped section if at least one child item is visible -->
-            {#if section.items.some(canSee)}
-              <div>
-                <h3
-                  class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2"
-                >
-                  {section.name}
-                </h3>
-                <div class="space-y-1">
-                  {#each section.items.filter(canSee) as item}
-                    <Link
-                      href={item.href}
-                      class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
-                        isActive(item.href)
-                          ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
-                          : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
-                      }`}
-                    >
-                      <svg
-                        class={`mr-3 h-5 w-5 transition-colors ${isActive(item.href) ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 group-hover:text-gray-500"}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d={item.icon}
-                        />
-                      </svg>
-                      {item.name}
-                    </Link>
-                  {/each}
-                </div>
-              </div>
-            {/if}
-          {:else}
-            <!-- Top-level link (e.g. Dashboard) — no permission guard needed -->
-            <div>
-              <Link
-                href={section.href}
-                class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
-                  isActive(section.href)
-                    ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
-                }`}
-              >
-                <svg
-                  class={`mr-3 h-5 w-5 transition-colors ${isActive(section.href) ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 group-hover:text-gray-500"}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d={section.icon}
-                  />
-                </svg>
-                {section.name}
-              </Link>
-            </div>
-          {/if}
-        {/each}
-      </nav>
-
-      <div
-        class="p-4 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 shrink-0"
-      >
-        <div class="flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-sm shrink-0 overflow-hidden border-2 border-white dark:border-gray-700 shadow-sm"
-          >
-            {#if user?.avatar}
-              <img
-                src={user.avatar}
-                alt={user.fullname}
-                class="w-full h-full object-cover"
-              />
-            {:else}
-              {(user?.fullname || user?.name || "A").charAt(0).toUpperCase()}
-            {/if}
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-gray-900 dark:text-white truncate">
-              {user?.fullname || user?.name || "Admin"}
-            </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
-              {user?.email}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </aside>
+  <Sidebar
+    {isSidebarOpen}
+    {navigation}
+    {user}
+    {isActive}
+    {canSee}
+    onClose={() => (isSidebarOpen = false)}
+  />
 
   <!-- Overlay -->
   {#if isSidebarOpen}
@@ -303,113 +106,18 @@
   <div
     class={`flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-300 ${isSidebarOpen ? "lg:pl-64" : ""}`}
   >
-    <!-- Top Nav -->
-    <header
-      class="bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex justify-between items-center border-b dark:border-gray-700 shrink-0 z-30"
+    <TopBar
+      onToggleSidebar={() => (isSidebarOpen = !isSidebarOpen)}
+      {currentLocale}
+      onLanguageChange={changeLanguage}
+      {isDarkMode}
+      onToggleTheme={toggleTheme}
+      onLogout={handleLogoutClick}
     >
-      <button
-        on:click={() => (isSidebarOpen = !isSidebarOpen)}
-        class="text-gray-500 hover:text-gray-700 focus:outline-none p-2"
-        aria-label="Open menu"
-      >
-        <svg
-          class="h-6 w-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16m-7 6h7"
-          />
-        </svg>
-      </button>
-      <!-- Page Header Slot -->
-      {#if $$slots.header}
-        <div class="px-1 md:px-6 py-[10px]">
-          <slot name="header" />
-        </div>
-      {/if}
-
-      <div class="flex-1 px-4">
-        <!-- Breadcrumbs could go here -->
-      </div>
-
-      <div class="flex items-center space-x-2 sm:space-x-4">
-        <!-- Language Switcher -->
-        <div
-          class="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1"
-        >
-          <button
-            on:click={() => changeLanguage("en")}
-            class={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${currentLocale === "en" ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm" : "text-gray-500 hover:text-gray-700 dark:text-gray-400"}`}
-          >
-            EN
-          </button>
-          <button
-            on:click={() => changeLanguage("mm")}
-            class={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${currentLocale === "mm" ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm" : "text-gray-500 hover:text-gray-700 dark:text-gray-400"}`}
-          >
-            MM
-          </button>
-        </div>
-
-        <!-- Theme Toggle -->
-        <button
-          on:click={toggleTheme}
-          class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
-          aria-label="Toggle theme"
-        >
-          {#if isDarkMode}
-            <svg
-              class="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-              />
-            </svg>
-          {:else}
-            <svg
-              class="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-              />
-            </svg>
-          {/if}
-        </button>
-
-        <button
-          on:click={handleLogoutClick}
-          class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-2 rounded-lg"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            />
-          </svg>
-          <span class="hidden lg:inline">Logout</span>
-        </button>
-      </div>
-    </header>
+      <svelte:fragment slot="header">
+        <slot name="header" />
+      </svelte:fragment>
+    </TopBar>
 
     <!-- Page Content -->
     <main
