@@ -11,6 +11,11 @@ import { page } from "@inertiajs/svelte";
  */
 export const __ = (key, defaultVal = "") => {
   const $page = get(page);
+
+  if (!$page || !$page.props || !$page.props.translations) {
+    return defaultVal || key;
+  }
+
   const parts = key.split(".");
   let result = $page.props.translations;
 

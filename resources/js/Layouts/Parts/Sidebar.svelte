@@ -50,7 +50,7 @@
               <h3
                 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2"
               >
-                {section.name}
+                {__(section.name, section.label)}
               </h3>
               <div class="space-y-1">
                 {#each section.items.filter(canSee) as item}
@@ -75,7 +75,7 @@
                         d={item.icon}
                       />
                     </svg>
-                    {item.name}
+                    {__(item.name, item.label)}
                   </Link>
                 {/each}
               </div>
@@ -104,7 +104,7 @@
                   d={section.icon}
                 />
               </svg>
-              {section.name}
+              {__(section.name, section.label)}
             </Link>
           </div>
         {/if}
