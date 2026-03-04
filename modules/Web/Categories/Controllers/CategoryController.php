@@ -50,24 +50,34 @@ class CategoryController extends BaseController
 
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        $this->categoryService->store($request->all());
-        return redirect()->route(self::ROUTE . '.index');
+        try {
+            $this->categoryService->store($request->validated());
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_created'));
+        } catch (Throwable $e) {
+            $this->LogError("Category store failed", $e);
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function update(UpdateCategoryRequest $request, string $id): RedirectResponse
     {
-        $decodedId = customDecoder($id);
-        $this->categoryService->update($request->validated(), $decodedId);
-        return redirect()->route(self::ROUTE . '.index');
+        try {
+            $decodedId = customDecoder($id);
+            $this->categoryService->update($request->validated(), $decodedId);
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
+        } catch (Throwable $e) {
+            $this->LogError("Category update failed", $e);
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function destroy(DeleteCategoryRequest $request): RedirectResponse
     {
         try {
             $this->categoryService->delete($request->validated()['id']);
-            return redirect()->route(self::ROUTE . '.index');
+            return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_deleted'));
         } catch (WarningException $e) {
-            return back()->with('warning', __($e->getMessage()));
+            return back()->with('error', __($e->getMessage()));
         } catch (Throwable $e) {
             $this->LogError("Category destroy failed", $e);
             return back()->with('error', $e->getMessage());

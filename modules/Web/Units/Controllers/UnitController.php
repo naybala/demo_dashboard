@@ -99,7 +99,7 @@ class UnitController extends BaseController
             $this->unitService->delete($request->validated()['id']);
             return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_deleted'));
         } catch (WarningException $e) {
-            return back()->with('warning', __($e->getMessage()));
+            return back()->with('error', __($e->getMessage()));
         } catch (Throwable $e) {
             $this->LogError("Unit destroy failed", $e);
             return back()->with('error', $e->getMessage());

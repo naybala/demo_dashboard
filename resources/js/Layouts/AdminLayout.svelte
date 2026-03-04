@@ -18,6 +18,7 @@
     confirmLogout,
     initAdminLayout,
   } from "./adminLayout.js";
+  import Toast from "./Parts/Toast.svelte";
 
   export let user = $page.props.auth.user;
   $: currentLocale = $page.props.locale || "en";
@@ -53,6 +54,7 @@
   <div
     class={`flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-300 ${$isSidebarOpen ? "lg:pl-64" : ""}`}
   >
+    <Toast />
     <TopBar
       onToggleSidebar={() => isSidebarOpen.update((v) => !v)}
       {currentLocale}
