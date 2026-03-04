@@ -7,8 +7,8 @@
   export let selectedYear = "";
   export let availableYears = [];
 
-  const handleChange = () => {
-    dispatch("change", selectedYear);
+  const handleChange = (e) => {
+    dispatch("change", e.target.value);
   };
 </script>
 
@@ -20,13 +20,13 @@
   >
   <select
     id="year"
-    bind:value={selectedYear}
+    value={selectedYear?.toString() || ""}
     on:change={handleChange}
     class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
   >
     <option value="">{__("messages.last_12_months", "Last 12 Months")}</option>
     {#each availableYears as year}
-      <option value={year}>{year}</option>
+      <option value={year.toString()}>{year}</option>
     {/each}
   </select>
 </div>
