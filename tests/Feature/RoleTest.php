@@ -32,7 +32,10 @@ class RoleTest extends TestCase
         $response = $this->get(route('roles.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Roles/Index')
+            ->has('data')
+        );
     }
 
     public function test_can_create_role()
@@ -41,7 +44,7 @@ class RoleTest extends TestCase
         
         $data = [
             'name' => 'New Role',
-            'p_' . $permission->id => 'on',
+            'permissions' => [$permission->name],
             'can_access_panel' => 'on',
         ];
 
@@ -62,7 +65,10 @@ class RoleTest extends TestCase
         $response = $this->get(route('roles.show', $obfuscatedId));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Roles/Show')
+            ->has('role')
+        );
     }
 
     public function test_can_update_role()
@@ -72,7 +78,7 @@ class RoleTest extends TestCase
 
         $data = [
             'name' => 'Updated Role',
-            'p_' . $permission->id => 'on',
+            'permissions' => [$permission->name],
             'can_access_panel' => 'on',
         ];
 
@@ -96,7 +102,24 @@ class RoleTest extends TestCase
         ]);
 
         $response->assertRedirect(route('roles.index'));
-        $this->assertDatabaseMissing('roles', [
+        $this->assertSoftDeleted('roles', [
+            'id' => $role->id
+        ]);
+    }
+
+    public function test_cannot_delete_role_in_use()
+    {
+        $role = Role::factory()->create();
+        User::factory()->create()->assignRole($role);
+
+        $obfuscatedId = customEncoder($role->id);
+        $response = $this->delete(route('roles.destroy', $obfuscatedId), [
+            'id' => $obfuscatedId
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertDatabaseHas('roles', [
             'id' => $role->id
         ]);
     }

@@ -47,7 +47,10 @@ class DailyIncomeTest extends TestCase
         $response = $this->get(route('daily-incomes.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('DailyIncomes/Index')
+            ->has('data')
+        );
     }
 
     public function test_can_create_daily_income()
@@ -56,7 +59,7 @@ class DailyIncomeTest extends TestCase
             'date' => now()->toDateString(),
             'items' => [
                 [
-                    'product_id' => $this->ownProduct->id,
+                    'own_product_id' => $this->ownProduct->id,
                     'amount' => 5,
                     'unit_id' => $this->unit->id,
                     'price' => 100,
@@ -99,7 +102,7 @@ class DailyIncomeTest extends TestCase
             'date' => now()->toDateString(),
             'items' => [
                 [
-                    'product_id' => $this->ownProduct->id,
+                    'own_product_id' => $this->ownProduct->id,
                     'amount' => 10,
                     'unit_id' => $this->unit->id,
                     'price' => 200,
@@ -151,7 +154,10 @@ class DailyIncomeTest extends TestCase
         $response = $this->get(route('daily-incomes.show', $obfuscatedId));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('DailyIncomes/Show')
+            ->has('dailyIncome')
+        );
     }
 
     public function test_can_filter_daily_incomes_by_keyword()
@@ -170,9 +176,10 @@ class DailyIncomeTest extends TestCase
         $response = $this->get(route('daily-incomes.index', ['keyword' => 'Specific']));
 
         $response->assertStatus(200);
-        $data = $response->viewData('data');
-        $this->assertCount(1, $data['data']);
-        $this->assertEquals('Specific Sale', $data['data'][0]['name']);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('DailyIncomes/Index')
+            ->has('data', 1)
+        );
     }
 
     public function test_can_paginate_daily_incomes()
@@ -185,9 +192,11 @@ class DailyIncomeTest extends TestCase
         $response = $this->get(route('daily-incomes.index', ['paginate' => 5]));
 
         $response->assertStatus(200);
-        $data = $response->viewData('data');
-        $this->assertCount(5, $data['data']);
-        $this->assertEquals(15, $data['meta']['total']);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('DailyIncomes/Index')
+            ->has('data', 5)
+            ->has('meta', fn ($meta) => $meta->where('total', 15)->etc())
+        );
     }
 
     public function test_validation_errors_on_create()
@@ -205,6 +214,7 @@ class DailyIncomeTest extends TestCase
             'investment' => 30000,
             'profit' => 20000,
             'own_product_id' => $this->ownProduct->id,
+            'created_by' => $this->user->id,
         ]);
 
         $resource = new \BasicDashboard\Web\DailyIncomes\Resources\DailyIncomeResource($dailyIncome);

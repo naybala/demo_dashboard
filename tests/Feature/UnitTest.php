@@ -31,7 +31,10 @@ class UnitTest extends TestCase
         $response = $this->get(route('units.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Units/Index')
+            ->has('data')
+        );
     }
 
     public function test_can_create_unit()
@@ -57,7 +60,10 @@ class UnitTest extends TestCase
         $response = $this->get(route('units.show', $obfuscatedId));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Units/Show')
+            ->has('unit')
+        );
     }
 
     public function test_can_update_unit()
@@ -72,7 +78,7 @@ class UnitTest extends TestCase
         $obfuscatedId = customEncoder($unit->id);
         $response = $this->put(route('units.update', $obfuscatedId), $data);
 
-        $response->assertRedirect(route('units.show', $obfuscatedId));
+        $response->assertRedirect(route('units.index'));
         $this->assertDatabaseHas('units', [
             'id' => $unit->id,
             'name' => 'Updated Kilo',
@@ -90,6 +96,27 @@ class UnitTest extends TestCase
 
         $response->assertRedirect(route('units.index'));
         $this->assertSoftDeleted('units', [
+            'id' => $unit->id
+        ]);
+    }
+
+    public function test_cannot_delete_unit_with_own_products()
+    {
+        $unit = Unit::factory()->create();
+        $category = \BasicDashboard\Foundations\Domain\Categories\Category::factory()->create();
+        \BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct::factory()->create([
+            'unit_id' => $unit->id,
+            'category_id' => $category->id
+        ]);
+
+        $obfuscatedId = customEncoder($unit->id);
+        $response = $this->delete(route('units.destroy', $obfuscatedId), [
+            'id' => $obfuscatedId
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertDatabaseHas('units', [
             'id' => $unit->id
         ]);
     }

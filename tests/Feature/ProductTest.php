@@ -39,7 +39,10 @@ class ProductTest extends TestCase
         $response = $this->get(route('products.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Products/Index')
+            ->has('data')
+        );
     }
 
     public function test_can_create_product()
@@ -76,7 +79,10 @@ class ProductTest extends TestCase
         $response = $this->get(route('products.show', $obfuscatedId));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Products/CreateEdit')
+            ->has('product')
+        );
     }
 
     public function test_can_update_product()
@@ -100,7 +106,7 @@ class ProductTest extends TestCase
         $obfuscatedId = customEncoder($product->id);
         $response = $this->put(route('products.update', $obfuscatedId), $data);
 
-        $response->assertRedirect(route('products.show', $obfuscatedId));
+        $response->assertRedirect(route('products.index'));
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
             'name' => 'Updated Product',
@@ -119,8 +125,6 @@ class ProductTest extends TestCase
         ]);
 
         $response->assertRedirect(route('products.index'));
-        // Product doesn't use SoftDeletes in the model shown (it doesn't have use SoftDeletes)
-        // Wait, let me double check the Product model.
         $this->assertDatabaseMissing('products', [
             'id' => $product->id
         ]);

@@ -3,8 +3,12 @@
 namespace Tests\Feature;
 
 use BasicDashboard\Foundations\Domain\Categories\Category;
+use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
+use BasicDashboard\Foundations\Domain\Products\Product;
+use BasicDashboard\Foundations\Domain\Units\Unit;
 use BasicDashboard\Foundations\Domain\Users\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -16,22 +20,20 @@ class CategoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
-
-        // Required for PermissionMiddleware - assuming same pattern as DailyIncome
         session(['permission_key' => 'manage categories,show categories,create categories,edit categories,delete categories']);
     }
 
     public function test_can_list_categories()
     {
         Category::factory()->count(3)->create();
-
         $response = $this->get(route('categories.index'));
-
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Categories/Index')
+            ->has('data')
+        );
     }
 
     public function test_can_create_category()
@@ -50,16 +52,7 @@ class CategoryTest extends TestCase
         ]);
     }
 
-    public function test_can_show_category()
-    {
-        $category = Category::factory()->create();
 
-        $obfuscatedId = customEncoder($category->id);
-        $response = $this->get(route('categories.show', $obfuscatedId));
-
-        $response->assertStatus(200);
-        $response->assertViewHas('data');
-    }
 
     public function test_can_update_category()
     {
@@ -74,7 +67,7 @@ class CategoryTest extends TestCase
         $obfuscatedId = customEncoder($category->id);
         $response = $this->put(route('categories.update', $obfuscatedId), $data);
 
-        $response->assertRedirect(route('categories.show', $obfuscatedId));
+        $response->assertRedirect(route('categories.index'));
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
             'name' => 'Updated Category',
@@ -92,6 +85,47 @@ class CategoryTest extends TestCase
 
         $response->assertRedirect(route('categories.index'));
         $this->assertSoftDeleted('categories', [
+            'id' => $category->id
+        ]);
+    }
+
+    public function test_cannot_delete_category_with_products()
+    {
+        $category = Category::factory()->create();
+        $product = clone Product::factory()->make(); // Need to make it, override relationships, and save or we can use the pivot correctly
+        
+        $product = Product::factory()->create();
+        $product->categories()->attach($category->id); // Product has a Many-to-Many with Categories, not a `category_id` column
+
+        $obfuscatedId = customEncoder($category->id);
+        $response = $this->delete(route('categories.destroy', $obfuscatedId), [
+            'id' => $obfuscatedId
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertDatabaseHas('categories', [
+            'id' => $category->id
+        ]);
+    }
+
+    public function test_cannot_delete_category_with_own_products()
+    {
+        $category = Category::factory()->create();
+        $unit = Unit::factory()->create();
+        OwnProduct::factory()->create([
+            'category_id' => $category->id,
+            'unit_id' => $unit->id, // Provide correct foreign key dependencies
+        ]);
+
+        $obfuscatedId = customEncoder($category->id);
+        $response = $this->delete(route('categories.destroy', $obfuscatedId), [
+            'id' => $obfuscatedId
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertDatabaseHas('categories', [
             'id' => $category->id
         ]);
     }

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use BasicDashboard\Foundations\Domain\Users\User;
+use BasicDashboard\Foundations\Domain\Roles\Role;
 use App\Enums\Common\Status;
 use App\Enums\Users\UserType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,14 +14,18 @@ class UserTest extends TestCase
     use RefreshDatabase;
 
     protected $admin;
+    protected $role;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->role = Role::factory()->create(['name' => 'Admin']);
         $this->admin = User::factory()->create([
             'user_type' => UserType::Administrator,
         ]);
+        $this->admin->assignRole($this->role);
+        
         $this->actingAs($this->admin);
 
         // Required for PermissionMiddleware
@@ -34,7 +39,10 @@ class UserTest extends TestCase
         $response = $this->get(route('users.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Users/Index')
+            ->has('data')
+        );
     }
 
     public function test_can_create_user()
@@ -43,8 +51,9 @@ class UserTest extends TestCase
             'fullname' => 'John Doe',
             'email' => 'john@example.com',
             'password' => 'password',
+            'password_confirmation' => 'password',
             'status' => Status::Active->value,
-            'role_marked' => 'Staff',
+            'role_id' => $this->role->id,
             'user_type' => UserType::User->value,
             'phone_number' => '123456789',
         ];
@@ -66,7 +75,10 @@ class UserTest extends TestCase
         $response = $this->get(route('users.show', $obfuscatedId));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Users/Show')
+            ->has('user')
+        );
     }
 
     public function test_can_update_user()
@@ -77,7 +89,7 @@ class UserTest extends TestCase
             'fullname' => 'Jane Doe',
             'email' => 'jane@example.com',
             'status' => Status::Active->value,
-            'role_marked' => 'Admin',
+            'role_id' => $this->role->id,
             'user_type' => UserType::Administrator->value,
             'phone_number' => '987654321',
         ];
@@ -85,7 +97,7 @@ class UserTest extends TestCase
         $obfuscatedId = customEncoder($user->id);
         $response = $this->put(route('users.update', $obfuscatedId), $data);
 
-        $response->assertRedirect(route('users.show', $obfuscatedId));
+        $response->assertRedirect(route('users.index'));
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'fullname' => 'Jane Doe',
@@ -102,9 +114,22 @@ class UserTest extends TestCase
         ]);
 
         $response->assertRedirect(route('users.index'));
-        // Soft delete test might depend on implementation, checking if record is gone or marked
         $this->assertSoftDeleted('users', [
             'id' => $user->id
+        ]);
+    }
+
+    public function test_cannot_delete_self()
+    {
+        $obfuscatedId = customEncoder($this->admin->id);
+        $response = $this->delete(route('users.destroy', $obfuscatedId), [
+            'id' => $obfuscatedId
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertDatabaseHas('users', [
+            'id' => $this->admin->id
         ]);
     }
 
@@ -112,6 +137,6 @@ class UserTest extends TestCase
     {
         $response = $this->post(route('users.store'), []);
 
-        $response->assertSessionHasErrors(['fullname', 'email', 'password', 'status', 'role_marked', 'user_type']);
+        $response->assertSessionHasErrors(['fullname', 'email', 'password', 'status', 'role_id', 'user_type']);
     }
 }

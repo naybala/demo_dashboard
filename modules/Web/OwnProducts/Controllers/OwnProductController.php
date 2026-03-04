@@ -91,7 +91,7 @@ class OwnProductController extends BaseController
         $ownProduct = $this->ownProductService->findOrFail($id);
         $ownProduct = new OwnProductResource($ownProduct);
         $ownProduct = $ownProduct->response()->getData(true)['data'];
-        return Inertia::render('OwnProducts/Show', [
+        return Inertia::render('OwnProducts/CreateEdit', [
             'ownProduct' => $ownProduct,
         ]);
     }

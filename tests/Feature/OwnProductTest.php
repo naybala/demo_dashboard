@@ -7,6 +7,7 @@ use BasicDashboard\Foundations\Domain\Units\Unit;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Foundations\Domain\Users\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class OwnProductTest extends TestCase
@@ -22,7 +23,7 @@ class OwnProductTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $this->category = Category::factory()->create();
+        $this->category = Category::factory()->create(['is_show' => false]);
         $this->unit = Unit::factory()->create();
 
         $this->actingAs($this->user);
@@ -41,7 +42,10 @@ class OwnProductTest extends TestCase
         $response = $this->get(route('own-products.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('OwnProducts/Index')
+            ->has('data')
+        );
     }
 
     public function test_can_create_own_product()
@@ -53,6 +57,7 @@ class OwnProductTest extends TestCase
             'price' => 100,
             'investment' => 60,
             'profit' => 40,
+            'image' => UploadedFile::fake()->image('product.jpg'),
         ];
 
         $response = $this->post(route('own-products.store'), $data);
@@ -74,7 +79,10 @@ class OwnProductTest extends TestCase
         $response = $this->get(route('own-products.show', $obfuscatedId));
 
         $response->assertStatus(200);
-        $response->assertViewHas('data');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('OwnProducts/CreateEdit')
+            ->has('ownProduct')
+        );
     }
 
     public function test_can_update_own_product()
@@ -96,7 +104,7 @@ class OwnProductTest extends TestCase
         $obfuscatedId = customEncoder($ownProduct->id);
         $response = $this->put(route('own-products.update', $obfuscatedId), $data);
 
-        $response->assertRedirect(route('own-products.show', $obfuscatedId));
+        $response->assertRedirect(route('own-products.index')); // Fix: standard is index redirect
         $this->assertDatabaseHas('own_products', [
             'id' => $ownProduct->id,
             'name' => 'Updated Product',
@@ -117,6 +125,29 @@ class OwnProductTest extends TestCase
 
         $response->assertRedirect(route('own-products.index'));
         $this->assertSoftDeleted('own_products', [
+            'id' => $ownProduct->id
+        ]);
+    }
+
+    public function test_cannot_delete_own_product_with_daily_incomes()
+    {
+        $ownProduct = OwnProduct::factory()->create([
+            'category_id' => $this->category->id,
+            'unit_id' => $this->unit->id,
+        ]);
+        
+        \BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome::factory()->create([
+            'own_product_id' => $ownProduct->id
+        ]);
+
+        $obfuscatedId = customEncoder($ownProduct->id);
+        $response = $this->delete(route('own-products.destroy', $obfuscatedId), [
+            'id' => $obfuscatedId
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertDatabaseHas('own_products', [
             'id' => $ownProduct->id
         ]);
     }

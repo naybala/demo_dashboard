@@ -82,8 +82,7 @@ class UserController extends BaseController
     public function update(UpdateUserRequest $request, string $id): RedirectResponse
     {
         try {
-            $decodedId = customDecoder($id);
-            $this->userService->update($request->all(), $decodedId);
+            $this->userService->update($request->all(), $id);
             return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("User update failed", $e);

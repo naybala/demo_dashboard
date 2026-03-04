@@ -96,7 +96,7 @@ class UserService
     {
         DB::transaction(function () use ($id) {
             $decodedId = customDecoder($id);
-            if ($decodedId === Auth::id()) {
+            if ($decodedId == Auth::id()) {
                 throw new WarningException('user.cannot_delete_self');
             }
             $user = $this->user->findOrFail($decodedId);

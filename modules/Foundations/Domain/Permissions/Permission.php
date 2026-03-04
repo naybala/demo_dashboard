@@ -11,6 +11,11 @@ class Permission extends SpatiePermission
 {
     use HasFactory;
 
+    protected static function newFactory()
+    {
+        return \Database\Factories\PermissionFactory::new();
+    }
+
     protected $fillable = [
         'name',
         'guard_name',

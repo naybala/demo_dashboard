@@ -86,7 +86,7 @@ class ProductController extends Controller
         $product = $this->productService->findOrFail($decodedId);
         $product = new ProductResource($product);
         $product = $product->response()->getData(true)['data'];
-        return Inertia::render('Products/Show', [
+        return Inertia::render('Products/CreateEdit', [
             'product' => $product,
         ]);
     }

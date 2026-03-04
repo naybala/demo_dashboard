@@ -66,7 +66,7 @@ class UnitService
         DB::transaction(function () use ($id) {
             $decodedId = customDecoder($id);
             $unit = $this->unit->findOrFail($decodedId);
-            if ($unit->hasOwnProducts() || $unit->hasProducts()) {
+            if ($unit->hasOwnProducts()) {
                 throw new WarningException('unit.unit_in_use');
             }
             $unit->update([
