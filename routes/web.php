@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth', 'permission.check']], function (): void {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::resource('categories', CategoryController::class);
     Route::resource('roles', RoleController::class);
+    Route::resource('permissions', \BasicDashboard\Web\Permissions\Controllers\PermissionController::class);
     Route::resource('products' ,ProductController::class);
     Route::resource('audits', AuditController::class)->only(['index', 'show']);
     Route::resource('units' ,UnitController::class);

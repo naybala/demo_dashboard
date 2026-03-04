@@ -11,4 +11,5 @@ return [
     'audit'              => "Audit",
     'unit'               => "Unit",
     'daily_income'       => "Daily Income",
+    'permission'         => "Permission",
 ];
