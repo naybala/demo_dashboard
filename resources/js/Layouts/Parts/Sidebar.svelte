@@ -1,6 +1,13 @@
 <script>
   import { Link } from "@inertiajs/svelte";
+  import { crossfade } from "svelte/transition";
+  import { cubicOut } from "svelte/easing";
   import { __ } from "@/helpers.js";
+
+  const [send, receive] = crossfade({
+    duration: 400,
+    easing: cubicOut,
+  });
 
   export let isSidebarOpen = true;
   export let navigation = [];
@@ -56,14 +63,21 @@
                 {#each section.items.filter(canSee) as item}
                   <Link
                     href={item.href}
-                    class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                    class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 group relative overflow-hidden ${
                       isActive(item.href)
-                        ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
+                        ? "bg-indigo-50/80 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 shadow-sm"
                         : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
+                    {#if isActive(item.href)}
+                      <div
+                        class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 dark:bg-indigo-500 rounded-r-full"
+                        in:receive={{ key: "active-indicator" }}
+                        out:send={{ key: "active-indicator" }}
+                      ></div>
+                    {/if}
                     <svg
-                      class={`mr-3 h-5 w-5 transition-colors ${isActive(item.href) ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 group-hover:text-gray-500"}`}
+                      class={`mr-3 h-5 w-5 transition-all duration-300 ${isActive(item.href) ? "text-indigo-600 dark:text-indigo-400 scale-110" : "text-gray-400 group-hover:text-gray-500 group-hover:scale-110"}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -75,7 +89,15 @@
                         d={item.icon}
                       />
                     </svg>
-                    {__(item.name, item.label)}
+                    <span
+                      class="transition-transform duration-300 {isActive(
+                        item.href,
+                      )
+                        ? 'translate-x-1'
+                        : 'group-hover:translate-x-1'}"
+                    >
+                      {__(item.name, item.label)}
+                    </span>
                   </Link>
                 {/each}
               </div>
@@ -85,14 +107,21 @@
           <div>
             <Link
               href={section.href}
-              class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
+              class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 group relative overflow-hidden ${
                 isActive(section.href)
-                  ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
+                  ? "bg-indigo-50/80 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 shadow-sm"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
+              {#if isActive(section.href)}
+                <div
+                  class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 dark:bg-indigo-500 rounded-r-full"
+                  in:receive={{ key: "active-indicator" }}
+                  out:send={{ key: "active-indicator" }}
+                ></div>
+              {/if}
               <svg
-                class={`mr-3 h-5 w-5 transition-colors ${isActive(section.href) ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 group-hover:text-gray-500"}`}
+                class={`mr-3 h-5 w-5 transition-all duration-300 ${isActive(section.href) ? "text-indigo-600 dark:text-indigo-400 scale-110" : "text-gray-400 group-hover:text-gray-500 group-hover:scale-110"}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -104,7 +133,13 @@
                   d={section.icon}
                 />
               </svg>
-              {__(section.name, section.label)}
+              <span
+                class="transition-transform duration-300 {isActive(section.href)
+                  ? 'translate-x-1'
+                  : 'group-hover:translate-x-1'}"
+              >
+                {__(section.name, section.label)}
+              </span>
             </Link>
           </div>
         {/if}
