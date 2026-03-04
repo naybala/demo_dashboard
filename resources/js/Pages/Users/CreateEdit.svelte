@@ -61,6 +61,13 @@
 </svelte:head>
 
 <AdminLayout>
+  <svelte:fragment slot="header">
+    <h2
+      class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem] hidden md:block"
+    >
+      {__("sidebar.user", "User")}
+    </h2>
+  </svelte:fragment>
   <PageHeader
     title={user
       ? __("user.edit_user", "Edit User")

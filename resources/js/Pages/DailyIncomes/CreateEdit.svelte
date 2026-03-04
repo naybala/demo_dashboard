@@ -50,9 +50,7 @@
     <h2
       class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem] hidden md:block"
     >
-      {dailyIncome
-        ? __("dailyIncome.edit_daily_income", "Edit Daily Income")
-        : __("dailyIncome.create_daily_income", "Create Daily Income")}
+      {__("sidebar.daily_income", "Daily Income")}
     </h2>
   </svelte:fragment>
   <PageHeader
