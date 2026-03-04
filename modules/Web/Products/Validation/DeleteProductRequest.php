@@ -21,6 +21,13 @@ class DeleteProductRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'id' => $this->route('product'),
+        ]);
+    }
+
     public function rules(): array
     {
         return [

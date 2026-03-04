@@ -51,7 +51,8 @@ class CategoryService
 
     public function findOrFail(string $id): Category
     {
-        $category = $this->category->findOrFail($id);
+        $decodedId = customDecoder($id);
+        $category = $this->category->findOrFail($decodedId);
         return $category;
     }
 
@@ -59,7 +60,8 @@ class CategoryService
     public function update(array $request, string $id): void
     {
         DB::transaction(function () use ($request , $id) {
-            $category = $this->category->findOrFail($id);
+            $decodedId = customDecoder($id);
+            $category = $this->category->findOrFail($decodedId);
             $category->update([
                 ...$request,
                 'updated_by' => auth()->id(),
@@ -70,7 +72,8 @@ class CategoryService
     public function delete(string $id)
     {
         DB::transaction(function () use ($id) {
-            $category = $this->category->findOrFail($id);
+            $decodedId = customDecoder($id);
+            $category = $this->category->findOrFail($decodedId);
             if ($category->hasOwnProducts() || $category->hasProducts()) {
                 throw new WarningException('category.category_in_use');
             }

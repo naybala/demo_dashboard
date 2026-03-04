@@ -75,4 +75,5 @@ return [
     'back_to_list'                 => 'Back to List',
     'created_at'                   => 'Created At',
     'last_login'                   => 'Last Login',
+    'cannot_delete_self'           => 'You cannot delete your own account.',
 ];

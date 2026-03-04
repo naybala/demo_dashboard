@@ -15,6 +15,7 @@ use BasicDashboard\Web\Users\Resources\UserEditResource;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
+use App\Exceptions\WarningException;
 
 class UserController extends BaseController
 {
@@ -90,11 +91,14 @@ class UserController extends BaseController
         }
     }
 
+    
     public function destroy(DeleteUserRequest $request): RedirectResponse
     {
         try {
             $this->userService->delete($request->validated()['id']);
             return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_deleted'));
+        } catch (WarningException $e) {
+            return back()->with('error', __($e->getMessage()));
         } catch (Throwable $e) {
             $this->LogError("User destroy failed", $e);
             return back()->with('error', $e->getMessage());

@@ -62,8 +62,7 @@ class CategoryController extends BaseController
     public function update(UpdateCategoryRequest $request, string $id): RedirectResponse
     {
         try {
-            $decodedId = customDecoder($id);
-            $this->categoryService->update($request->validated(), $decodedId);
+            $this->categoryService->update($request->validated(), $id);
             return redirect()->route(self::ROUTE . '.index')->with('success', __(self::LANG_PATH . '_updated'));
         } catch (Throwable $e) {
             $this->LogError("Category update failed", $e);

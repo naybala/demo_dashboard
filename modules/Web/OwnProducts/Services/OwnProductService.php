@@ -91,7 +91,8 @@ class OwnProductService
     public function delete(string $id): void
     {
         DB::transaction(function () use ($id) {
-            $ownProduct = $this->ownProduct->findOrFail($id);
+            $decodedId = customDecoder($id);
+            $ownProduct = $this->ownProduct->findOrFail($decodedId);
             if ($ownProduct->hasDailyIncomes()) {
                 throw new WarningException('ownProduct.ownProduct_in_use');
             }

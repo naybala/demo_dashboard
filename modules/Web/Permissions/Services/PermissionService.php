@@ -33,12 +33,14 @@ class PermissionService
 
     public function findOrFail(string $id): Permission
     {
-        return $this->permission->findOrFail($id);
+        $decodedId = customDecoder($id);
+        return $this->permission->findOrFail($decodedId);
     }
 
     public function update(array $request, string $id): Permission
     {
-        $permission = $this->permission->findOrFail($id);
+        $decodedId = customDecoder($id);
+        $permission = $this->permission->findOrFail($decodedId);
         $permission->update([
             'name' => $request['name'],
         ]);
@@ -47,7 +49,8 @@ class PermissionService
 
     public function delete(string $id): void
     {
-        $permission = $this->permission->findOrFail($id);
+        $decodedId = customDecoder($id);
+        $permission = $this->permission->findOrFail($decodedId);
         if ($permission->hasRoles()) {
             throw new \App\Exceptions\WarningException('permission.permission_in_use');
         }

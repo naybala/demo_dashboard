@@ -96,7 +96,8 @@ class ProductService
     public function delete(string $id): void
     {
         DB::transaction(function () use ($id) {
-            $product = $this->product->findOrFail($id);
+            $decodedId = customDecoder($id);
+            $product = $this->product->findOrFail($decodedId);
             if ($product->photos) {
                 $this->filesystemManager->forceDeleteFilesFromLocal($product->photos);
             }

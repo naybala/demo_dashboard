@@ -9,6 +9,7 @@ use BasicDashboard\Foundations\Domain\Users\User;
 use BasicDashboard\Foundations\Domain\Roles\Role;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\WarningException;
 
 class UserService
 {
@@ -95,6 +96,9 @@ class UserService
     {
         DB::transaction(function () use ($id) {
             $decodedId = customDecoder($id);
+            if ($decodedId === Auth::id()) {
+                throw new WarningException('user.cannot_delete_self');
+            }
             $user = $this->user->findOrFail($decodedId);
             $user->roles()->detach();
             $this->webFileStoreAction->delete($user, config('cache.file_system_disk'),'avatar');

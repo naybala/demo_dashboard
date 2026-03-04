@@ -64,7 +64,8 @@ class UnitService
     public function delete(string $id): void
     {
         DB::transaction(function () use ($id) {
-            $unit = $this->unit->findOrFail($id);
+            $decodedId = customDecoder($id);
+            $unit = $this->unit->findOrFail($decodedId);
             if ($unit->hasOwnProducts() || $unit->hasProducts()) {
                 throw new WarningException('unit.unit_in_use');
             }
