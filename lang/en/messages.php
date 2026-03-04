@@ -50,4 +50,6 @@ return [
     'to_date' => "To Date",
     'choose_file' => "Choose Photo",
     'toggle_all' => "Toggle All",
+    'connection_failed' => "Network connection failed, Please use internet",
+    'connection_restored' => "Connection restored",
 ];

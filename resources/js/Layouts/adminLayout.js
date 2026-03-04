@@ -8,6 +8,9 @@ export const isSidebarOpen = writable(
 );
 export const isDarkMode = writable(false);
 export const showLogoutModal = writable(false);
+export const isOnline = writable(
+  typeof window !== "undefined" ? window.navigator.onLine : true,
+);
 
 // Helpers
 export const toggleTheme = () => {
@@ -64,6 +67,13 @@ export const initAdminLayout = () => {
     isDarkMode.set(false);
   }
 
+  // Connectivity listeners
+  const handleOnline = () => isOnline.set(true);
+  const handleOffline = () => isOnline.set(false);
+
+  window.addEventListener("online", handleOnline);
+  window.addEventListener("offline", handleOffline);
+
   // Auto-close sidebar on navigation for mobile/tablet
   const unregisterFinish = router.on("finish", () => {
     if (window.innerWidth < 1024) {
@@ -73,5 +83,7 @@ export const initAdminLayout = () => {
 
   return () => {
     unregisterFinish();
+    window.removeEventListener("online", handleOnline);
+    window.removeEventListener("offline", handleOffline);
   };
 };
