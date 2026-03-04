@@ -29,8 +29,8 @@
   <title
     >{__(
       ownProduct
-        ? "own_product.edit_own_product"
-        : "own_product.create_own_product",
+        ? "ownProduct.edit_own_product"
+        : "ownProduct.create_own_product",
     )}</title
   >
 </svelte:head>
@@ -39,19 +39,15 @@
     <h2
       class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem] hidden md:block"
     >
-      {__(
-        ownProduct
-          ? "own_product.edit_own_product"
-          : "own_product.create_own_product",
-      )}
+      {__(ownProduct ? "sidebar.own_product" : "sidebar.own_product")}
     </h2>
   </svelte:fragment>
   <PageHeader
     class="block md:hidden"
     title={__(
       ownProduct
-        ? "own_product.edit_own_product"
-        : "own_product.create_own_product",
+        ? "ownProduct.edit_own_product"
+        : "ownProduct.create_own_product",
     )}
   />
 

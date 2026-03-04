@@ -15,4 +15,6 @@ return [
     "own_product"=>"Own Product",
     "create_own_product"=>"Create Own Product",
     "edit_own_product"=>"Edit Own Product",
+    "delete_title"=>"Delete Own Product",
+    "delete_message"=>"Are you sure you want to delete {name}? This action cannot be undone.",
 ];

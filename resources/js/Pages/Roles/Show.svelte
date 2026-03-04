@@ -11,6 +11,10 @@
   export let getCurrentPermissions = [];
 </script>
 
+<svelte:head>
+  <title>{__("role.role", "Role")}: {role.name}</title>
+</svelte:head>
+
 <AdminLayout>
   <PageHeader title={`${__("role.role", "Role")}: ${role.name}`}>
     <Link href="/roles">

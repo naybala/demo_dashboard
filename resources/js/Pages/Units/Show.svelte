@@ -9,6 +9,10 @@
   export let unit = {};
 </script>
 
+<svelte:head>
+  <title>{__("sidebar.unit", "Unit")}: {unit.name}</title>
+</svelte:head>
+
 <AdminLayout>
   <PageHeader title={`${__("sidebar.unit", "Unit")}: ${unit.name}`}>
     <Link href="/units">

@@ -40,14 +40,14 @@
 </script>
 
 <svelte:head>
-  <title>{__("own_product.own_product", "Own Products")}</title>
+  <title>{__("sidebar.own_product")}</title>
 </svelte:head>
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2
       class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
     >
-      {__("sidebar.own_product", "Own Products")}
+      {__("sidebar.own_product")}
     </h2>
   </svelte:fragment>
 

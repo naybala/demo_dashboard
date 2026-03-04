@@ -49,6 +49,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__("sidebar.audit")}</title>
+</svelte:head>
+
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2

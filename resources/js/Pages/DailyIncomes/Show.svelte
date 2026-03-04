@@ -8,6 +8,13 @@
   export let dailyIncome = {};
 </script>
 
+<svelte:head>
+  <title
+    >{__("dailyIncome.voucher", "Voucher")}: {dailyIncome.voucher_no ||
+      "N/A"}</title
+  >
+</svelte:head>
+
 <AdminLayout>
   <PageHeader
     title={`${__("dailyIncome.voucher", "Voucher")}: ${dailyIncome.voucher_no || "N/A"}`}

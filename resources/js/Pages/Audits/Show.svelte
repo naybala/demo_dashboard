@@ -16,6 +16,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__("audit.audit_details", "Audit Details")}</title>
+</svelte:head>
+
 <AdminLayout>
   <PageHeader title={__("audit.audit_details", "Audit Details")}>
     <Link href="/audits">

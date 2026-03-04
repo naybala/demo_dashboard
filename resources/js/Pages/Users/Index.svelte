@@ -55,6 +55,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__("sidebar.user")}</title>
+</svelte:head>
+
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2

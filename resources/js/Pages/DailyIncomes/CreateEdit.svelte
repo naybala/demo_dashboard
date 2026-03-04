@@ -35,6 +35,16 @@
   $: totalAmount = formatNumber($totalAmountStore, 0);
 </script>
 
+<svelte:head>
+  <title
+    >{__(
+      dailyIncome
+        ? "dailyIncome.edit_daily_income"
+        : "dailyIncome.create_daily_income",
+    )}</title
+  >
+</svelte:head>
+
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2

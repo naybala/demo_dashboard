@@ -9,6 +9,10 @@
   export let user = {};
 </script>
 
+<svelte:head>
+  <title>{__("user.user", "User")}: {user.fullname}</title>
+</svelte:head>
+
 <AdminLayout>
   <PageHeader title={`${__("user.user", "User")}: ${user.fullname}`}>
     <Link href="/users">

@@ -57,6 +57,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__("sidebar.daily_income")}</title>
+</svelte:head>
+
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2

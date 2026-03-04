@@ -55,6 +55,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__(role ? "role.edit_role" : "role.create_role")}</title>
+</svelte:head>
+
 <AdminLayout>
   <PageHeader
     title={role

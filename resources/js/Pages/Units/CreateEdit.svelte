@@ -26,6 +26,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__(unit ? "unit.edit_unit" : "unit.create_unit")}</title>
+</svelte:head>
+
 <AdminLayout>
   <PageHeader
     title={unit

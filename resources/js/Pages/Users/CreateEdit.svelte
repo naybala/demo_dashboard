@@ -56,6 +56,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__(user ? "user.edit_user" : "user.create_user")}</title>
+</svelte:head>
+
 <AdminLayout>
   <PageHeader
     title={user
