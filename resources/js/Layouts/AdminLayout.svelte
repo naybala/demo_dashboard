@@ -17,6 +17,7 @@
     handleLogoutClick,
     confirmLogout,
     initAdminLayout,
+    isChangingLanguage,
   } from "./adminLayout.js";
   import Toast from "./Parts/Toast.svelte";
 
@@ -28,7 +29,24 @@
   $: navigation = navigations;
 </script>
 
-<div class="h-dvh flex bg-gray-100 dark:bg-gray-900 overflow-hidden">
+<div class="h-dvh flex bg-gray-100 dark:bg-gray-900 overflow-hidden relative">
+  {#if $isChangingLanguage}
+    <div
+      class="fixed inset-0 z-[110] flex items-center justify-center bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm transition-all duration-300"
+    >
+      <div class="flex flex-col items-center gap-3">
+        <div
+          class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"
+        ></div>
+        <p class="text-indigo-600 dark:text-indigo-400 font-medium text-sm">
+          {currentLocale === "en"
+            ? "Changing Language..."
+            : "ဘာသာစကား ပြောင်းလဲနေသည်..."}
+        </p>
+      </div>
+    </div>
+  {/if}
+
   <Sidebar
     isSidebarOpen={$isSidebarOpen}
     {navigation}

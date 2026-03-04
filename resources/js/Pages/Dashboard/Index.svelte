@@ -1,9 +1,11 @@
 <script>
   import AdminLayout from "@/Layouts/AdminLayout.svelte";
-  import PageHeader from "@/Components/PageHeader.svelte";
   import Chart from "@/Components/Chart.svelte";
   import { router } from "@inertiajs/svelte";
   import { __, formatNumber } from "@/helpers.js";
+  import StatCard from "./Parts/StatCard.svelte";
+  import DateFilter from "./Parts/DateFilter.svelte";
+  import YearFilter from "./Parts/YearFilter.svelte";
 
   export let stats = {};
   export let monthly_revenue = { labels: [], series: [] };
@@ -45,17 +47,26 @@
     },
   };
 
-  let startDate = filters.start_date || "";
-  let endDate = filters.end_date || "";
-  let selectedYear = filters.year || "";
-
-  const handleFilter = () => {
+  const handleDateFilter = (e) => {
     router.get(
       "/dashboard",
       {
-        start_date: startDate,
-        end_date: endDate,
-        year: selectedYear,
+        ...filters,
+        ...e.detail,
+      },
+      {
+        preserveState: true,
+        replace: true,
+      },
+    );
+  };
+
+  const handleYearChange = (e) => {
+    router.get(
+      "/dashboard",
+      {
+        ...filters,
+        year: e.detail,
       },
       {
         preserveState: true,
@@ -65,9 +76,6 @@
   };
 
   const handleReset = () => {
-    startDate = "";
-    endDate = "";
-    selectedYear = "";
     router.get("/dashboard");
   };
 </script>
@@ -86,99 +94,31 @@
   </svelte:fragment>
 
   <main class="space-y-6">
-    <!-- Date Filter -->
-    <div
-      class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
-    >
-      <form
-        on:submit|preventDefault={handleFilter}
-        class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end"
-      >
-        <div>
-          <label
-            for="start_date"
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >{__("messages.start_date", "Start Date")}</label
-          >
-          <input
-            type="date"
-            id="start_date"
-            bind:value={startDate}
-            class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-        <div>
-          <label
-            for="end_date"
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >{__("messages.end_date", "End Date")}</label
-          >
-          <input
-            type="date"
-            id="end_date"
-            bind:value={endDate}
-            class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-
-        <div class="flex gap-2">
-          <button
-            type="submit"
-            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-            >{__("messages.filter", "Filter")}</button
-          >
-          <button
-            type="button"
-            on:click={handleReset}
-            class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
-            >{__("messages.reset", "Reset")}</button
-          >
-        </div>
-      </form>
-    </div>
+    <DateFilter
+      startDate={filters.start_date || ""}
+      endDate={filters.end_date || ""}
+      on:filter={handleDateFilter}
+      on:reset={handleReset}
+    />
 
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div
-        class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
-      >
-        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          {__("dashboard.total_own_product", "Own Product Types")}
-        </p>
-        <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
-          {formatNumber(stats.total_products) || 0}
-        </h4>
-      </div>
-      <div
-        class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
-      >
-        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          {__("dashboard.total_price", "Total Price")}
-        </p>
-        <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
-          {formatNumber(stats.total_price) || 0}
-        </h4>
-      </div>
-      <div
-        class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
-      >
-        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          {__("dashboard.total_investment", "Total Investment")}
-        </p>
-        <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
-          {formatNumber(stats.total_investment) || 0}
-        </h4>
-      </div>
-      <div
-        class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
-      >
-        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          {__("dashboard.total_profit", "Total Profit")}
-        </p>
-        <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
-          {formatNumber(stats.total_profit) || 0}
-        </h4>
-      </div>
+      <StatCard
+        label={__("dashboard.total_own_product", "Own Product Types")}
+        value={stats.total_products}
+      />
+      <StatCard
+        label={__("dashboard.total_price", "Total Price")}
+        value={stats.total_price}
+      />
+      <StatCard
+        label={__("dashboard.total_investment", "Total Investment")}
+        value={stats.total_investment}
+      />
+      <StatCard
+        label={__("dashboard.total_profit", "Total Profit")}
+        value={stats.total_profit}
+      />
     </div>
 
     <!-- Charts -->
@@ -202,29 +142,13 @@
       />
     </div>
 
-    <div class="w-4/12">
-      <label
-        for="year"
-        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >{__("messages.year", "Year")}</label
-      >
-      <select
-        id="year"
-        bind:value={selectedYear}
-        on:change={handleFilter}
-        class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-      >
-        <option value=""
-          >{__("messages.last_12_months", "Last 12 Months")}</option
-        >
-        {#each monthly_revenue.available_years as year}
-          <option value={year}>{year}</option>
-        {/each}
-      </select>
-    </div>
-
     <!-- Revenue Chart -->
     <div class="w-full">
+      <YearFilter
+        selectedYear={filters.year || ""}
+        availableYears={monthly_revenue.available_years || []}
+        on:change={handleYearChange}
+      />
       <Chart
         title={__("dashboard.monthly_revenue", "Monthly Revenue")}
         type="area"

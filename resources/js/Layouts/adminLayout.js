@@ -11,6 +11,7 @@ export const showLogoutModal = writable(false);
 export const isOnline = writable(
   typeof window !== "undefined" ? window.navigator.onLine : true,
 );
+export const isChangingLanguage = writable(false);
 
 // Helpers
 export const toggleTheme = () => {
@@ -28,7 +29,15 @@ export const toggleTheme = () => {
 };
 
 export const changeLanguage = (lang) => {
-  router.get("/change", { lang }, { preserveState: false });
+  router.get(
+    "/change",
+    { lang },
+    {
+      preserveState: false,
+      onStart: () => isChangingLanguage.set(true),
+      onFinish: () => isChangingLanguage.set(false),
+    },
+  );
 };
 
 export const isActive = (href) => {

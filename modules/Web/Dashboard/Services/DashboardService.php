@@ -136,6 +136,7 @@ class DashboardService extends BaseController
             ->orderBy('year', 'desc')
             ->pluck('year')
             ->toArray();
+
             
         // Ensure current year is always there
         if (!in_array(now()->year, $availableYears)) {
