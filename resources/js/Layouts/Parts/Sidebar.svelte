@@ -1,12 +1,19 @@
 <script>
-  import { Link } from "@inertiajs/svelte";
+  import { Link, page } from "@inertiajs/svelte";
   import { crossfade } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
   import { __ } from "@/helpers.js";
 
   const [send, receive] = crossfade({
-    duration: 400,
+    duration: 600,
     easing: cubicOut,
+    fallback(node, params) {
+      return {
+        duration: 600,
+        easing: cubicOut,
+        css: (t) => `opacity: ${t}; transform: scale(${t})`,
+      };
+    },
   });
 
   export let isSidebarOpen = true;
@@ -50,20 +57,20 @@
     </div>
 
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 no-scrollbar">
-      {#each navigation as section}
+      {#each navigation as section (section.name)}
         {#if section.items}
           {#if section.items.some(canSee)}
             <div>
               <h3
                 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2"
               >
-                {__(section.name, section.label)}
+                {__($page.props.locale && section.name, section.label)}
               </h3>
               <div class="space-y-1">
-                {#each section.items.filter(canSee) as item}
+                {#each section.items.filter(canSee) as item (item.href)}
                   <Link
                     href={item.href}
-                    class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                    class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 group relative ${
                       isActive(item.href)
                         ? "bg-indigo-50/80 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 shadow-sm"
                         : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
@@ -96,7 +103,7 @@
                         ? 'translate-x-1'
                         : 'group-hover:translate-x-1'}"
                     >
-                      {__(item.name, item.label)}
+                      {__($page.props.locale && item.name, item.label)}
                     </span>
                   </Link>
                 {/each}
@@ -107,7 +114,7 @@
           <div>
             <Link
               href={section.href}
-              class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 group relative overflow-hidden ${
+              class={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 group relative ${
                 isActive(section.href)
                   ? "bg-indigo-50/80 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 shadow-sm"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
@@ -138,7 +145,7 @@
                   ? 'translate-x-1'
                   : 'group-hover:translate-x-1'}"
               >
-                {__(section.name, section.label)}
+                {__($page.props.locale && section.name, section.label)}
               </span>
             </Link>
           </div>

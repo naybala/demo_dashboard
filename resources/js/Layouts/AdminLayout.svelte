@@ -24,7 +24,7 @@
 
   onMount(initAdminLayout);
 
-  $: navigation = $page && navigations;
+  $: navigation = navigations;
 </script>
 
 <div class="h-dvh flex bg-gray-100 dark:bg-gray-900 overflow-hidden">
