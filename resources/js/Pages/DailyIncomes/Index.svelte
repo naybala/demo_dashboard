@@ -128,7 +128,10 @@
         {#if permissions.includes("create daily-incomes")}
           <Link href="/daily-incomes/create" class="md:ml-auto">
             <PrimaryButton
-              >{__("messages.create", "Create Daily Income")}</PrimaryButton
+              >{__(
+                "dailyIncome.create_daily_income",
+                "Create Daily Income",
+              )}</PrimaryButton
             >
           </Link>
         {/if}

@@ -3,6 +3,7 @@
   import PageHeader from "@/Components/PageHeader.svelte";
   import { Link } from "@inertiajs/svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
+  import { __ } from "@/helpers.js";
 
   export let audit = {};
 
@@ -16,9 +17,11 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title="Audit Details">
+  <PageHeader title={__("audit.audit_details", "Audit Details")}>
     <Link href="/audits">
-      <SecondaryButton>Back to Logs</SecondaryButton>
+      <SecondaryButton
+        >{__("audit.back_to_logs", "Back to Logs")}</SecondaryButton
+      >
     </Link>
   </PageHeader>
 
@@ -28,34 +31,40 @@
         <h3
           class="text-lg font-bold mb-4 text-gray-900 dark:text-white border-b pb-2"
         >
-          Information
+          {__("audit.information", "Information")}
         </h3>
         <div class="space-y-4 text-sm">
           <div>
-            <span class="block text-gray-500">User</span>
+            <span class="block text-gray-500">{__("audit.user", "User")}</span>
             <span class="font-medium">{audit.user_name}</span>
           </div>
           <div>
-            <span class="block text-gray-500">Event</span>
+            <span class="block text-gray-500">{__("audit.event", "Event")}</span
+            >
             <span
               class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800"
               >{audit.event}</span
             >
           </div>
           <div>
-            <span class="block text-gray-500">Model</span>
+            <span class="block text-gray-500">{__("audit.model", "Model")}</span
+            >
             <span>{audit.auditable_type} (ID: {audit.auditable_id})</span>
           </div>
           <div>
-            <span class="block text-gray-500">IP Address</span>
+            <span class="block text-gray-500"
+              >{__("audit.ip_address", "IP Address")}</span
+            >
             <span>{audit.ip_address}</span>
           </div>
           <div>
-            <span class="block text-gray-500">User Agent</span>
+            <span class="block text-gray-500"
+              >{__("audit.user_agent", "User Agent")}</span
+            >
             <span class="text-xs break-words">{audit.user_agent}</span>
           </div>
           <div>
-            <span class="block text-gray-500">Date</span>
+            <span class="block text-gray-500">{__("audit.date", "Date")}</span>
             <span>{audit.created_at}</span>
           </div>
         </div>
@@ -67,13 +76,13 @@
         <h3
           class="text-lg font-bold mb-4 text-gray-900 dark:text-white border-b pb-2"
         >
-          Changes
+          {__("audit.changes", "Changes")}
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <h4 class="text-sm font-bold text-gray-400 uppercase mb-2">
-              Old Values
+              {__("audit.old_values", "Old Values")}
             </h4>
             <pre
               class="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg text-xs overflow-x-auto border border-gray-200 dark:border-gray-700">
@@ -82,7 +91,7 @@
           </div>
           <div>
             <h4 class="text-sm font-bold text-gray-400 uppercase mb-2">
-              New Values
+              {__("audit.new_values", "New Values")}
             </h4>
             <pre
               class="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg text-xs overflow-x-auto border border-gray-200 dark:border-gray-700">
@@ -97,10 +106,10 @@
           <h3
             class="text-lg font-bold mb-4 text-gray-900 dark:text-white border-b pb-2"
           >
-            Context
+            {__("audit.context", "Context")}
           </h3>
           <div class="text-sm">
-            <span class="block text-gray-500">URL</span>
+            <span class="block text-gray-500">{__("audit.url", "URL")}</span>
             <span class="break-all">{audit.url}</span>
           </div>
         </div>

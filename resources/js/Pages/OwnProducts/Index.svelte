@@ -39,6 +39,9 @@
   };
 </script>
 
+<svelte:head>
+  <title>{__("own_product.own_product", "Own Products")}</title>
+</svelte:head>
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2
@@ -75,7 +78,10 @@
       {#if permissions.includes("create own-products")}
         <Link href="/own-products/create">
           <PrimaryButton class="w-full sm:w-auto"
-            >{__("messages.create", "Create Own Product")}</PrimaryButton
+            >{__(
+              "ownProduct.create_own_product",
+              "Create Own Product",
+            )}</PrimaryButton
           >
         </Link>
       {/if}

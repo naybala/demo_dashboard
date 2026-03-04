@@ -3,15 +3,19 @@
   import PageHeader from "@/Components/PageHeader.svelte";
   import { Link } from "@inertiajs/svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
-  import { formatNumber } from "@/helpers.js";
+  import { formatNumber, __ } from "@/helpers.js";
 
   export let dailyIncome = {};
 </script>
 
 <AdminLayout>
-  <PageHeader title={`Voucher: ${dailyIncome.voucher_no || "N/A"}`}>
+  <PageHeader
+    title={`${__("dailyIncome.voucher", "Voucher")}: ${dailyIncome.voucher_no || "N/A"}`}
+  >
     <Link href="/daily-incomes">
-      <SecondaryButton>Back to List</SecondaryButton>
+      <SecondaryButton
+        >{__("messages.back_to_list", "Back to List")}</SecondaryButton
+      >
     </Link>
   </PageHeader>
 
@@ -22,7 +26,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
           <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Date
+            {__("dailyIncome.date", "Date")}
           </h4>
           <p class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">
             {dailyIncome.date}
@@ -30,7 +34,7 @@
         </div>
         <div>
           <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Voucher No
+            {__("dailyIncome.voucher_no", "Voucher No")}
           </h4>
           <p class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">
             {dailyIncome.voucher_no || "N/A"}
@@ -38,12 +42,14 @@
         </div>
         <div>
           <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Payment Status
+            {__("dailyIncome.payment_status", "Payment Status")}
           </h4>
           <span
             class={`mt-1 inline-flex px-2 text-xs font-semibold rounded-full leading-5 ${dailyIncome.is_instant ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}
           >
-            {dailyIncome.is_instant ? "Instant" : "Pending"}
+            {dailyIncome.is_instant
+              ? __("dailyIncome.instant", "Instant")
+              : __("dailyIncome.pending", "Pending")}
           </span>
         </div>
       </div>
@@ -55,10 +61,14 @@
           class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase font-medium"
         >
           <tr>
-            <th class="px-6 py-3">Product</th>
-            <th class="px-6 py-3">Unit</th>
-            <th class="px-6 py-3 text-right">Amount</th>
-            <th class="px-6 py-3 text-right">Price</th>
+            <th class="px-6 py-3">{__("dailyIncome.product_id", "Product")}</th>
+            <th class="px-6 py-3">{__("dailyIncome.unit_id", "Unit")}</th>
+            <th class="px-6 py-3 text-right"
+              >{__("dailyIncome.amount", "Amount")}</th
+            >
+            <th class="px-6 py-3 text-right"
+              >{__("dailyIncome.price", "Price")}</th
+            >
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
@@ -81,7 +91,9 @@
         </tbody>
         <tfoot class="bg-gray-50 dark:bg-gray-700 font-bold">
           <tr>
-            <td colspan="3" class="px-6 py-4 text-right">Total Price:</td>
+            <td colspan="3" class="px-6 py-4 text-right"
+              >{__("messages.total_price", "Total Price")}:</td
+            >
             <td class="px-6 py-4 text-right text-gray-900 dark:text-white"
               >{formatNumber(
                 dailyIncome.items.reduce(
@@ -102,7 +114,7 @@
         class="p-6 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
       >
         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-          Note
+          {__("dailyIncome.note", "Note")}
         </h4>
         <p class="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
           {dailyIncome.note}

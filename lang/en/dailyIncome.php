@@ -17,5 +17,15 @@ return [
     'dailyIncome_created' => "Daily Income was successfully created",
     'dailyIncome_updated' => "Daily Income was successfully updated",
     'dailyIncome_deleted' => "Daily Income was successfully deleted",
-    
+    'delete_title' => 'Delete Daily Income',
+    'delete_message' => 'Are you sure you want to delete this record? If it belongs to a voucher, the entire voucher will be deleted.',
+    'create_daily_income' => 'Create Daily Income',
+    'edit_daily_income' => 'Edit Daily Income',
+    'items' => 'Items',
+    'add_item' => 'Add Item',
+    'total' => 'Total',
+    'payment_status' => 'Payment Status',
+    'instant' => 'Instant',
+    'pending' => 'Pending',
+    'back_to_list' => 'Back to List',
 ];

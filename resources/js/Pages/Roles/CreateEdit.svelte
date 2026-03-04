@@ -7,6 +7,7 @@
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import { useForm, router, page } from "@inertiajs/svelte";
+  import { __ } from "@/helpers.js";
 
   export let role = null;
   export let getAllPermissions = {};
@@ -55,13 +56,17 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title={role ? "Edit Role" : "Create Role"} />
+  <PageHeader
+    title={role
+      ? __("role.edit_role", "Edit Role")
+      : __("role.create_role", "Create Role")}
+  />
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-8">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
         <div>
-          <InputLabel for="name" value="Role Name" />
+          <InputLabel for="name" value={__("role.role_name", "Role Name")} />
           <TextInput
             id="name"
             type="text"
@@ -80,7 +85,7 @@
               bind:checked={$form.can_access_panel}
             />
             <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-              >Can Access Admin Panel</span
+              >{__("role.can_access_panel", "Can Access Admin Panel")}</span
             >
           </label>
         </div>
@@ -90,7 +95,7 @@
         <h3
           class="text-lg font-medium text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2"
         >
-          Permissions
+          {__("role.permissions", "Permissions")}
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -110,7 +115,7 @@
                     toggleFeaturePermissions(feature, permissions)}
                   class="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
                 >
-                  Toggle All
+                  {__("messages.toggle_all", "Toggle All")}
                 </button>
               </div>
               <div class="space-y-2">
@@ -138,11 +143,13 @@
         class="flex items-center justify-end gap-4 border-t border-gray-100 dark:border-gray-700 pt-6"
       >
         <SecondaryButton on:click={() => router.get("/roles")}
-          >Cancel</SecondaryButton
+          >{__("messages.cancel", "Cancel")}</SecondaryButton
         >
         {#if (role && permissions.includes("edit roles")) || (!role && permissions.includes("create roles"))}
           <PrimaryButton type="submit" disabled={$form.processing}>
-            {role ? "Update Role" : "Create Role"}
+            {role
+              ? __("messages.update", "Update Role")
+              : __("messages.create", "Create Role")}
           </PrimaryButton>
         {/if}
       </div>

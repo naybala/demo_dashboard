@@ -45,4 +45,7 @@ return [
     'placeholder_note'=> 'Please enter note',
     'placeholder_unit_id'=> 'Please enter unit',
     'voucher_or_product' => "Voucher or Product...",
+    'select_category' => "Select Category",
+    'select_unit' => "Select Unit",
+    'select_product' => "Select Product",
 ];

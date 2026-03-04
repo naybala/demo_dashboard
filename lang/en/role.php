@@ -12,5 +12,11 @@ return [
     'can_access_panel' => 'access admin panel',
 
     'role_in_use' => "This role cannot be deleted because it is already used by users.",
-
+    'create_role' => 'Create Role',
+    'edit_role' => 'Edit Role',
+    'update_role' => 'Update Role',
+    'back_to_list' => 'Back to List',
+    'permissions' => 'Permissions',
+    'assigned_permissions' => 'Assigned Permissions',
+    'role' => 'Role',
 ];

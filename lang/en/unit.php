@@ -9,5 +9,7 @@ return [
     'unit_deleted' => "Unit was successfully deleted",
 
     'unit_in_use' => "This unit cannot be deleted because it is already used by products.",
-
+    'create_unit' => 'Create Unit',
+    'edit_unit' => 'Edit Unit',
+    'back_to_list' => 'Back to List',
 ];

@@ -78,10 +78,7 @@
 
 <svelte:head>
   <title
-    >{__(
-      product ? "product.edit_product" : "product.create_product",
-      product ? "Edit Product" : "Create Product",
-    )} - Demo</title
+    >{__(product ? "product.edit_product" : "product.create_product")}</title
   >
 </svelte:head>
 

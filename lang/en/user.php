@@ -9,6 +9,7 @@ return [
     'user_email'                   => "Email Address to login the system",
     'role'                         => "Role",
     'password'                     => "Password",
+    'password_confirmation'        => "Confirm Password",
     'province_ids'                 => "Province",
     'country'                      => "Country",
     'old_password'                 => "Old Password",
@@ -64,4 +65,14 @@ return [
 
     //Profile
     'name_other'                   => 'Name in English Language',
+    'delete_title'                 => 'Delete User',
+    'delete_message'               => 'Are you sure you want to delete this user? This action cannot be undone.',
+    'select_role'                  => 'Select Role',
+    'confirm_password'             => 'Confirm Password',
+    'new_password_optional'        => 'New Password (Optional)',
+    'create_user'                  => 'Create User',
+    'edit_user'                    => 'Edit User',
+    'back_to_list'                 => 'Back to List',
+    'created_at'                   => 'Created At',
+    'last_login'                   => 'Last Login',
 ];

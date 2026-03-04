@@ -28,4 +28,7 @@ return [
     //Product
     'placeholder_price'                         => "Please enter price in MM",
     'voucher_or_product' => "ဘောက်ချာ သို့မဟုတ် ထုတ်ကုန်...",
+    'select_category' => "အမျိုးအစား ရွေးချယ်ပါ",
+    'select_unit' => "ယူနစ် ရွေးချယ်ပါ",
+    'select_product' => "ပစ္စည်း ရွေးချယ်ပါ",
 ];

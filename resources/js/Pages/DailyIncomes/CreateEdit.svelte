@@ -9,7 +9,7 @@
   import { useDailyIncomeForm } from "./useDailyIncomeForm";
   import { router, page } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
-  import { formatNumber } from "@/helpers.js";
+  import { __, formatNumber } from "@/helpers.js";
 
   export let dailyIncome = null;
   export let products = [];
@@ -40,19 +40,23 @@
     <h2
       class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem] hidden md:block"
     >
-      {dailyIncome ? "Edit Daily Income" : "Create Daily Income"}
+      {dailyIncome
+        ? __("dailyIncome.edit_daily_income", "Edit Daily Income")
+        : __("dailyIncome.create_daily_income", "Create Daily Income")}
     </h2>
   </svelte:fragment>
   <PageHeader
     class="block md:hidden"
-    title={dailyIncome ? "Edit Daily Income" : "Create Daily Income"}
+    title={dailyIncome
+      ? __("dailyIncome.edit_daily_income", "Edit Daily Income")
+      : __("dailyIncome.create_daily_income", "Create Daily Income")}
   />
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <InputLabel for="date" value="Date" />
+          <InputLabel for="date" value={__("dailyIncome.date", "Date")} />
           <input
             type="date"
             id="date"
@@ -71,7 +75,7 @@
               bind:checked={$form.is_instant}
             />
             <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-              >Is Instant Payment</span
+              >{__("dailyIncome.is_instant", "Is Instant Payment")}</span
             >
           </label>
         </div>
@@ -80,10 +84,10 @@
       <div class="space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-            Items
+            {__("messages.items", "Items")}
           </h3>
           <SecondaryButton type="button" on:click={addItem}
-            >Add Item</SecondaryButton
+            >{__("messages.add_item", "Add Item")}</SecondaryButton
           >
         </div>
 
@@ -95,10 +99,18 @@
                 class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase font-medium"
               >
                 <tr>
-                  <th class="px-4 py-2 w-1/4">Product</th>
-                  <th class="px-4 py-2 w-24 text-center">Amount</th>
-                  <th class="px-4 py-2 w-32">Price</th>
-                  <th class="px-4 py-2 w-32">Profit</th>
+                  <th class="px-4 py-2 w-1/4"
+                    >{__("dailyIncome.product_id", "Product")}</th
+                  >
+                  <th class="px-4 py-2 w-24 text-center"
+                    >{__("dailyIncome.amount", "Amount")}</th
+                  >
+                  <th class="px-4 py-2 w-32"
+                    >{__("dailyIncome.price", "Price")}</th
+                  >
+                  <th class="px-4 py-2 w-32"
+                    >{__("dailyIncome.profit", "Profit")}</th
+                  >
                   <th class="px-4 py-2 w-16"></th>
                 </tr>
               </thead>
@@ -110,7 +122,10 @@
                         options={productOptions}
                         bind:value={item.own_product_id}
                         on:change={() => handleProductChange(i)}
-                        placeholder="Select Product"
+                        placeholder={__(
+                          "placeholder.select_product",
+                          "Select Product",
+                        )}
                       />
                     </td>
                     <td class="px-4 py-2">
@@ -192,18 +207,21 @@
                 </button>
 
                 <div class="space-y-2">
-                  <InputLabel value="Product" />
+                  <InputLabel value={__("dailyIncome.product_id", "Product")} />
                   <SearchableSelect
                     options={productOptions}
                     bind:value={item.own_product_id}
                     on:change={() => handleProductChange(i)}
-                    placeholder="Select Product"
+                    placeholder={__(
+                      "placeholder.select_product",
+                      "Select Product",
+                    )}
                   />
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                   <div class="space-y-2">
-                    <InputLabel value="Amount" />
+                    <InputLabel value={__("dailyIncome.amount", "Amount")} />
                     <CurrencyInput
                       bind:value={item.amount}
                       on:input={() => calculateProfit(i)}
@@ -214,7 +232,7 @@
                     />
                   </div>
                   <div class="space-y-2">
-                    <InputLabel value="Price" />
+                    <InputLabel value={__("dailyIncome.price", "Price")} />
                     <div
                       class="px-3 py-2 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-mono truncate"
                     >
@@ -226,7 +244,9 @@
                 <div
                   class="flex justify-between items-center text-sm pt-2 border-t border-gray-200 dark:border-gray-600"
                 >
-                  <span class="text-gray-500">Profit:</span>
+                  <span class="text-gray-500"
+                    >{__("dailyIncome.profit", "Profit")}:</span
+                  >
                   <span class="font-bold text-indigo-600 dark:text-indigo-400"
                     >{formatNumber(item.profit, 2) || "0.00"}</span
                   >
@@ -242,7 +262,7 @@
             <div
               class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-4"
             >
-              <span>Total:</span>
+              <span>{__("dailyIncome.total", "Total")}:</span>
               <span
                 class="text-indigo-600 p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded"
                 >{totalAmount}</span
@@ -253,7 +273,7 @@
       </div>
 
       <div>
-        <InputLabel for="note" value="Note" />
+        <InputLabel for="note" value={__("dailyIncome.note", "Note")} />
         <textarea
           id="note"
           bind:value={$form.note}
@@ -265,11 +285,13 @@
 
       <div class="flex items-center justify-end gap-4">
         <SecondaryButton on:click={() => router.get("/daily-incomes")}
-          >Cancel</SecondaryButton
+          >{__("messages.cancel", "Cancel")}</SecondaryButton
         >
         {#if (dailyIncome && permissions.includes("edit daily-incomes")) || (!dailyIncome && permissions.includes("create daily-incomes"))}
           <PrimaryButton type="submit" disabled={$form.processing}>
-            {dailyIncome ? "Update Record" : "Save Record"}
+            {dailyIncome
+              ? __("messages.update_record", "Update Record")
+              : __("messages.save_record", "Save Record")}
           </PrimaryButton>
         {/if}
       </div>

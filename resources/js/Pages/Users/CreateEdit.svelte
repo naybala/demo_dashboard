@@ -57,7 +57,11 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title={user ? "Edit User" : "Create User"} />
+  <PageHeader
+    title={user
+      ? __("user.edit_user", "Edit User")
+      : __("user.create_user", "Create User")}
+  />
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-6 max-w-2xl">
@@ -179,7 +183,9 @@
         <div>
           <InputLabel
             for="password"
-            value={user ? "New Password (Optional)" : "Password"}
+            value={user
+              ? __("user.new_password_optional", "New Password (Optional)")
+              : __("user.password", "Password")}
           />
           <TextInput
             id="password"
@@ -192,7 +198,10 @@
         </div>
 
         <div>
-          <InputLabel for="password_confirmation" value="Confirm Password" />
+          <InputLabel
+            for="password_confirmation"
+            value={__("user.confirm_password", "Confirm Password")}
+          />
           <TextInput
             id="password_confirmation"
             type="password"
@@ -208,11 +217,13 @@
         class="flex items-center justify-end gap-4 pt-4 border-t border-gray-100 dark:border-gray-700"
       >
         <SecondaryButton on:click={() => router.get("/users")}
-          >Cancel</SecondaryButton
+          >{__("messages.cancel", "Cancel")}</SecondaryButton
         >
         {#if (user && permissions.includes("edit users")) || (!user && permissions.includes("create users"))}
           <PrimaryButton type="submit" disabled={$form.processing}>
-            {user ? "Update User" : "Create User"}
+            {user
+              ? __("messages.update", "Update User")
+              : __("messages.create", "Create User")}
           </PrimaryButton>
         {/if}
       </div>

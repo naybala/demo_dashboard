@@ -4,14 +4,17 @@
   import { Link } from "@inertiajs/svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
+  import { __ } from "@/helpers.js";
 
   export let user = {};
 </script>
 
 <AdminLayout>
-  <PageHeader title={`User: ${user.fullname}`}>
+  <PageHeader title={`${__("user.user", "User")}: ${user.fullname}`}>
     <Link href="/users">
-      <SecondaryButton>Back to List</SecondaryButton>
+      <SecondaryButton
+        >{__("user.back_to_list", "Back to List")}</SecondaryButton
+      >
     </Link>
   </PageHeader>
 
@@ -44,7 +47,7 @@
           <h4
             class="text-sm font-medium text-gray-400 uppercase tracking-wider"
           >
-            Role
+            {__("user.role", "Role")}
           </h4>
           <p class="mt-1 text-lg text-gray-900 dark:text-white font-medium">
             {user.role_name}
@@ -54,7 +57,7 @@
           <h4
             class="text-sm font-medium text-gray-400 uppercase tracking-wider"
           >
-            Status
+            {__("user.status", "Status")}
           </h4>
           <span
             class={`mt-1 inline-flex px-2.5 py-0.5 rounded-full text-sm font-semibold ${user.status === 1 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
@@ -69,7 +72,7 @@
           <h4
             class="text-sm font-medium text-gray-400 uppercase tracking-wider"
           >
-            Created At
+            {__("user.created_at", "Created At")}
           </h4>
           <p class="mt-1 text-lg text-gray-900 dark:text-white font-medium">
             {user.created_at}
@@ -80,7 +83,7 @@
             <h4
               class="text-sm font-medium text-gray-400 uppercase tracking-wider"
             >
-              Last Login
+              {__("user.last_login", "Last Login")}
             </h4>
             <p class="mt-1 text-lg text-gray-900 dark:text-white font-medium">
               {user.last_login}
@@ -94,7 +97,7 @@
       class="mt-8 pt-8 border-t border-gray-100 dark:border-gray-700 flex gap-4"
     >
       <Link href={`/users/${user.id}/edit`}>
-        <PrimaryButton>Edit User</PrimaryButton>
+        <PrimaryButton>{__("user.edit_user", "Edit User")}</PrimaryButton>
       </Link>
     </div>
   </div>

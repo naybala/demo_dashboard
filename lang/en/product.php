@@ -14,4 +14,6 @@ return [
     'category'=>'Categories',
     'is_banner'=>'Is Banner',
     'is_mini_banner'=>'Is Mini Banner',
+    'create_product'=>'Create Product',
+    'edit_product'=>'Edit Product',
 ];

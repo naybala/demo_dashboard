@@ -10,6 +10,7 @@
   import { router, page } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
   import { useOwnProductForm } from "./useOwnProductForm";
+  import { __ } from "@/helpers.js";
 
   export let ownProduct = null;
   export let categories = [];
@@ -24,17 +25,34 @@
     useOwnProductForm(ownProduct);
 </script>
 
+<svelte:head>
+  <title
+    >{__(
+      ownProduct
+        ? "own_product.edit_own_product"
+        : "own_product.create_own_product",
+    )}</title
+  >
+</svelte:head>
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2
       class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem] hidden md:block"
     >
-      {ownProduct ? "Edit Own Product" : "Create Own Product"}
+      {__(
+        ownProduct
+          ? "own_product.edit_own_product"
+          : "own_product.create_own_product",
+      )}
     </h2>
   </svelte:fragment>
   <PageHeader
     class="block md:hidden"
-    title={ownProduct ? "Edit Own Product" : "Create Own Product"}
+    title={__(
+      ownProduct
+        ? "own_product.edit_own_product"
+        : "own_product.create_own_product",
+    )}
   />
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
@@ -71,7 +89,7 @@
             <label
               class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-bold"
             >
-              Change Image
+              {__("ownProduct.add_photo", "Change Image")}
               <input
                 type="file"
                 class="hidden"
@@ -84,7 +102,10 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 col-span-2">
           <div>
-            <InputLabel for="name" value="Product Name" />
+            <InputLabel
+              for="name"
+              value={__("ownProduct.name", "Product Name")}
+            />
             <TextInput
               id="name"
               type="text"
@@ -95,7 +116,7 @@
             <InputError message={$form.errors.name} />
           </div>
           <div>
-            <InputLabel for="price" value="Price" />
+            <InputLabel for="price" value={__("ownProduct.price", "Price")} />
             <CurrencyInput
               id="price"
               class="mt-1 block w-full"
@@ -106,7 +127,10 @@
           </div>
 
           <div>
-            <InputLabel for="investment" value="Investment" />
+            <InputLabel
+              for="investment"
+              value={__("ownProduct.investment", "Investment")}
+            />
             <CurrencyInput
               id="investment"
               class="mt-1 block w-full"
@@ -117,7 +141,10 @@
           </div>
 
           <div>
-            <InputLabel for="profit" value="Profit" />
+            <InputLabel
+              for="profit"
+              value={__("ownProduct.profit", "Profit")}
+            />
             <CurrencyInput
               id="profit"
               class="mt-1 block w-full"
@@ -127,12 +154,18 @@
             <InputError message={$form.errors.profit} />
           </div>
           <div>
-            <InputLabel for="category" value="Category" />
+            <InputLabel
+              for="category"
+              value={__("ownProduct.category_id", "Category")}
+            />
             <div class="mt-1">
               <SearchableSelect
                 options={categoryOptions}
                 bind:value={$form.category_id}
-                placeholder="Select Category"
+                placeholder={__(
+                  "placeholder.select_category",
+                  "Select Category",
+                )}
                 required
               />
             </div>
@@ -140,12 +173,12 @@
           </div>
 
           <div>
-            <InputLabel for="unit" value="Unit" />
+            <InputLabel for="unit" value={__("ownProduct.unit_id", "Unit")} />
             <div class="mt-1">
               <SearchableSelect
                 options={unitOptions}
                 bind:value={$form.unit_id}
-                placeholder="Select Unit"
+                placeholder={__("placeholder.select_unit", "Select Unit")}
                 required
               />
             </div>
@@ -156,11 +189,13 @@
 
       <div class="flex items-center justify-end gap-4 mt-6">
         <SecondaryButton on:click={() => router.get("/own-products")}
-          >Cancel</SecondaryButton
+          >{__("messages.cancel", "Cancel")}</SecondaryButton
         >
         {#if (ownProduct && permissions.includes("edit own-products")) || (!ownProduct && permissions.includes("create own-products"))}
           <PrimaryButton type="submit" disabled={$form.processing}>
-            {ownProduct ? "Update Own Product" : "Create Own Product"}
+            {ownProduct
+              ? __("ownProduct.edit_own_product", "Update Own Product")
+              : __("ownProduct.create_own_product", "Create Own Product")}
           </PrimaryButton>
         {/if}
       </div>

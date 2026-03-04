@@ -4,6 +4,7 @@
   import { Link } from "@inertiajs/svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
+  import { __ } from "@/helpers.js";
 
   export let role = {};
   export let getAllPermissions = {};
@@ -11,9 +12,11 @@
 </script>
 
 <AdminLayout>
-  <PageHeader title={`Role: ${role.name}`}>
+  <PageHeader title={`${__("role.role", "Role")}: ${role.name}`}>
     <Link href="/roles">
-      <SecondaryButton>Back to List</SecondaryButton>
+      <SecondaryButton
+        >{__("role.back_to_list", "Back to List")}</SecondaryButton
+      >
     </Link>
   </PageHeader>
 
@@ -24,7 +27,7 @@
           {role.name}
         </h3>
         <p class="mt-1 text-gray-500 dark:text-gray-400">
-          Access Admin Panel:
+          {__("role.can_access_panel", "Access Admin Panel")}:
           <span
             class={`font-semibold ${role.can_access_panel ? "text-green-600" : "text-gray-400"}`}
           >
@@ -33,7 +36,7 @@
         </p>
       </div>
       <Link href={`/roles/${role.id}/edit`}>
-        <PrimaryButton>Edit Role</PrimaryButton>
+        <PrimaryButton>{__("role.edit_role", "Edit Role")}</PrimaryButton>
       </Link>
     </div>
 
@@ -41,7 +44,7 @@
       <h4
         class="text-lg font-medium text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2"
       >
-        Assigned Permissions
+        {__("role.assigned_permissions", "Assigned Permissions")}
       </h4>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -14,6 +14,12 @@ return [
     'update' => "Update",
     'create' => "Create",
     'cancel' => "Cancel",
+    'items' => "Items",
+    'add_item' => "Add Item",
+    'back_to_list' => "Back to List",
+    'total_price' => "Total Price",
+    'update_record' => "Update Record",
+    'save_record' => "Save Record",
     'search_item' => "Search for items",
     'search' => "Search",
     'edit' => "Edit",
@@ -42,7 +48,6 @@ return [
     'last_12_months' => 'Last 12 Months',
     'from_date' => "From Date",
     'to_date' => "To Date",
-   
-    
-    
+    'choose_file' => "Choose Photo",
+    'toggle_all' => "Toggle All",
 ];

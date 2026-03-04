@@ -4,7 +4,7 @@ import "../css/app.css";
 import { createInertiaApp } from "@inertiajs/svelte";
 createInertiaApp({
   progress: {
-    delay: 250,
+    delay: 0,
     color: "#004bfa",
     showSpinner: false,
   },
