@@ -45,7 +45,7 @@
 <AdminLayout>
   <svelte:fragment slot="header">
     <h2
-      class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.20rem]"
+      class="font-semibold text-[12px] md:text-xl text-gray-800 dark:text-gray-200 leading-tight py-[0.13rem]"
     >
       {__("sidebar.own_product")}
     </h2>
