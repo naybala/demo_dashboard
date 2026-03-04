@@ -6,7 +6,6 @@ module.exports = {
     "./resources/**/*.svelte",
     "./resources/**/*.css",
     "./node_modules/flowbite/**/*.js",
-    "node_modules/preline/dist/*.js",
   ],
   safelist: [
     ...[...Array(10).keys()].flatMap((i) => [
@@ -36,6 +35,5 @@ module.exports = {
     require("flowbite/plugin")({
       charts: true,
     }),
-    require("preline/plugin"),
   ],
 };

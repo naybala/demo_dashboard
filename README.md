@@ -1,321 +1,149 @@
 # Demo Dashboard
 
-A modular **Laravel-based admin dashboard** with scalable architecture, feature scaffolding, and clean separation between Domain, Application, and Web layers.
+A modular **Laravel 12** admin dashboard with a scalable architecture, feature scaffolding, and clean separation between Domain, Application, and Web layers.
 
 ---
 
 ## ✨ Features
 
-- Modular architecture (`modules/` structure)
-- CRUD scaffolding via custom Artisan commands
-- Service layer separation for business logic
-- Form Request validation
-- API Resources for response formatting
-- TailwindCSS + modern UI components
-- Ready for scaling into multi-feature admin systems
+- **Modular Architecture**: Clean separation into `modules/` structure.
+- **CRUD Scaffolding**: Custom Artisan commands for rapid feature development.
+- **Inertia.js + Svelte**: Modern, reactive frontend with seamless Laravel integration.
+- **Service Layer**: Decoupled business logic for maintainability.
+- **Advanced Permissions**: Comprehensive Role/Permission management via Spatie.
+- **ID Obfuscation**: Secure, encoded IDs in public URLs.
+- **Deletion Guards**: Proactive checks to prevent orphaned data.
 
 ---
 
 ## 🏗️ Architecture Overview
 
-Each feature/module is organized into clear layers:
+Each module in `modules/` is organized into three distinct layers:
 
-```
+```text
 modules/
   FeatureName/
-    Domain/        → Models, repositories, core logic
-    Application/   → Services / Actions (business rules)
-    Web/           → Controllers, Requests, Resources, Views
-    Routes.php     → Module routes
+    Domain/        → Eloquent Models, Repositories, core logic
+    Application/   → Business Logic / Services (Cross-module or complex logic)
+    Web/           → Controllers, Requests, Resources, Views (Svelte)
+    Routes.php     → Module-specific routes
 ```
 
-### Principles
+### Core Principles
 
-- **Skinny Controllers**
-- **Fat Services / Actions**
-- **Validated input only**
-- **No HTTP logic inside services**
-- **Reusable modular features**
+- **Lean Controllers**: Handle HTTP requests only; delegate logic to services.
+- **Fat Services**: Centralize business logic and database transactions.
+- **Validated Input**: Always use FormRequest classes.
+- **Obfuscated IDs**: Protect internal database IDs in public routes.
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
+### 1. Installation
 
 ```bash
 git clone https://github.com/naybala/demo_dashboard.git
 cd demo_dashboard
-```
-
-### 2. Install dependencies
-
-```bash
 composer install
 npm install
 ```
 
-### 3. Environment setup
+### 2. Environment Setup
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-Configure your database inside `.env`.
+\_Configure `DB\__`settings in`.env` before proceeding.\*
 
----
-
-### 4. Run migrations & seeders
+### 3. Database & Dev
 
 ```bash
-php artisan migrate
-php artisan db:seed
-```
-
----
-
-### 5. Start the development server
-
-```bash
+php artisan migrate --seed
 php artisan serve
 npm run dev
 ```
 
-Visit:
+---
 
+## 🛠️ Standard Operating Procedures (SOP)
+
+### 1. Creating a New Feature
+
+Always use the custom scaffolding commands to ensure architectural consistency:
+
+```bash
+# Generate full CRUD module (Domain, Service, Web, Views)
+php artisan make:coreFeature --all FeatureName
 ```
-http://127.0.0.1:8000
+
+### 2. ID Handling
+
+Public URLs must use obfuscated IDs.
+
+- **In Tests/Routes**: Use `customEncoder($id)`.
+- **In Controllers/Services**: Use `customDecoder($id)`.
+
+### 3. Testing Standards
+
+All new features must include Feature Tests in `tests/Feature`.
+
+- **Component Assertions**: Use `assertInertia` to verify component names and props.
+- **Deletion Safety**: Implement `canDelete()` or `hasDependencies()` checks in models/services and verify in tests using `assertDatabaseHas` upon failed deletion.
+- **ID Verification**: Ensure tests correctly pass encoded IDs to route helpers.
+
+### 4. Deletion Guards (Example)
+
+Before deleting a record, check for dependencies in the Service or Model:
+
+```php
+if ($item->hasDependencies()) {
+    throw new WarningException('item.in_use');
+}
 ```
 
 ---
 
-## 🧰 Custom Artisan Generators
+## 🧰 Custom Artisan Commands
 
-This project includes **feature scaffolding commands**.
-
-### Generate full feature
-
-```bash
-php artisan make:coreFeature--all
-```
-
-### Generate logic only
-
-```bash
-php artisan make:coreFeature--logic
-```
-
-# Demo Dashboard
-
-A modular **Laravel-based admin dashboard** with scalable architecture, feature scaffolding, and clean separation between Domain, Application, and Web layers.
-
----
-
-## ✨ Features
-
-- Modular architecture (`modules/` structure)
-- CRUD scaffolding via custom Artisan commands
-- Service layer separation for business logic
-- Form Request validation
-- API Resources for response formatting
-- TailwindCSS + modern UI components
-- Ready for scaling into multi-feature admin systems
-
----
-
-## 🏗️ Architecture Overview
-
-Each feature/module is organized into clear layers:
-
-```
-modules/
-  FeatureName/
-    Domain/        → Models, repositories, core logic
-    Application/   → Services / Actions (business rules)
-    Web/           → Controllers, Requests, Resources, Views
-    Routes.php     → Module routes
-```
-
-### Principles
-
-- **Skinny Controllers**
-- **Fat Services / Actions**
-- **Validated input only**
-- **No HTTP logic inside services**
-- **Reusable modular features**
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/naybala/demo_dashboard.git
-cd demo_dashboard
-```
-
-### 2. Install dependencies
-
-```bash
-composer install
-npm install
-```
-
-### 3. Environment setup
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-Configure your database inside `.env`.
-
----
-
-### 4. Run migrations & seeders
-
-```bash
-php artisan migrate
-php artisan db:seed
-```
-
----
-
-### 5. Start the development server
-
-```bash
-php artisan serve
-npm run dev
-```
-
-Visit:
-
-```
-http://127.0.0.1:8000
-```
-
----
-
-## 🧰 Custom Artisan Generators
-
-This project includes **feature scaffolding commands**.
-
-### Generate full feature
-
-```bash
-php artisan make:coreFeature--all FeatureName
-```
-
-### Generate logic only
-
-```bash
-php artisan make:coreFeature--logic FeatureName
-```
-
-### Generate views only
-
-```bash
-php artisan make:coreFeature--view FeatureName
-```
-
-### Add fields to generated views
-
-```bash
-php artisan add-fields-to-view FeatureName
-```
-
-These commands speed up CRUD module creation and enforce consistent structure.
+| Command                             | Description                                             |
+| :---------------------------------- | :------------------------------------------------------ |
+| `make:coreFeature --all {Name}`     | Generates full module structure including Svelte views. |
+| `make:coreFeature --logic {Name}`   | Generates Domain and Application layers only.           |
+| `make:coreFeature --view {Name}`    | Generates Svelte views only.                            |
+| `add-fields-to-view --model={Name}` | Appends new fields to existing generated views.         |
 
 ---
 
 ## 🧪 Testing
 
-Run tests with:
+Run the full test suite with:
 
 ```bash
 php artisan test
 ```
 
-> Future improvements will expand **unit and feature test coverage**.
-
 ---
 
 ## 📦 Tech Stack
 
-- **Laravel** (v10+ compatible)
-- **MySQL**
-- **TailwindCSS**
-- **Flowbite UI**
-- **Spatie Permission**
-- **Debugbar / IDE Helper**
-- **Docker support**
+- **PHP**: ^8.0.2
+- **Laravel**: v12.0
+- **Frontend**: Inertia.js (v2.0) + Svelte (v4.2)
+- **Styling**: TailwindCSS + Flowbite UI
+- **Database**: MySQL
+- **Permissions**: Spatie Laravel Permission (v6.9)
+- **Utilities**: ApexCharts, CropperJS
 
 ---
 
 ## 📐 Coding Guidelines
 
-### Controllers
-
-- Handle **HTTP only**
-- Call **services/actions**
-- Return **views or JSON**
-
-### Services / Actions
-
-- Contain **business logic**
-- Use **DB transactions**
-- Receive **validated data only**
-- Must **not return views**
-
-### Validation
-
-- Use **FormRequest classes**
-- Never validate inside services
-
-### Resources
-
-- Format **API / view response data**
-- Avoid heavy logic
-
----
-
-## 🔐 Security Notes
-
-- Always use `$request->validated()`
-- Never trust raw request input
-- Use authorization policies where needed
-
----
-
-## 🛣️ Roadmap
-
-- [ ] Full automated test coverage
-- [ ] CI/CD with GitHub Actions
-- [ ] Repository pattern integration
-- [ ] Multi-tenant support
-- [ ] API authentication layer
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome.
-
-Suggested flow:
-
-1. Fork the repository
-2. Create a feature branch
-3. Follow coding guidelines
-4. Add tests if applicable
-5. Submit PR
-
----
-
-## 📄 License
-
-Open-source under the **MIT License**.
+- **Validation**: Use FormRequest classes; never validate inside Services.
+- **Resources**: Use API Resources for consistent data formatting between Backend and Frontend.
+- **Transactions**: Complex write operations in Services must use `DB::transaction()`.
 
 ---
 
@@ -323,124 +151,12 @@ Open-source under the **MIT License**.
 
 **Nay Ba La**
 
-- GitHub: [https://github.com/naybala](https://github.com/naybala)
-- Portfolio: [https://naybala.netlify.app](https://naybala.netlify.app)
+- [GitHub](https://github.com/naybala)
+- [Portfolio](https://naybala.netlify.app)
+- [Mini CRUD Generator (Composer Package)](https://packagist.org/packages/davion190510/mini-crud-generator)
 
 ---
 
 ## ⭐ Support
 
-If you find this project useful, please consider giving it a **star** on GitHub.
-
-### Add fields to generated views
-
-```bash
-php artisan add-fields-to-view --model={FeatureName}
-```
-
-These commands speed up CRUD module creation and enforce consistent structure.
-
----
-
-## 🧪 Testing
-
-Run tests with:
-
-```bash
-php artisan test
-```
-
-> Future improvements will expand **unit and feature test coverage**.
-
----
-
-## 📦 Tech Stack
-
-- **Laravel** (v10+ compatible)
-- **MySQL**
-- **TailwindCSS**
-- **Flowbite UI**
-- **Spatie Permission**
-- **Debugbar / IDE Helper**
-- **Docker support**
-
----
-
-## 📐 Coding Guidelines
-
-### Controllers
-
-- Handle **HTTP only**
-- Call **services/actions**
-- Return **views or JSON**
-
-### Services / Actions
-
-- Contain **business logic**
-- Use **DB transactions**
-- Receive **validated data only**
-- Must **not return views**
-
-### Validation
-
-- Use **FormRequest classes**
-- Never validate inside services
-
-### Resources
-
-- Format **API / view response data**
-- Avoid heavy logic
-
----
-
-## 🔐 Security Notes
-
-- Always use `$request->validated()`
-- Never trust raw request input
-- Use authorization policies where needed
-
----
-
-## 🛣️ Roadmap
-
-- [ ] Full automated test coverage
-- [ ] CI/CD with GitHub Actions
-- [ ] Repository pattern integration
-- [ ] Multi-tenant support
-- [ ] API authentication layer
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome.
-
-Suggested flow:
-
-1. Fork the repository
-2. Create a feature branch
-3. Follow coding guidelines
-4. Add tests if applicable
-5. Submit PR
-
----
-
-## 📄 License
-
-Open-source under the **MIT License**.
-
----
-
-## 👤 Author
-
-**Nay Ba La**
-
-- GitHub: [https://github.com/naybala](https://github.com/naybala)
-- Portfolio: [https://naybala.netlify.app](https://naybala.netlify.app)
-- my composer pkg : [https://packagist.org/packages/davion190510/mini-crud-generator](https://packagist.org/packages/davion190510/mini-crud-generator)
-
----
-
-## ⭐ Support
-
-If you find this project useful, please consider giving it a **star** on GitHub.
+If you find this project useful, please give it a **star** on GitHub!
