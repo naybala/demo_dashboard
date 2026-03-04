@@ -5,6 +5,7 @@ namespace BasicDashboard\Web\OwnProducts\Services;
 use BasicDashboard\Foundations\Actions\WebFileStoreAction;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Web\OwnProducts\Services\OwnProductImageAction;
+use App\Exceptions\WarningException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Filesystem\FilesystemManager;
@@ -91,6 +92,9 @@ class OwnProductService
     {
         DB::transaction(function () use ($id) {
             $ownProduct = $this->ownProduct->findOrFail($id);
+            if ($ownProduct->hasDailyIncomes()) {
+                throw new WarningException('ownProduct.ownProduct_in_use');
+            }
             $this->webFileStoreAction->delete($ownProduct, config('cache.file_system_disk'),'image');
             $ownProduct->update([
                 'deleted_by' => auth()->id(),

@@ -17,4 +17,5 @@ return [
     "edit_own_product"=>"Update Own Product",
     "delete_title"=>"Delete Own Product",
     "delete_message"=>"Are you sure you want to delete {name}? This action cannot be undone.",
+    'ownProduct_in_use' => "This product cannot be deleted because it is already used in daily incomes.",
 ];

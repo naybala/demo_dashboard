@@ -71,7 +71,7 @@ class CategoryService
     {
         DB::transaction(function () use ($id) {
             $category = $this->category->findOrFail($id);
-            if ($category->hasOwnProducts()) {
+            if ($category->hasOwnProducts() || $category->hasProducts()) {
                 throw new WarningException('category.category_in_use');
             }
             $category->update([

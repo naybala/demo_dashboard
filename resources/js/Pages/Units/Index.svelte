@@ -43,8 +43,7 @@
   };
 
   const deleteUnit = () => {
-    router.delete("/units", {
-      data: { id: unitToDelete.id },
+    router.delete(`/units/${unitToDelete.id}`, {
       onSuccess: () => {
         showDeleteModal = false;
         unitToDelete = null;

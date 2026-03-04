@@ -82,4 +82,13 @@ class OwnProduct extends Model
             ->orderBy('id', 'desc');
     }
 
+    public function dailyIncomes()
+    {
+        return $this->hasMany(\BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome::class);
+    }
+
+    public function hasDailyIncomes(): bool
+    {
+        return $this->dailyIncomes()->exists();
+    }
 }

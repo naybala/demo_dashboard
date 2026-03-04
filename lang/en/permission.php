@@ -11,4 +11,5 @@ return [
     'permission_created' => 'Permission created successfully',
     'permission_updated' => 'Permission updated successfully',
     'permission_deleted' => 'Permission deleted successfully',
+    'permission_in_use' => 'This permission cannot be deleted because it is already assigned to roles.',
 ];

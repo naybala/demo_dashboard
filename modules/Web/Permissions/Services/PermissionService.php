@@ -48,6 +48,9 @@ class PermissionService
     public function delete(string $id): void
     {
         $permission = $this->permission->findOrFail($id);
+        if ($permission->hasRoles()) {
+            throw new \App\Exceptions\WarningException('permission.permission_in_use');
+        }
         $permission->delete();
     }
 }

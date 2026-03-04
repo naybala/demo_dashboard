@@ -82,6 +82,11 @@ class Category extends Model
         return $this->belongsToMany(Product::class, 'category_product');
     }
 
+    public function hasProducts(): bool
+    {
+        return $this->products()->exists();
+    }
+
     public function ownProducts()
     {
         return $this->hasMany(OwnProduct::class);

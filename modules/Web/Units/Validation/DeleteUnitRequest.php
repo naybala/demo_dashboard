@@ -20,11 +20,25 @@ class DeleteUnitRequest extends FormRequest
     {
         return true;
     }
+     protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'id' => $this->route('unit'),
+        ]);
+    }
+
 
     public function rules(): array
     {
         return [
           "id"=>"required",
+        ];
+    }
+
+     public function messages(): array
+    {
+        return [
+            "id.required" => "Role ID is required",
         ];
     }
 }

@@ -45,8 +45,7 @@
   };
 
   const deleteUser = () => {
-    router.delete("/users", {
-      data: { id: userToDelete.id },
+    router.delete(`/users/${userToDelete.id}`, {
       onSuccess: () => {
         showDeleteModal = false;
         userToDelete = null;

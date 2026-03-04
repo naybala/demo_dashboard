@@ -44,4 +44,9 @@ class Permission extends SpatiePermission
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
             ->orderBy('id', 'desc');
     }
+
+    public function hasRoles(): bool
+    {
+        return $this->roles()->exists();
+    }
 }

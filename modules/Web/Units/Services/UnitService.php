@@ -65,7 +65,7 @@ class UnitService
     {
         DB::transaction(function () use ($id) {
             $unit = $this->unit->findOrFail($id);
-            if ($unit->hasOwnProducts()) {
+            if ($unit->hasOwnProducts() || $unit->hasProducts()) {
                 throw new WarningException('unit.unit_in_use');
             }
             $unit->update([
