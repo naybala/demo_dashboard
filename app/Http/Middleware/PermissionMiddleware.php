@@ -38,6 +38,10 @@ class PermissionMiddleware
             return $next($request);
         }
 
+        if (str_ends_with($request->route()->getName(), ".search")) {
+            return $next($request);
+        }
+
         $sessionPermission = Session::get('permission_key'); //"manage users,create users,manage countries,create countries"
 
         // If there is no session permission, the session has expired — redirect to login
@@ -56,6 +60,7 @@ class PermissionMiddleware
         $permissionName = null;
         switch ($getRouteMethod) {
             case "index":
+            case "search":
                 $permissionName = 'manage ' . $getRouteModel;
                 break;
             case "show":

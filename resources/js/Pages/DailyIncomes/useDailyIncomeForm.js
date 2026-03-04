@@ -2,6 +2,15 @@ import { useForm } from "@inertiajs/svelte";
 import { get, derived } from "svelte/store";
 
 export function useDailyIncomeForm(dailyIncome = null, products = []) {
+  // Registry of products to handle async-fetched ones
+  let productRegistry = [...products];
+
+  const updateRegistry = (product) => {
+    if (product && !productRegistry.find((p) => p.id === product.id)) {
+      productRegistry.push(product);
+    }
+  };
+
   const form = useForm({
     date: dailyIncome?.date || new Date().toISOString().split("T")[0],
     is_instant: dailyIncome?.is_instant ?? true,
@@ -52,7 +61,7 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     form.update((data) => {
       const items = [...data.items];
       const item = { ...items[index] };
-      const product = products.find((p) => p.id === item.own_product_id);
+      const product = productRegistry.find((p) => p.id === item.own_product_id);
 
       if (product) {
         const amount = parseInt(item.amount.toString().replace(/,/g, "")) || 0;
@@ -70,18 +79,22 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     });
   };
 
-  const handleProductChange = (index) => {
+  const handleProductChange = (index, selectedProduct = null) => {
+    if (selectedProduct) updateRegistry(selectedProduct);
+
     form.update((data) => {
       const items = [...data.items];
       const item = { ...items[index] };
-      const product = products.find((p) => p.id === item.own_product_id);
+      const product =
+        selectedProduct ||
+        productRegistry.find((p) => p.id === item.own_product_id);
 
       if (product) {
         if (!item.amount || parseInt(item.amount) === 0) {
           item.amount = "1";
         }
 
-        const amount = parseInt(item.amount) || 0;
+        const amount = parseInt(item.amount.toString().replace(/,/g, "")) || 0;
         const unitPrice =
           parseFloat(product.price.toString().replace(/,/g, "")) || 0;
         const unitInv =

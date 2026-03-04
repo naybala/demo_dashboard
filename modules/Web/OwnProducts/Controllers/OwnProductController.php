@@ -116,4 +116,16 @@ class OwnProductController extends BaseController
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function search(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $products = $this->ownProductService->paginate([
+            'keyword' => $request->get('keyword'),
+            'paginate' => 20,
+        ]);
+        
+        $products = OwnProductResource::collection($products);
+        
+        return response()->json($products->response()->getData(true));
+    }
 }

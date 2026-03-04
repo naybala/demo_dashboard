@@ -48,9 +48,8 @@ class DailyIncomeController extends BaseController
 
     public function create(): Response
     {
-        $products = app(OwnProductService::class)->all();
         return Inertia::render('DailyIncomes/CreateEdit', [
-            'products' => $products,
+            'products' => [],
         ]);
     }
 
@@ -82,7 +81,12 @@ class DailyIncomeController extends BaseController
             'total_profit' => number_format($dailyIncome->dailyIncomeTotal?->total_profit ??0,2,'.',''),
         ];
 
-        $products = app(OwnProductService::class)->all();
+        // For editing, we should pass the products that are already in the voucher
+        // so the SearchableSelect can show the correct initial labels.
+        $productIds = $items->pluck('own_product_id')->unique();
+        $products = \BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct::whereIn('id', $productIds)
+            ->with('unit')
+            ->get();
 
         return Inertia::render('DailyIncomes/CreateEdit', [
             'dailyIncome' => $data,

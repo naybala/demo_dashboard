@@ -127,9 +127,11 @@
                   <tr>
                     <td class="px-4 py-2">
                       <SearchableSelect
+                        asyncUrl="/own-products/search"
                         options={productOptions}
                         bind:value={item.own_product_id}
-                        on:change={() => handleProductChange(i)}
+                        on:change={(e) =>
+                          handleProductChange(i, e.detail.original)}
                         placeholder={__(
                           "placeholder.select_product",
                           "Select Product",
@@ -217,9 +219,10 @@
                 <div class="space-y-2">
                   <InputLabel value={__("dailyIncome.product_id", "Product")} />
                   <SearchableSelect
+                    asyncUrl="/own-products/search"
                     options={productOptions}
                     bind:value={item.own_product_id}
-                    on:change={() => handleProductChange(i)}
+                    on:change={(e) => handleProductChange(i, e.detail.original)}
                     placeholder={__(
                       "placeholder.select_product",
                       "Select Product",
