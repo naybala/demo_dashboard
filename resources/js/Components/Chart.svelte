@@ -37,6 +37,7 @@
     const { default: ApexCharts } = await import("apexcharts");
     chart = new ApexCharts(chartNode, chartOptions);
     chart.render();
+    console.log(height);
   });
 
   onDestroy(() => {

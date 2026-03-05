@@ -24,7 +24,7 @@
   };
 </script>
 
-<div class="w-full mb-6">
+<div class="w-3/5 mb-6">
   <div
     class="bg-white dark:bg-gray-800 p-1.5 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-wrap items-center gap-2"
   >

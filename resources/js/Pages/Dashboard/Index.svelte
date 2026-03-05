@@ -13,6 +13,47 @@
   export let daily_revenue = { labels: [], series: [] };
   export let filters = {};
 
+  $: instantChartOptions = {
+    stroke: { curve: "smooth", width: 2 },
+    colors: ["#6366f1", "#10b981"],
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 0.5,
+        opacityFrom: 1,
+        opacityTo: 0.7,
+        stops: [50, 100, 100],
+      },
+    },
+    dataLabels: { enabled: false },
+    xaxis: {
+      labels: {
+        show: true,
+        style: { fontSize: "12px", colors: "#94a3b8" },
+      },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+    },
+    yaxis: {
+      labels: {
+        formatter: (val) => formatNumber(val, 0),
+        style: { colors: "#94a3b8" },
+      },
+    },
+    markers: {
+      size: 4,
+    },
+    grid: {
+      borderColor: "#f1f1f1",
+      strokeDashArray: 4,
+      padding: { left: 10, right: 10 },
+    },
+    legend: {
+      position: "top",
+      horizontalAlign: "right",
+    },
+  };
+
   $: revenueChartOptions = {
     stroke: {
       curve: "smooth",
@@ -140,10 +181,19 @@
     />
 
     <!-- Stat Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
       <StatCard
         label={__("dashboard.total_price", "Total Price")}
         value={stats.total_price}
+      />
+
+      <StatCard
+        label={__("dashboard.isInstant", "Instant")}
+        value={stats.is_instant}
+      />
+      <StatCard
+        label={__("dashboard.non_instant", "Non-Instant")}
+        value={stats.total_price - stats.is_instant}
       />
       <StatCard
         label={__("dashboard.total_investment", "Total Investment")}
@@ -152,10 +202,6 @@
       <StatCard
         label={__("dashboard.total_profit", "Total Profit")}
         value={stats.total_profit}
-      />
-      <StatCard
-        label={__("dashboard.isInstant", "Instant")}
-        value={stats.is_instant}
       />
     </div>
 
@@ -173,24 +219,25 @@
         type="donut"
         series={stats.product_sales_distribution?.series || []}
         labels={stats.product_sales_distribution?.labels || []}
-        height={320}
       />
       <!-- Sale By Product -->
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+    <!-- Instant And Non Instant -->
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-6 shadow-xl rounded-lg">
       <Chart
         title={__(
           "dashboard.instant_vs_non_instant",
           "Instant vs Non-Instant Sales",
         )}
-        type="bar"
+        type="area"
         series={stats.instant_sales_distribution?.series || []}
         labels={stats.instant_sales_distribution?.labels || []}
-        height={320}
+        options={instantChartOptions}
+        height={350}
       />
     </div>
-
+    <hr class="" />
     <!-- Revenue Chart -->
     <div class="w-full">
       <YearFilter
@@ -206,6 +253,7 @@
         height={350}
       />
     </div>
+    <hr class="" />
     <div>
       <SingleDateFilter
         date={filters.date || ""}
