@@ -11,7 +11,6 @@ export const showLogoutModal = writable(false);
 export const isOnline = writable(
   typeof window !== "undefined" ? window.navigator.onLine : true,
 );
-export const isChangingLanguage = writable(false);
 export const globalLoading = writable(false);
 
 // Helpers
@@ -35,8 +34,6 @@ export const changeLanguage = (lang) => {
     { lang },
     {
       preserveState: false,
-      onStart: () => isChangingLanguage.set(true),
-      onFinish: () => isChangingLanguage.set(false),
     },
   );
 };
