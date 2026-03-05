@@ -70,7 +70,12 @@ class OwnProduct extends Model
             return $query;
         }
 
-        return $query->where('name', 'LIKE', '%' . $keyword . '%');
+        return $query->where(function ($query) use ($keyword) {
+            $query->where('name', 'LIKE', '%' . $keyword . '%')
+                ->orWhereHas('category', function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', '%' . $keyword . '%');
+                });
+        });
     }
 
     /**
