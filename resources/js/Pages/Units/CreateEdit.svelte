@@ -15,6 +15,7 @@
 
   const form = useForm({
     name: unit?.name || "",
+    description: unit?.description || "",
   });
 
   const submit = () => {
@@ -53,6 +54,20 @@
           type="text"
           class="mt-1 block w-full"
           bind:value={$form.name}
+          required
+        />
+        <InputError message={$form.errors.name} />
+      </div>
+      <div>
+        <InputLabel
+          for="description"
+          value={__("unit.description", "Description")}
+        />
+        <TextInput
+          id="description"
+          type="text"
+          class="mt-1 block w-full"
+          bind:value={$form.description}
           required
         />
         <InputError message={$form.errors.name} />
