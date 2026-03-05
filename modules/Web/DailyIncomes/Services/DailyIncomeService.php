@@ -37,7 +37,8 @@ class DailyIncomeService
             ->filterByKeyword($request['keyword'] ?? null)
             ->filterByDateRange($request['from_date'] ?? null, $request['to_date'] ?? null)
             ->orderByLatest()
-            ->paginate($request['paginate'] ?? config('numbers.paginate'));
+            ->paginate($request['paginate'] ?? config('numbers.paginate'))
+            ->withQueryString();
     }
 
     public function store(array $request): void

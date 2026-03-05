@@ -12,10 +12,11 @@
 
   export let data = [];
   export let meta = {};
+  export let filters = {};
 
   $: permissions = $page.props.permissions || [];
 
-  let search = "";
+  let search = filters.keyword || "";
 
   const {
     showDeleteModal,

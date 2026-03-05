@@ -45,7 +45,9 @@ class OwnProductController extends BaseController
     {
         $ownProductList = $this->ownProductService->paginate($request->all());
         $ownProductList = OwnProductResource::collection($ownProductList)->response()->getData(true);
-        return Inertia::render('OwnProducts/Index', $ownProductList);
+        return Inertia::render('OwnProducts/Index', array_merge($ownProductList, [
+            'filters' => $request->only(['keyword'])
+        ]));
     }
 
     public function create(): Response

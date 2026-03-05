@@ -43,8 +43,8 @@ class OwnProductService
             ->with(['unit', 'category'])
             ->filterByKeyword($request['keyword'] ?? null)
             ->orderByLatest()
-            ->paginate($request['paginate'] ?? config('numbers.paginate'));
-
+            ->paginate($request['paginate'] ?? config('numbers.paginate'))
+            ->withQueryString();
     }
 
     public function store(array $request): OwnProduct

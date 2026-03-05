@@ -43,7 +43,9 @@ class DailyIncomeController extends BaseController
     {
         $dailyIncomeList = $this->dailyIncomeService->paginate($request->all());
         $dailyIncomeList = DailyIncomeResource::collection($dailyIncomeList)->response()->getData(true);
-        return Inertia::render('DailyIncomes/Index', $dailyIncomeList);
+        return Inertia::render('DailyIncomes/Index',  array_merge($dailyIncomeList, [
+            'filters' => $request->only(['keyword'])
+        ]));
     }
 
     public function create(): Response
