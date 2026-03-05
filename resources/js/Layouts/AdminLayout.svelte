@@ -31,8 +31,6 @@
 </script>
 
 <div class="h-dvh flex bg-gray-100 dark:bg-gray-900 overflow-hidden relative">
-  <LoadingOverlay show={$globalLoading} />
-
   <Sidebar
     isSidebarOpen={$isSidebarOpen}
     {navigation}
@@ -74,9 +72,10 @@
 
     <!-- Page Content -->
     <main
-      class="flex-1 overflow-y-auto p-1 md:p-4 shadow-inner custom-scrollbar bg-gray-50 dark:bg-gray-900/50"
+      class={`flex-1 overflow-y-auto shadow-inner custom-scrollbar bg-gray-50 dark:bg-gray-900/50 ${$globalLoading ? "" : "p-1 md:p-4"}`}
     >
-      <div class="mx-auto w-full">
+      <div class="mx-auto w-full relative min-h-full">
+        <LoadingOverlay show={$globalLoading} />
         <slot />
       </div>
     </main>

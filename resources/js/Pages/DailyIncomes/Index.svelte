@@ -136,10 +136,14 @@
           <option value="0">No</option>
         </select>
       </div>
-      <div class="flex gap-2">
+    </div>
+    <div class="flex flex-wrap justify-end mt-3 gap-2">
+      <div>
         <PrimaryButton on:click={handleFilter}
           >{__("messages.filter", "Filter")}</PrimaryButton
         >
+      </div>
+      <div>
         <SecondaryButton
           on:click={() => {
             search = "";
@@ -149,7 +153,10 @@
             handleFilter();
           }}>{__("messages.reset", "Reset")}</SecondaryButton
         >
-        {#if permissions.includes("create daily-incomes")}
+      </div>
+
+      {#if permissions.includes("create daily-incomes")}
+        <div>
           <Link href="/daily-incomes/create" class="md:ml-auto">
             <PrimaryButton
               >{__(
@@ -158,8 +165,8 @@
               )}</PrimaryButton
             >
           </Link>
-        {/if}
-      </div>
+        </div>
+      {/if}
     </div>
   </div>
 
