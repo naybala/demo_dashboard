@@ -11,4 +11,5 @@ return [
     'non_instant' => "Non-Instant",
     'instant_vs_non_instant' => "Instant vs Non-Instant Sales",
     'sale_by_product' => "Sale By Product",
+    "kyats" => "Kyats"
 ];

@@ -1,5 +1,5 @@
 <script>
-  import { formatNumber } from "@/helpers.js";
+  import { formatNumber, __ } from "@/helpers.js";
   export let label = "";
   export let value = 0;
 </script>
@@ -12,5 +12,6 @@
   </p>
   <h4 class="text-2xl font-bold text-gray-800 dark:text-white mt-1">
     {formatNumber(value) || 0}
+    {__("dashboard.kyats", "Kyats")}
   </h4>
 </div>

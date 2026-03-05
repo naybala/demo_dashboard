@@ -126,6 +126,30 @@
     },
   };
 
+  $: pieChartOptions = {
+    dataLabels: {
+      formatter: (val, opts) =>
+        formatNumber(opts.w.globals.series[opts.seriesIndex], 0),
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => formatNumber(val, 0),
+      },
+    },
+  };
+
+  $: donutChartOptions = {
+    dataLabels: {
+      formatter: (val, opts) =>
+        formatNumber(opts.w.globals.series[opts.seriesIndex], 0),
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => formatNumber(val, 0),
+      },
+    },
+  };
+
   const handleDateFilter = (e) => {
     router.get(
       "/dashboard",
@@ -213,12 +237,15 @@
         series={stats.sales_distribution?.series || []}
         labels={stats.sales_distribution?.labels || []}
         height={320}
+        options={pieChartOptions}
       />
       <Chart
         title={__("dashboard.sale_by_product", "Sale By Product")}
         type="donut"
         series={stats.product_sales_distribution?.series || []}
         labels={stats.product_sales_distribution?.labels || []}
+        height={320}
+        options={donutChartOptions}
       />
       <!-- Sale By Product -->
     </div>
