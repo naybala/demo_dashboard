@@ -96,6 +96,17 @@ class DailyIncome extends Model
         return $query;
     }
 
+    public function scopeFilterByInstant($query, $isInstant)
+    {
+        if ($isInstant === null || $isInstant === '') {
+            return $query;
+        }
+
+        return $query->whereHas('dailyIncomeTotal', function ($q) use ($isInstant) {
+            $q->where('is_instant', $isInstant);
+        });
+    }
+
     /**
      * Scope to order by latest activity
      */

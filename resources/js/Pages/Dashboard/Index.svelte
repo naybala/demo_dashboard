@@ -142,10 +142,6 @@
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard
-        label={__("dashboard.total_own_product", "Own Product Types")}
-        value={stats.total_products}
-      />
-      <StatCard
         label={__("dashboard.total_price", "Total Price")}
         value={stats.total_price}
       />
@@ -157,25 +153,40 @@
         label={__("dashboard.total_profit", "Total Profit")}
         value={stats.total_profit}
       />
+      <StatCard
+        label={__("dashboard.isInstant", "Instant")}
+        value={stats.is_instant}
+      />
     </div>
 
     <!-- Charts -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Chart
-        title={__(
-          "dashboard.own_product_by_category",
-          "Own Product By Category",
-        )}
-        type="donut"
-        series={stats.product_distribution?.series || []}
-        labels={stats.product_distribution?.labels || []}
-        height={320}
-      />
-      <Chart
         title={__("dashboard.sales_by_category", "Sales By Category")}
         type="pie"
         series={stats.sales_distribution?.series || []}
         labels={stats.sales_distribution?.labels || []}
+        height={320}
+      />
+      <Chart
+        title={__("dashboard.sale_by_product", "Sale By Product")}
+        type="donut"
+        series={stats.product_sales_distribution?.series || []}
+        labels={stats.product_sales_distribution?.labels || []}
+        height={320}
+      />
+      <!-- Sale By Product -->
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+      <Chart
+        title={__(
+          "dashboard.instant_vs_non_instant",
+          "Instant vs Non-Instant Sales",
+        )}
+        type="bar"
+        series={stats.instant_sales_distribution?.series || []}
+        labels={stats.instant_sales_distribution?.labels || []}
         height={320}
       />
     </div>

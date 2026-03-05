@@ -72,12 +72,24 @@ class DashboardService extends BaseController
             ->groupBy('categories.id', 'categories.name')
             ->get();
 
+        $instantSalesData = (clone $query)
+            ->join('own_products', 'daily_incomes.own_product_id', '=', 'own_products.id')
+            ->leftJoin('daily_income_totals', 'daily_incomes.daily_income_total_id', '=', 'daily_income_totals.id')
+            ->select(
+                'own_products.name as label',
+                DB::raw('SUM(CASE WHEN daily_income_totals.is_instant = 1 OR daily_income_totals.id IS NULL THEN daily_incomes.price ELSE 0 END) as instant_value'),
+                DB::raw('SUM(CASE WHEN daily_income_totals.is_instant = 0 THEN daily_incomes.price ELSE 0 END) as non_instant_value')
+            )
+            ->groupBy('own_products.id', 'own_products.name')
+            ->get();
+
         return [
             'total_products' => $productCount,
             'total_amount' => $incomeStats->total_amount ?? 0,
             'total_price' => $incomeStats->total_price ?? 0,
             'total_investment' => $incomeStats->total_investment ?? 0,
             'total_profit' => $incomeStats->total_profit ?? 0,
+            'is_instant' => $instantSalesData->sum('instant_value'),
             'product_distribution' => [
                 'labels' => $productDistribution->pluck('label')->toArray(),
                 'series' => $productDistribution->pluck('value')->toArray(),
@@ -85,6 +97,23 @@ class DashboardService extends BaseController
             'sales_distribution' => [
                 'labels' => $salesDistribution->pluck('label')->toArray(),
                 'series' => $salesDistribution->pluck('value')->map(fn($v) => (float)$v)->toArray(),
+            ],
+            'product_sales_distribution' => [
+                'labels' => $instantSalesData->pluck('label')->toArray(),
+                'series' => $instantSalesData->map(fn($item) => (float)$item->instant_value + (float)$item->non_instant_value)->toArray(),
+            ],
+            'instant_sales_distribution' => [
+                'labels' => $instantSalesData->pluck('label')->toArray(),
+                'series' => [
+                    [
+                        'name' => 'Instant',
+                        'data' => $instantSalesData->pluck('instant_value')->map(fn($v) => (float)$v)->toArray(),
+                    ],
+                    [
+                        'name' => 'Non-Instant',
+                        'data' => $instantSalesData->pluck('non_instant_value')->map(fn($v) => (float)$v)->toArray(),
+                    ],
+                ],
             ],
         ];
     }

@@ -17,6 +17,7 @@
   let search = filters.keyword || "";
   let fromDate = "";
   let toDate = "";
+  let isInstant = filters.is_instant || "";
   let showDeleteModal = false;
   let incomeToDelete = null;
 
@@ -27,6 +28,7 @@
     { key: "amount", label: __("table.amount", "Amount") },
     { key: "price", label: __("table.price", "Price") },
     { key: "profit", label: __("table.profit", "Profit") },
+    { key: "is_instant", label: "Is Instant" },
     { key: "actions", label: __("table.action", "Actions") },
   ];
 
@@ -37,6 +39,7 @@
         keyword: search,
         from_date: fromDate,
         to_date: toDate,
+        is_instant: isInstant,
       },
       { preserveState: true, replace: true },
     );
@@ -117,6 +120,22 @@
           class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
       </div>
+      <div>
+        <label
+          for="is_instant"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >{__("dailyIncome.is_instant", "Is Instant")}</label
+        >
+        <select
+          id="is_instant"
+          bind:value={isInstant}
+          class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+        >
+          <option value="">All</option>
+          <option value="1">Yes</option>
+          <option value="0">No</option>
+        </select>
+      </div>
       <div class="flex gap-2">
         <PrimaryButton on:click={handleFilter}
           >{__("messages.filter", "Filter")}</PrimaryButton
@@ -126,6 +145,7 @@
             search = "";
             fromDate = "";
             toDate = "";
+            isInstant = "";
             handleFilter();
           }}>{__("messages.reset", "Reset")}</SecondaryButton
         >
@@ -176,6 +196,11 @@
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
           {formatNumber(income.profit, 0)}
+        </td>
+        <td
+          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+        >
+          {income.is_instant ? "Yes" : "No"}
         </td>
         <td class="flex gap-2">
           <Link href={`/daily-incomes/${income.id}`}>
