@@ -3,6 +3,7 @@
   import { crossfade } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
   import { __ } from "@/helpers.js";
+  import Logo from "../../../../public/images/logo.png";
 
   const [send, receive] = crossfade({
     duration: 600,
@@ -29,12 +30,17 @@
 >
   <div class="h-full flex flex-col">
     <div
-      class="p-6 border-b dark:border-gray-700 flex items-center justify-between shrink-0"
+      class="p-[1.12rem] border-b dark:border-gray-700 flex items-center justify-start shrink-0 shadow-lg"
     >
+      <img
+        src={Logo}
+        alt="Logo"
+        class="w-10 h-10 rounded-xl object-cover me-2"
+      />
       <h1
         class="text-xl font-black tracking-tight text-indigo-600 dark:text-indigo-400"
       >
-        DASHBOARD
+        Tha Dar Aung
       </h1>
       <button
         on:click={onClose}

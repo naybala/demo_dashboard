@@ -90,7 +90,7 @@ export const initAdminLayout = () => {
     // Small delay to ensure the loading screen is seen and doesn't flicker
     setTimeout(() => {
       globalLoading.set(false);
-    }, 300);
+    }, 400);
   });
 
   // Auto-close sidebar on navigation for mobile/tablet

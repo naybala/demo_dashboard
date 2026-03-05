@@ -71,14 +71,16 @@
     </TopBar>
 
     <!-- Page Content -->
-    <main
-      class={`flex-1 overflow-y-auto shadow-inner custom-scrollbar bg-gray-50 dark:bg-gray-900/50 ${$globalLoading ? "" : "p-1 md:p-4"}`}
-    >
-      <div class="mx-auto w-full relative min-h-full">
-        <LoadingOverlay show={$globalLoading} />
-        <slot />
-      </div>
-    </main>
+    <div class="relative flex-1 overflow-hidden flex flex-col">
+      <LoadingOverlay show={$globalLoading} />
+      <main
+        class={`flex-1 overflow-y-auto shadow-inner custom-scrollbar bg-gray-50 dark:bg-gray-900/50 p-1 md:p-4`}
+      >
+        <div class="mx-auto w-full min-h-full">
+          <slot />
+        </div>
+      </main>
+    </div>
   </div>
 
   <DeleteConfirmationModal

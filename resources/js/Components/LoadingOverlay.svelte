@@ -1,17 +1,18 @@
 <script>
   import { __ } from "@/helpers.js";
+  import Logo from "../../../public/images/logo.png";
   export let show = false;
   export let message = __("messages.loading", "Loading...");
 </script>
 
 {#if show}
   <div
-    class="absolute inset-0 z-[100] flex items-center justify-center bg-white/60 dark:bg-gray-900/60 backdrop-blur-[30px] transition-all duration-300"
+    class="min-h-screen absolute inset-0 z-[100] flex items-center justify-center bg-white/60 dark:bg-gray-900/60 backdrop-blur-[30px] transition-all duration-300"
   >
     <div
       class="flex flex-col items-center gap-4 p-8 rounded-2xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-100 dark:border-gray-700"
     >
-      <div class="relative w-16 h-16">
+      <div class="relative w-16 h-16 flex items-center justify-center">
         <!-- Outer Ring -->
         <div
           class="absolute inset-0 border-4 border-indigo-100 dark:border-gray-700 rounded-full"
@@ -20,6 +21,12 @@
         <div
           class="absolute inset-0 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin shadow-lg"
         ></div>
+        <!-- Stationary Logo -->
+        <img
+          src={Logo}
+          alt="Logo"
+          class="w-10 h-10 rounded-lg object-contain relative z-10"
+        />
       </div>
       <div class="flex flex-col items-center gap-1">
         <p class="text-gray-800 dark:text-gray-100 font-bold text-lg">
