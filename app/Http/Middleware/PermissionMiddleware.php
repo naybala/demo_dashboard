@@ -25,31 +25,29 @@ class PermissionMiddleware
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
-    {
-        //For Logout For No Restrictions
-        if ($request->route()->uri == "logout") {
-            return $next($request);
-        }
-
-        if ($request->route()->uri == "dashboard") {
-            return $next($request);
-        }
-        if ($request->route()->uri == "profile") {
-            return $next($request);
-        }
-
-        if (str_ends_with($request->route()->getName(), ".search")) {
-            return $next($request);
-        }
-
-        $sessionPermission = Session::get('permission_key'); //"manage users,create users,manage countries,create countries"
+    {       
+        $sessionPermission = Session::get('permission_key'); 
 
         // If there is no session permission, the session has expired — redirect to login
         if (empty($sessionPermission)) {
             Auth::logout();
             Session::invalidate();
             Session::regenerateToken();
-            return Redirect::route('login')->with('message', 'Your session has expired. Please log in again.');
+            return Redirect::route('unauthorize')->with('message', 'Your session has expired. Please log in again.');
+        }
+        if($sessionPermission){
+            if ($request->route()->uri == "dashboard") {
+                return $next($request);
+            }
+            if ($request->route()->uri == "profile") {
+                return $next($request);
+            }
+            if ($request->route()->uri == "logout") {
+                return $next($request);
+            }
+            if (str_ends_with($request->route()->getName(), ".search")) {
+                return $next($request);
+            }
         }
 
         $arrPermission = explode(",", $sessionPermission); //['manage users','create users','manage countries','create countries']
