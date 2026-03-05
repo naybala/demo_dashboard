@@ -18,8 +18,10 @@
     confirmLogout,
     initAdminLayout,
     isChangingLanguage,
+    globalLoading,
   } from "./adminLayout.js";
   import Toast from "./Parts/Toast.svelte";
+  import LoadingOverlay from "@/Components/LoadingOverlay.svelte";
 
   export let user = $page.props.auth.user;
   $: currentLocale = $page.props.locale || "en";
@@ -46,6 +48,8 @@
       </div>
     </div>
   {/if}
+
+  <LoadingOverlay show={$globalLoading} />
 
   <Sidebar
     isSidebarOpen={$isSidebarOpen}

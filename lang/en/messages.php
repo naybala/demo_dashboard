@@ -52,4 +52,6 @@ return [
     'toggle_all' => "Toggle All",
     'connection_failed' => "Network connection failed, Please use internet",
     'connection_restored' => "Connection restored",
+    'loading' => "Loading...",
+    'please_wait' => "Please wait a moment",
 ];

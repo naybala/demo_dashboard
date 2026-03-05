@@ -12,6 +12,7 @@ export const isOnline = writable(
   typeof window !== "undefined" ? window.navigator.onLine : true,
 );
 export const isChangingLanguage = writable(false);
+export const globalLoading = writable(false);
 
 // Helpers
 export const toggleTheme = () => {
@@ -83,15 +84,29 @@ export const initAdminLayout = () => {
   window.addEventListener("online", handleOnline);
   window.addEventListener("offline", handleOffline);
 
-  // Auto-close sidebar on navigation for mobile/tablet
+  // Global loading state
+  const unregisterStart = router.on("start", () => {
+    globalLoading.set(true);
+  });
+
   const unregisterFinish = router.on("finish", () => {
+    // Small delay to ensure the loading screen is seen and doesn't flicker
+    setTimeout(() => {
+      globalLoading.set(false);
+    }, 300);
+  });
+
+  // Auto-close sidebar on navigation for mobile/tablet
+  const unregisterFinishSidebar = router.on("finish", () => {
     if (window.innerWidth < 1024) {
       isSidebarOpen.set(false);
     }
   });
 
   return () => {
+    unregisterStart();
     unregisterFinish();
+    unregisterFinishSidebar();
     window.removeEventListener("online", handleOnline);
     window.removeEventListener("offline", handleOffline);
   };
