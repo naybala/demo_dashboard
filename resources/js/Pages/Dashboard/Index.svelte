@@ -36,7 +36,8 @@
     },
     yaxis: {
       labels: {
-        formatter: (val) => formatNumber(val, 0),
+        formatter: (val) =>
+          formatNumber(val, 0) + " " + __("dashboard.kyats", "Kyats"),
         style: { colors: "#94a3b8" },
       },
     },
@@ -76,12 +77,14 @@
     },
     yaxis: {
       labels: {
-        formatter: (val) => formatNumber(val, 0),
+        formatter: (val) =>
+          formatNumber(val, 0) + " " + __("dashboard.kyats", "Kyats"),
       },
     },
     tooltip: {
       y: {
-        formatter: (val) => formatNumber(val, 0),
+        formatter: (val) =>
+          formatNumber(val, 0) + " " + __("dashboard.kyats", "Kyats"),
       },
     },
     grid: {
@@ -112,12 +115,14 @@
     },
     yaxis: {
       labels: {
-        formatter: (val) => formatNumber(val, 0),
+        formatter: (val) =>
+          formatNumber(val, 0) + " " + __("dashboard.kyats", "Kyats"),
       },
     },
     tooltip: {
       y: {
-        formatter: (val) => formatNumber(val, 0),
+        formatter: (val) =>
+          formatNumber(val, 0) + " " + __("dashboard.kyats", "Kyats"),
       },
     },
     grid: {
@@ -127,25 +132,23 @@
   };
 
   $: pieChartOptions = {
-    dataLabels: {
-      formatter: (val, opts) =>
-        formatNumber(opts.w.globals.series[opts.seriesIndex], 0),
-    },
+    // dataLabels: {
+    //   formatter: (val, opts) =>
+    //     formatNumber(opts.w.globals.series[opts.seriesIndex], 0),
+    // },
     tooltip: {
       y: {
-        formatter: (val) => formatNumber(val, 0),
+        formatter: (val) =>
+          formatNumber(val, 0) + " " + __("dashboard.kyats", "Kyats"),
       },
     },
   };
 
   $: donutChartOptions = {
-    dataLabels: {
-      formatter: (val, opts) =>
-        formatNumber(opts.w.globals.series[opts.seriesIndex], 0),
-    },
     tooltip: {
       y: {
-        formatter: (val) => formatNumber(val, 0),
+        formatter: (val) =>
+          formatNumber(val, 0) + " " + __("dashboard.kyats", "Kyats"),
       },
     },
   };
@@ -281,7 +284,7 @@
       />
     </div>
     <hr class="" />
-    <div>
+    <!-- <div>
       <SingleDateFilter
         date={filters.date || ""}
         on:filter={handleDateFilter}
@@ -294,6 +297,6 @@
         options={dailyRevenueChartOptions}
         height={350}
       />
-    </div>
+    </div> -->
   </main>
 </AdminLayout>
