@@ -6,9 +6,11 @@
   import StatCard from "./Parts/StatCard.svelte";
   import DateFilter from "./Parts/DateFilter.svelte";
   import YearFilter from "./Parts/YearFilter.svelte";
+  import SingleDateFilter from "./Parts/SingleDateFilter.svelte";
 
   export let stats = {};
   export let monthly_revenue = { labels: [], series: [] };
+  export let daily_revenue = { labels: [], series: [] };
   export let filters = {};
 
   $: revenueChartOptions = {
@@ -28,6 +30,42 @@
     },
     xaxis: {
       categories: monthly_revenue.labels,
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+    },
+    yaxis: {
+      labels: {
+        formatter: (val) => formatNumber(val, 0),
+      },
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => formatNumber(val, 0),
+      },
+    },
+    grid: {
+      borderColor: "#f1f1f1",
+      strokeDashArray: 4,
+    },
+  };
+
+  $: dailyRevenueChartOptions = {
+    stroke: {
+      curve: "smooth",
+      width: 3,
+    },
+    colors: ["#4f46e5"],
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [50, 100, 100],
+      },
+    },
+    xaxis: {
+      categories: daily_revenue.labels,
       axisBorder: { show: false },
       axisTicks: { show: false },
     },
@@ -154,6 +192,20 @@
         type="area"
         series={monthly_revenue.series}
         options={revenueChartOptions}
+        height={350}
+      />
+    </div>
+    <div>
+      <SingleDateFilter
+        date={filters.date || ""}
+        on:filter={handleDateFilter}
+        on:reset={handleReset}
+      />
+      <Chart
+        title={__("dashboard.daily_revenue", "Daily Revenue")}
+        type="bar"
+        series={daily_revenue.series}
+        options={dailyRevenueChartOptions}
         height={350}
       />
     </div>

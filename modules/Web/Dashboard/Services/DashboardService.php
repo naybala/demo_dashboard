@@ -4,6 +4,7 @@ namespace BasicDashboard\Web\Dashboard\Services;
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Web\Common\BaseController;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
@@ -20,9 +21,11 @@ class DashboardService extends BaseController
     {        
         $stats = $this->getDashboardStats($filters);
         $monthlyRevenue = $this->getMonthlyRevenueData($filters);
+        $dailyRevenue = $this->getDailyRevenueData($filters);
         return [
             'stats' => $stats,
             'monthly_revenue' => $monthlyRevenue,
+            'daily_revenue' => $dailyRevenue,
             'filters' => $filters
         ];
     }
@@ -91,8 +94,8 @@ class DashboardService extends BaseController
         $year = $filters['year'] ?? null;
         
         if ($year) {
-            $startDate = \Carbon\Carbon::createFromDate($year, 1, 1)->startOfDay();
-            $endDate = \Carbon\Carbon::createFromDate($year, 12, 31)->endOfDay();
+            $startDate = Carbon::createFromDate($year, 1, 1)->startOfDay();
+            $endDate = Carbon::createFromDate($year, 12, 31)->endOfDay();
         } else {
             $startDate = now()->subMonths(11)->startOfMonth();
             $endDate = now()->endOfDay();
@@ -114,7 +117,7 @@ class DashboardService extends BaseController
             // Jan to Dec for the selected year
             for ($m = 1; $m <= 12; $m++) {
                 $monthStr = sprintf('%04d-%02d', $year, $m);
-                $labels[] = \Carbon\Carbon::createFromDate($year, $m, 1)->format('M');
+                $labels[] = Carbon::createFromDate($year, $m, 1)->format('M');
 
                 $match = $monthlyData->firstWhere('month', $monthStr);
                 $seriesData[] = $match ? (float)$match->total_revenue : 0;
@@ -153,6 +156,38 @@ class DashboardService extends BaseController
             ],
             'available_years' => $availableYears,
             'selected_year' => $year
+        ];
+    }
+
+    public function getDailyRevenueData(array $filters = []): array
+    {
+        $date = $filters['date'] ?? null;
+
+        $dailyData = DailyIncome::select(
+            DB::raw('DATE_FORMAT(date, "%Y-%m-%d") as date'),
+            DB::raw('SUM(price) as total_revenue')
+        )
+            ->where('date', $date)
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $labels = [];
+        $seriesData = [];
+
+        foreach ($dailyData as $data) {
+            $labels[] = $data->date;
+            $seriesData[] = (float)$data->total_revenue;
+        }
+
+        return [
+            'labels' => $labels,
+            'series' => [
+                [
+                    'name' => 'Revenue',
+                    'data' => $seriesData,
+                ],
+            ],
         ];
     }
 }
