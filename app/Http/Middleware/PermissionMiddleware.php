@@ -45,6 +45,15 @@ class PermissionMiddleware
             if ($request->route()->uri == "logout") {
                 return $next($request);
             }
+
+            if($request->route()->uri == "daily-incomes/import"){
+                return $next($request);
+            }
+
+            if($request->route()->uri == "daily-incomes/sample-excel"){
+                return $next($request);
+            }
+
             if (str_ends_with($request->route()->getName(), ".search")) {
                 return $next($request);
             }

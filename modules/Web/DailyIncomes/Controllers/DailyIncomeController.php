@@ -3,6 +3,7 @@
 namespace BasicDashboard\Web\DailyIncomes\Controllers;
 
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
+use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Web\Common\BaseController;
 
 use BasicDashboard\Web\DailyIncomes\Resources\DailyIncomeResource;
@@ -12,10 +13,13 @@ use BasicDashboard\Web\DailyIncomes\Validation\UpdateDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\DeleteDailyIncomeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use BasicDashboard\Web\OwnProducts\Services\OwnProductService;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use BasicDashboard\Web\DailyIncomes\Imports\DailyIncomesImport;
+use BasicDashboard\Web\DailyIncomes\Exports\DailyIncomesSampleExport;
 
 
 /**
@@ -86,7 +90,7 @@ class DailyIncomeController extends BaseController
         // For editing, we should pass the products that are already in the voucher
         // so the SearchableSelect can show the correct initial labels.
         $productIds = $items->pluck('own_product_id')->unique();
-        $products = \BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct::whereIn('id', $productIds)
+        $products = OwnProduct::whereIn('id', $productIds)
             ->with('unit')
             ->get();
 
@@ -134,6 +138,31 @@ class DailyIncomeController extends BaseController
         } catch (Throwable $e) {
             $this->LogError("DailyIncome destroy failed", $e);
             return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function importView(): Response
+    {
+        return Inertia::render('DailyIncomes/ExcelImport');
+    }
+
+    public function downloadSample()
+    {
+        return Excel::download(new DailyIncomesSampleExport, 'daily_incomes_sample.xlsx');
+    }
+
+    public function import(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048'
+        ]);
+
+        try {
+            Excel::import(new DailyIncomesImport($this->dailyIncomeService), $request->file('file'));
+            return redirect()->route(self::ROUTE . '.index')->with('success', 'Excel imported successfully.');
+        } catch (Throwable $e) {
+            Log::error("DailyIncome import failed", ['error' => $e->getMessage()]);
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
         }
     }
 }

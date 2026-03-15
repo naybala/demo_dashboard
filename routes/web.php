@@ -46,6 +46,9 @@ Route::group(['middleware' => ['auth', 'permission.check']], function (): void {
     Route::resource('products' ,ProductController::class);
     Route::resource('audits', AuditController::class)->only(['index', 'show']);
     Route::resource('units' ,UnitController::class);
+    Route::get('daily-incomes/import', [DailyIncomeController::class, 'importView'])->name('daily-incomes.import-view');
+    Route::post('daily-incomes/import', [DailyIncomeController::class, 'import'])->name('daily-incomes.import');
+    Route::get('daily-incomes/sample-excel', [DailyIncomeController::class, 'downloadSample'])->name('daily-incomes.sample-excel');
     Route::resource('daily-incomes' ,DailyIncomeController::class);
     Route::get('own-products/search', [OwnProductController::class, 'search'])->name('own-products.search');
     Route::resource('own-products' ,OwnProductController::class);
