@@ -43,19 +43,20 @@
       >
         Excel Import - Daily Incomes
       </h2>
+    </div>
+  </svelte:fragment>
+
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div
+      class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-200 dark:border-gray-700"
+    >
       <Link
         href="/daily-incomes"
         class="text-indigo-600 hover:text-indigo-900 border border-indigo-600 rounded px-3 py-1 text-sm bg-white"
       >
         &larr; Back to Incomes
       </Link>
-    </div>
-  </svelte:fragment>
-
-  <div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
-    <div
-      class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-200 dark:border-gray-700"
-    >
+      <br /><br />
       <div class="mb-6">
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
           Instructions

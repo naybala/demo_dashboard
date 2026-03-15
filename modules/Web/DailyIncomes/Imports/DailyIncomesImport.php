@@ -28,7 +28,16 @@ class DailyIncomesImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
-            $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date'])->format('Y-m-d');
+            $rawDate = $row['date'];
+            if (is_numeric($rawDate)) {
+                $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($rawDate)->format('Y-m-d');
+            } else {
+                try {
+                    $date = \Carbon\Carbon::parse($rawDate)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    throw new Exception("Invalid date format in row " . ($index + 2) . ": " . $rawDate);
+                }
+            }
             $productName = $row['product_name'];
 
             $product = OwnProduct::where('name', $productName)->first();
@@ -38,7 +47,8 @@ class DailyIncomesImport implements ToCollection, WithHeadingRow
             }
 
             // Group by Date, Is Instant, and Note
-            $isInstant = isset($row['is_instant']) ? (bool) $row['is_instant'] : true;
+            $rawIsInstant = $row['is_instant_1_or_0'] ?? $row['is_instant'] ?? null;
+            $isInstant = $rawIsInstant !== null && trim((string)$rawIsInstant) !== '' ? (bool) $rawIsInstant : true;
             $note = $row['note'] ?? null;
             $groupKey = $date . '_' . ($isInstant ? '1' : '0') . '_' . $note;
 
