@@ -37,6 +37,11 @@ class OwnProductService
         return $this->ownProduct->with(['category', 'unit'])->orderBy('name')->get();
     }
 
+    public function getByIdsWithUnit($ids)
+    {
+        return $this->ownProduct->whereIn('id', $ids)->with('unit')->get();
+    }
+
     public function paginate(array $request)
     {
         return $this->ownProduct

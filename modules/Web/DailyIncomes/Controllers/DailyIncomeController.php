@@ -5,9 +5,9 @@ namespace BasicDashboard\Web\DailyIncomes\Controllers;
 use BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Web\Common\BaseController;
-
 use BasicDashboard\Web\DailyIncomes\Resources\DailyIncomeResource;
 use BasicDashboard\Web\DailyIncomes\Services\DailyIncomeService;
+use BasicDashboard\Web\OwnProducts\Services\OwnProductService;
 use BasicDashboard\Web\DailyIncomes\Validation\StoreDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\UpdateDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\DeleteDailyIncomeRequest;
@@ -39,7 +39,8 @@ class DailyIncomeController extends BaseController
     const LANG_PATH = "dailyIncome.dailyIncome";
 
     public function __construct(
-        private DailyIncomeService $dailyIncomeService
+        private DailyIncomeService $dailyIncomeService,
+        private OwnProductService $ownProductService
     ) {
     }
 
@@ -89,9 +90,7 @@ class DailyIncomeController extends BaseController
         // For editing, we should pass the products that are already in the voucher
         // so the SearchableSelect can show the correct initial labels.
         $productIds = $items->pluck('own_product_id')->unique();
-        $products = OwnProduct::whereIn('id', $productIds)
-            ->with('unit')
-            ->get();
+        $products = $this->ownProductService->getByIdsWithUnit($productIds);
 
         return Inertia::render('DailyIncomes/CreateEdit', [
             'dailyIncome' => $data,

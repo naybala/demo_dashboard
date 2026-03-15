@@ -28,4 +28,5 @@ return [
     'instant' => 'Instant',
     'pending' => 'Pending',
     'back_to_list' => 'Back to List',
+    'excel_import' => 'Excel Import',
 ];

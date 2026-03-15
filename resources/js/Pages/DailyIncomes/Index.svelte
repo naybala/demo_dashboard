@@ -137,42 +137,60 @@
         </select>
       </div>
     </div>
-    <div class="flex flex-wrap justify-end mt-3 gap-2">
+    <div class="flex flex-wrap justify-between mt-3 gap-2">
       <div>
-        <PrimaryButton on:click={handleFilter}
-          >{__("messages.filter", "Filter")}</PrimaryButton
-        >
-      </div>
-      <div>
-        <SecondaryButton
-          on:click={() => {
-            search = "";
-            fromDate = "";
-            toDate = "";
-            isInstant = "";
-            handleFilter();
-          }}>{__("messages.reset", "Reset")}</SecondaryButton
-        >
-      </div>
-
-      {#if permissions.includes("create daily-incomes")}
-        <div>
+        {#if permissions.includes("excel daily-incomes")}
           <Link href="/daily-incomes/import" class="md:ml-auto mr-2">
-            <SecondaryButton>
-              <svg class="w-4 h-4 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-              Excel Import
-            </SecondaryButton>
+            <PrimaryButton>
+              <svg
+                class="w-4 h-4 mr-1 inline-block"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                ></path></svg
+              >
+              {__("dailyIncome.excel_import", "Excel Import")}
+            </PrimaryButton>
           </Link>
-          <Link href="/daily-incomes/create" class="md:ml-auto">
-            <PrimaryButton
-              >{__(
-                "dailyIncome.create_daily_income",
-                "Create Daily Income",
-              )}</PrimaryButton
-            >
-          </Link>
+        {/if}
+      </div>
+      <div class="flex flex-wrap justify-end gap-2">
+        <div>
+          <PrimaryButton on:click={handleFilter}
+            >{__("messages.filter", "Filter")}</PrimaryButton
+          >
         </div>
-      {/if}
+        <div>
+          <SecondaryButton
+            on:click={() => {
+              search = "";
+              fromDate = "";
+              toDate = "";
+              isInstant = "";
+              handleFilter();
+            }}>{__("messages.reset", "Reset")}</SecondaryButton
+          >
+        </div>
+
+        {#if permissions.includes("create daily-incomes")}
+          <div>
+            <Link href="/daily-incomes/create" class="md:ml-auto">
+              <PrimaryButton
+                >{__(
+                  "dailyIncome.create_daily_income",
+                  "Create Daily Income",
+                )}</PrimaryButton
+              >
+            </Link>
+          </div>
+        {/if}
+      </div>
     </div>
   </div>
 
