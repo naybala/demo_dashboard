@@ -17,6 +17,13 @@ class DailyIncomesSampleExport implements FromArray, WithHeadings
                 '1',
                 'Example note here'
             ],
+            [
+                '2023-10-25',
+                'Example Product B',
+                '5',
+                '1',
+                'Example note here'
+            ],
         ];
     }
 

@@ -42,6 +42,7 @@ class DailyIncomesImport implements ToCollection, WithHeadingRow
 
             $product = OwnProduct::where('name', $productName)->first();
 
+
             if (!$product) {
                 throw new Exception("Product '{$productName}' not found in row " . ($index + 2));
             }
@@ -50,6 +51,9 @@ class DailyIncomesImport implements ToCollection, WithHeadingRow
             $rawIsInstant = $row['is_instant_1_or_0'] ?? $row['is_instant'] ?? null;
             $isInstant = $rawIsInstant !== null && trim((string)$rawIsInstant) !== '' ? (bool) $rawIsInstant : true;
             $note = $row['note'] ?? null;
+            
+            // Generate a grouping key based on the row attributes that define a unique voucher header
+            // Rows with the exact same Date, Is Instant, and Note will be grouped together
             $groupKey = $date . '_' . ($isInstant ? '1' : '0') . '_' . $note;
 
             if (!isset($vouchers[$groupKey])) {

@@ -64,9 +64,11 @@
         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
           To import daily incomes, please download the sample Excel file. Fill
           it with your data and ensure that the "Product Name" matches exactly
-          what is recorded in the system. The voucher number and product pricing
-          (price, investment, profit) will be automatically calculated based on
-          the Product Name.
+          what is recorded in the system. The product pricing (price, investment, 
+          profit) will be automatically calculated based on the Product Name.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 font-semibold">
+          Note: To group multiple products into a single voucher, make sure they all share the exact same "Date", "Is Instant", and "Note" values in the Excel sheet.
         </p>
 
         <SecondaryButton type="button" on:click={downloadSample}>

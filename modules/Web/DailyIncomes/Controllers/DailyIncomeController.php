@@ -73,7 +73,6 @@ class DailyIncomeController extends BaseController
     public function edit(DailyIncome $dailyIncome): Response
     {
         $items = $this->dailyIncomeService->getByVoucherNo($dailyIncome);
-
         $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
         $data = [
             'id' => customEncoder($dailyIncome->id),
@@ -103,7 +102,6 @@ class DailyIncomeController extends BaseController
     public function show(DailyIncome $dailyIncome): Response
     {
         $items = $this->dailyIncomeService->getByVoucherNo($dailyIncome);
-
         $formattedItems = DailyIncomeResource::collection($items)->response()->getData(true)['data'];
         $data = [
             'id' => customEncoder($dailyIncome->id),
