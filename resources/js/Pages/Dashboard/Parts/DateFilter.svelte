@@ -19,6 +19,14 @@
     endDate = "";
     dispatch("reset");
   };
+  const todaySelector = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    startDate = `${year}-${month}-${day}`;
+    endDate = `${year}-${month}-${day}`;
+  };
 </script>
 
 <div
@@ -56,6 +64,12 @@
     </div>
 
     <div class="flex gap-2">
+      <button
+        type="button"
+        on:click={todaySelector}
+        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+        >{__("messages.today", "Today")}</button
+      >
       <button
         type="submit"
         class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"

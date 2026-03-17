@@ -54,4 +54,5 @@ return [
     'connection_restored' => "Connection restored",
     'loading' => "Loading...",
     'please_wait' => "Please wait a moment",
+    'today' => "Today",
 ];
