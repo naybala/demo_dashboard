@@ -70,17 +70,21 @@
         class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
         >{__("messages.today", "Today")}</button
       >
-      <button
-        type="submit"
-        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-        >{__("messages.filter", "Filter")}</button
-      >
-      <button
-        type="button"
-        on:click={handleReset}
-        class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
-        >{__("messages.reset", "Reset")}</button
-      >
+      {#if startDate && endDate}
+        <button
+          type="submit"
+          class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+          >{__("messages.filter", "Filter")}</button
+        >
+      {/if}
+      {#if startDate || endDate}
+        <button
+          type="button"
+          on:click={handleReset}
+          class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+          >{__("messages.reset", "Reset")}</button
+        >
+      {/if}
     </div>
   </form>
 </div>
