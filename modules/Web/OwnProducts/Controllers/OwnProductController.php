@@ -78,8 +78,8 @@ class OwnProductController extends BaseController
         $ownProduct = new OwnProductResource($ownProduct);
         $ownProduct = $ownProduct->response()->getData(true)['data'];
         
-        $categories = app(CategoryService::class)->all();
-        $units = app(UnitService::class)->all();
+        $categories = $this->categoryService->getNotShowCategories();
+        $units = $this->unitService->all();
 
         return Inertia::render('OwnProducts/CreateEdit', [
             'ownProduct' => $ownProduct,

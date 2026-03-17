@@ -72,8 +72,7 @@ class ProductController extends Controller
         $product = $this->productService->findOrFail($decodedId);
         $product = new ProductResource($product);
         $product = $product->response()->getData(true)['data'];
-        $categories = app(CategoryService::class)->all();
-        
+        $categories = $this->categoryService->getShowCategories();
         return Inertia::render('Products/CreateEdit', [
             'product' => $product,
             'categories' => $categories,
