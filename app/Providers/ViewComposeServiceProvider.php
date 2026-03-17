@@ -26,28 +26,9 @@ class ViewComposeServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //User
-        View::composer('admin.user.create', RoleComposer::class);
-        View::composer('admin.user.edit', RoleComposer::class);
-
-        //Product
-        View::composer('admin.product.create', CategoryComposer::class);
-        View::composer('admin.product.edit', CategoryComposer::class);
-        View::composer('admin.own-product.create', CategoryComposer::class);
-        View::composer('admin.own-product.edit', CategoryComposer::class);
-
-
-
-        //Unit
-        View::composer('admin.own-product.create', UnitComposer::class);
-        View::composer('admin.own-product.edit', UnitComposer::class);
-
-        //Daily Income
-        View::composer('admin.daily-income.create', OwnProductComposer::class);
-        View::composer('admin.daily-income.edit', OwnProductComposer::class);
-        View::composer('admin.daily-income.create', UnitComposer::class);
-        View::composer('admin.daily-income.edit', UnitComposer::class);
-
+        //User (Currently this logics are useless but later we will use it)
+        // View::composer('admin.user.create', RoleComposer::class);
+        // View::composer('admin.user.edit', RoleComposer::class);
 
     }
 }

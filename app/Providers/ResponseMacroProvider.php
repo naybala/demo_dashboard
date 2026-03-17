@@ -38,67 +38,11 @@ class ResponseMacroProvider extends ServiceProvider
             'data'    => $data,
         ]));
 
-        Response::macro('successIndexRedirect', function (string $model, string $message, string $index = 'index'): RedirectResponse {
-            $indexRoute = "$model.$index";
-            return to_route($indexRoute)->with([
-                'message'      => $message,
-                'responseType' => ResponseCode::Success->responseType(),
-            ]);
-        });
-
-        Response::macro('successShowRedirect', function (string $model, string $id, string $message, string $show = 'show'): RedirectResponse {
-            $showRoute = "$model.$show";
-            return to_route($showRoute, $id)->with([
-                'message'      => $message,
-                'responseType' => ResponseCode::Success->responseType(),
-            ]);
-        });
-
-        Response::macro('redirectBackWithError', function ($message): RedirectResponse {
-            \Log::info($message);
-            return redirect()->back()->with([
-                'message'      => $message,
-                'responseType' => ResponseCode::InternalServerError->responseType(),
-            ]);
-        });
-
-        Response::macro('redirectBackWithWarning', function ($message): RedirectResponse {
-            return redirect()->back()->with([
-                'message'      => $message,
-                'responseType' => ResponseCode::Warning->responseType(),
-            ]);
-        });
-
-        Response::macro('successAjaxResponse', function ($message, $data): JsonResponse {
-            // \Log::info('hello world');
-            $response = [
-                'code'    => 200,
-                'status'  => "Success",
-                'message' => $message,
-                'data'    => $data,
-            ];
-            return response()->json($response, 200);
-        });
-
-        Response::macro('notFoundAjaxRequest', function ($message): JsonResponse {
-            $response = [
-                'code'    => 404,
-                'status'  => "Not Found",
-                'message' => $message,
-            ];
-            return response()->json($response, 404);
-        });
         
-        Response::macro('failAjaxResponse', function ($message): JsonResponse {
-            \Log::info($message);
-            $response = [
-                'code'    => 500,
-                'status'  => "failed",
-                'message' => $message,
-            ];
-            return response()->json($response, 500);
-        });
 
+        
+
+        // Api Response
         Response::macro('sendAuthFailedResponse', function ($message, $data = null): JsonResponse {
 
             $response = [
