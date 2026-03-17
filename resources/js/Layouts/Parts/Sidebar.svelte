@@ -30,7 +30,7 @@
 >
   <div class="h-full flex flex-col">
     <div
-      class="p-[1.12rem] border-b dark:border-gray-700 flex items-center justify-start shrink-0 shadow-lg"
+      class="p-[1.12rem] border-b dark:border-gray-700 flex items-center justify-start shrink-0 shadow-xl rounded-l-3xl border ms-1"
     >
       <img
         src={Logo}
