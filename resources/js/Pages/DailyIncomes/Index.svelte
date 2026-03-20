@@ -195,7 +195,7 @@
   </div>
 
   <BaseTable {headers}>
-    {#each data as income}
+    {#each data as income, i}
       <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
@@ -205,7 +205,9 @@
         <td
           class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
         >
-          {income.voucher_no || "N/A"}
+          {i > 0 && data[i - 1].voucher_no === income.voucher_no
+            ? " "
+            : income.voucher_no || "N/A"}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"

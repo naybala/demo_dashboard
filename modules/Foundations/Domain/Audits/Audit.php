@@ -1,13 +1,4 @@
 <?php
-
-namespace BasicDashboard\Foundations\Domain\Audits;
-
-use BasicDashboard\Foundations\Domain\Users\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 /**
  *
  * A Audit is gives a basic way to do that using Eloquent ORM where each table incorporates to interact with it.
@@ -18,55 +9,79 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  */
 
+namespace BasicDashboard\Foundations\Domain\Audits;
+
+use BasicDashboard\Foundations\Domain\Users\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+
+#[Fillable([
+    'model',
+    'event',
+    'old_data',
+    'new_data',
+    'created_by',
+    'created_at',
+    'deleted_at'
+])]
+
 class Audit extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $table = 'audits';
+
     public $timestamps = false;
-    protected $fillable = [
-        'model',
-        'event',
-        'old_data',
-        'new_data',
-        'created_by',
-        'created_at',
-        'deleted_at',
+
+    /**
+     * Optional: Cast JSON fields (recommended in Laravel 13)
+     */
+    protected $casts = [
+        'old_data' => 'array',
+        'new_data' => 'array',
+        'created_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
+    /**
+     * Relationship: Audit belongs to User
+     */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by')->withDefault([
-            'name' => '---',
-        ]);
+        return $this->belongsTo(User::class, 'created_by')
+            ->withDefault([
+                'name' => '---',
+            ]);
     }
 
     // ==========================================
-    // Query Scopes for Simplified Architecture
+    // Query Scopes (Modern Typed Style)
     // ==========================================
-    
-    /**
-     * Scope to filter audits by keyword search
-     * Searches in: model, event
-     */
-    public function scopeFilterByKeyword($query, ?string $keyword)
-    {
-        if (empty($keyword)) {
-            return $query;
-        }
 
-        return $query->where(function($q) use ($keyword) {
-            $q->where('model', 'LIKE', '%' . $keyword . '%')
-              ->orWhere('event', 'LIKE', '%' . $keyword . '%');
+    /**
+     * Scope: Filter by keyword
+     */
+    public function scopeFilterByKeyword(Builder $query, ?string $keyword): Builder
+    {
+        return $query->when($keyword, function (Builder $q) use ($keyword) {
+            $q->where(function (Builder $sub) use ($keyword) {
+                $sub->where('model', 'like', "%{$keyword}%")
+                    ->orWhere('event', 'like', "%{$keyword}%");
+            });
         });
     }
 
     /**
-     * Scope to order by latest activity
+     * Scope: Order by latest
      */
-    public function scopeOrderByLatest($query)
+    public function scopeOrderByLatest(Builder $query): Builder
     {
-        return $query->orderBy('created_at', 'desc')
-            ->orderBy('id', 'desc');
+        return $query
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
     }
-
 }

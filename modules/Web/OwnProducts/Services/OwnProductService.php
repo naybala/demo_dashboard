@@ -4,7 +4,6 @@ namespace BasicDashboard\Web\OwnProducts\Services;
 
 use BasicDashboard\Foundations\Actions\WebFileStoreAction;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
-use BasicDashboard\Web\OwnProducts\Services\OwnProductImageAction;
 use App\Exceptions\WarningException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
