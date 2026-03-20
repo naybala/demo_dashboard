@@ -2,11 +2,18 @@
 namespace BasicDashboard\Foundations\Domain\Permissions;
 
 use App\Observers\AuditObserver;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 #[ObservedBy([AuditObserver::class])]
+#[Fillable([
+    'name',
+    'guard_name',
+    'created_at',
+    'updated_at',
+])]
 class Permission extends SpatiePermission
 {
     use HasFactory;
@@ -16,12 +23,7 @@ class Permission extends SpatiePermission
         return \Database\Factories\PermissionFactory::new();
     }
 
-    protected $fillable = [
-        'name',
-        'guard_name',
-        'created_at',
-        'updated_at',
-    ];
+    
 
     /**
      * Scope to filter permissions by keyword search
@@ -29,25 +31,23 @@ class Permission extends SpatiePermission
      * 
      * Usage: Permission::filterByKeyword($keyword)->get()
      */
-    public function scopeFilterByKeyword($query, ?string $keyword)
+    /**
+     * Scope to filter permissions by keyword search
+     */
+    public function scopeFilterByKeyword(Builder $query, ?string $keyword): Builder
     {
-        if (empty($keyword)) {
-            return $query;
-        }
-
-        return $query->where('name', 'LIKE', '%' . $keyword . '%');
+        return $query->when($keyword, function (Builder $q) use ($keyword) {
+            $q->where('name', 'LIKE', '%' . $keyword . '%');
+        });
     }
 
     /**
      * Scope to order permissions by latest activity
-     * Orders by created_at or updated_at (whichever is more recent), then by id
-     * 
-     * Usage: Permission::orderByLatest()->get()
      */
-    public function scopeOrderByLatest($query)
+    public function scopeOrderByLatest(Builder $query): Builder
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
-            ->orderBy('id', 'desc');
+            ->orderByDesc('id');
     }
 
     public function hasRoles(): bool

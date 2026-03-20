@@ -3,7 +3,9 @@
 namespace BasicDashboard\Foundations\Domain\Units;
 use App\Observers\AuditObserver;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +22,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 //if you want to audit this model uncomment below code and import
 #[ObservedBy([AuditObserver::class])]
+#[Fillable([
+    'name',
+    'created_at',
+    'updated_at',
+    'deleted_at',
+    'created_by',
+    'updated_by',
+    'deleted_by',
+])]
 class Unit extends Model
 {
     use HasFactory, SoftDeletes;
@@ -30,9 +41,6 @@ class Unit extends Model
     }
 
       //protected $table = 'table_name';
-    protected $guarded = [
-
-    ];
 
     // ==========================================
     // Query Scopes for Simplified Architecture
@@ -41,27 +49,24 @@ class Unit extends Model
     
     /**
      * Scope to filter by keyword search
-     * Searches in: name
      */
-    public function scopeFilterByKeyword($query, ?string $keyword)
+    public function scopeFilterByKeyword(Builder $query, ?string $keyword): Builder
     {
-        if (empty($keyword)) {
-            return $query;
-        }
-
-        return $query->where('name', 'LIKE', '%' . $keyword . '%');
+        return $query->when($keyword, function (Builder $q) use ($keyword) {
+            $q->where('name', 'LIKE', '%' . $keyword . '%');
+        });
     }
 
     /**
      * Scope to order by latest activity
      */
-    public function scopeOrderByLatest($query)
+    public function scopeOrderByLatest(Builder $query): Builder
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
-            ->orderBy('id', 'desc');
+            ->orderByDesc('id');
     }
 
-    public function ownProducts()
+    public function ownProducts(): HasMany
     {
         return $this->hasMany(OwnProduct::class);
     }

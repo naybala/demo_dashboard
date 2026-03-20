@@ -2,7 +2,7 @@
 
 namespace BasicDashboard\Foundations\Domain\CategoryProduct;
 use App\Observers\AuditObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,20 +19,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 //if you want to audit this model uncomment below code and import
 #[ObservedBy([AuditObserver::class])]
+#[Fillable([
+    'product_id',
+    'category_id',
+    'created_at',
+    'updated_at',
+    'deleted_at',
+    'created_by',
+    'updated_by',
+    'deleted_by',
+])]
 class CategoryProduct extends Model
 {
     use HasFactory, SoftDeletes;
       //protected $table = 'table_name';
-    protected $fillable = [
-        'product_id',
-        'category_id',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-    ];
 
     
 

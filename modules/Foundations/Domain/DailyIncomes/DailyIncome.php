@@ -4,7 +4,9 @@ namespace BasicDashboard\Foundations\Domain\DailyIncomes;
 use App\Observers\AuditObserver;
 use BasicDashboard\Foundations\Domain\DailyIncomeTotals\DailyIncomeTotal;
 use Database\Factories\DailyIncomeFactory;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +25,19 @@ use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
  */
 //if you want to audit this model uncomment below code and import
 #[ObservedBy([AuditObserver::class])]
+#[Fillable([
+    'date',
+    'name',
+    'amount',
+    'own_product_id',
+    'price',
+    'investment',
+    'profit',
+    'daily_income_total_id',
+    'created_by',
+    'updated_by',
+    'deleted_by',
+])]
 class DailyIncome extends Model
 {
     use HasFactory, SoftDeletes;
@@ -33,26 +48,13 @@ class DailyIncome extends Model
     }
 
       //protected $table = 'table_name';
-    protected $fillable = [
-        'date',
-        'name',
-        'amount',
-        'own_product_id',
-        'price',
-        'investment',
-        'profit',
-        'daily_income_total_id',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-    ];
 
-    public function dailyIncomeTotal()
+    public function dailyIncomeTotal(): BelongsTo
     {
         return $this->belongsTo(DailyIncomeTotal::class);
     }
 
-    public function ownProduct()
+    public function ownProduct(): BelongsTo
     {
         return $this->belongsTo(OwnProduct::class);
     }
@@ -66,54 +68,44 @@ class DailyIncome extends Model
     
     /**
      * Scope to filter by keyword search
-     * Searches in: name
      */
-    public function scopeFilterByKeyword($query, ?string $keyword)
+    public function scopeFilterByKeyword(Builder $query, ?string $keyword): Builder
     {
-        if (empty($keyword)) {
-            return $query;
-        }
-
-        return $query->where('name', 'LIKE', '%' . $keyword . '%')
-            ->orWhereHas('ownProduct', function ($q) use ($keyword) {
-                $q->where('name', 'LIKE', '%' . $keyword . '%');
-            })
-            ->orWhereHas('dailyIncomeTotal', function ($q) use ($keyword) {
-                $q->where('voucher_no', 'LIKE', '%' . $keyword . '%');
+        return $query->when($keyword, function (Builder $q) use ($keyword) {
+            $q->where(function (Builder $sub) use ($keyword) {
+                $sub->where('name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhereHas('ownProduct', function (Builder $q) use ($keyword) {
+                        $q->where('name', 'LIKE', '%' . $keyword . '%');
+                    })
+                    ->orWhereHas('dailyIncomeTotal', function (Builder $q) use ($keyword) {
+                        $q->where('voucher_no', 'LIKE', '%' . $keyword . '%');
+                    });
             });
+        });
     }
 
-    public function scopeFilterByDateRange($query, ?string $from, ?string $to)
+    public function scopeFilterByDateRange(Builder $query, ?string $from, ?string $to): Builder
     {
-        if ($from) {
-            $query->whereDate('date', '>=', $from);
-        }
-
-        if ($to) {
-            $query->whereDate('date', '<=', $to);
-        }
-
-        return $query;
+        return $query->when($from, fn(Builder $q) => $q->whereDate('date', '>=', $from))
+            ->when($to, fn(Builder $q) => $q->whereDate('date', '<=', $to));
     }
 
-    public function scopeFilterByInstant($query, $isInstant)
+    public function scopeFilterByInstant(Builder $query, mixed $isInstant): Builder
     {
-        if ($isInstant === null || $isInstant === '') {
-            return $query;
-        }
-
-        return $query->whereHas('dailyIncomeTotal', function ($q) use ($isInstant) {
-            $q->where('is_instant', $isInstant);
+        return $query->when($isInstant !== null && $isInstant !== '', function (Builder $q) use ($isInstant) {
+            $q->whereHas('dailyIncomeTotal', function (Builder $sub) use ($isInstant) {
+                $sub->where('is_instant', $isInstant);
+            });
         });
     }
 
     /**
      * Scope to order by latest activity
      */
-    public function scopeOrderByLatest($query)
+    public function scopeOrderByLatest(Builder $query): Builder
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
-            ->orderBy('id', 'desc');
+            ->orderByDesc('id');
     }
 
 }

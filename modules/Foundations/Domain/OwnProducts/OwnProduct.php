@@ -4,7 +4,10 @@ namespace BasicDashboard\Foundations\Domain\OwnProducts;
 use App\Observers\AuditObserver;
 use BasicDashboard\Foundations\Domain\Categories\Category;
 use BasicDashboard\Foundations\Domain\Units\Unit;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,6 +24,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 //if you want to audit this model uncomment below code and import
 #[ObservedBy([AuditObserver::class])]
+#[Fillable([
+    'name',
+    'unit_id',
+    'category_id',
+    'price',
+    'investment',
+    'profit',
+    'image',
+    'created_by',
+    'updated_by',
+    'deleted_by',
+])]
 class OwnProduct extends Model
 {
     use HasFactory, SoftDeletes;
@@ -31,25 +46,13 @@ class OwnProduct extends Model
     }
 
       //protected $table = 'table_name';
-    protected $fillable = [
-        'name',
-        'unit_id',
-        'category_id',
-        'price',
-        'investment',
-        'profit',
-        'image',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-    ];
 
-    public function unit()
+    public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
     }
 
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
@@ -62,32 +65,29 @@ class OwnProduct extends Model
     
     /**
      * Scope to filter by keyword search
-     * Searches in: name
      */
-    public function scopeFilterByKeyword($query, ?string $keyword)
+    public function scopeFilterByKeyword(Builder $query, ?string $keyword): Builder
     {
-        if (empty($keyword)) {
-            return $query;
-        }
-
-        return $query->where(function ($query) use ($keyword) {
-            $query->where('name', 'LIKE', '%' . $keyword . '%')
-                ->orWhereHas('category', function ($query) use ($keyword) {
-                    $query->where('name', 'LIKE', '%' . $keyword . '%');
-                });
+        return $query->when($keyword, function (Builder $q) use ($keyword) {
+            $q->where(function (Builder $sub) use ($keyword) {
+                $sub->where('name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhereHas('category', function (Builder $q) use ($keyword) {
+                        $q->where('name', 'LIKE', '%' . $keyword . '%');
+                    });
+            });
         });
     }
 
     /**
      * Scope to order by latest activity
      */
-    public function scopeOrderByLatest($query)
+    public function scopeOrderByLatest(Builder $query): Builder
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
-            ->orderBy('id', 'desc');
+            ->orderByDesc('id');
     }
 
-    public function dailyIncomes()
+    public function dailyIncomes(): HasMany
     {
         return $this->hasMany(\BasicDashboard\Foundations\Domain\DailyIncomes\DailyIncome::class);
     }

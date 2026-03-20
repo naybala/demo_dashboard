@@ -41,8 +41,6 @@ class Audit extends Model
      * Optional: Cast JSON fields (recommended in Laravel 13)
      */
     protected $casts = [
-        'old_data' => 'array',
-        'new_data' => 'array',
         'created_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];

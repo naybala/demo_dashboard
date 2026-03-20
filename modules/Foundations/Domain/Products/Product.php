@@ -2,7 +2,9 @@
 
 namespace BasicDashboard\Foundations\Domain\Products;
 use App\Observers\AuditObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use BasicDashboard\Foundations\Domain\Categories\Category;
@@ -19,6 +21,22 @@ use BasicDashboard\Foundations\Domain\Categories\Category;
  */
 //if you want to audit this model uncomment below code and import
 #[ObservedBy([AuditObserver::class])]
+#[Fillable([
+    'name',
+    'name_other',
+    'price',
+    'photos',
+    'description',
+    'description_other',
+    'is_banner',
+    'is_mini_banner',
+    'created_at',
+    'updated_at',
+    'deleted_at',
+    'created_by',
+    'updated_by',
+    'deleted_by',
+])]
 class Product extends Model
 {
     use HasFactory;
@@ -28,22 +46,6 @@ class Product extends Model
         return \Database\Factories\ProductFactory::new();
     }
       //protected $table = 'table_name';
-    protected $fillable = [
-        'name',
-        'name_other',
-        'price',
-        'photos',
-        'description',
-        'description_other',
-        'is_banner',
-        'is_mini_banner',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-    ];
 
     protected $casts = [
         'photos' => 'array',
@@ -60,49 +62,48 @@ class Product extends Model
      * Scope to filter by keyword search
      * Searches in: name
      */
-    public function scopeFilterByKeyword($query, ?string $keyword)
+    /**
+     * Scope to filter by keyword search
+     */
+    public function scopeFilterByKeyword(Builder $query, ?string $keyword): Builder
     {
-        if (empty($keyword)) {
-            return $query;
-        }
-
-        return $query->where('name', 'LIKE', '%' . $keyword . '%');
+        return $query->when($keyword, function (Builder $q) use ($keyword) {
+            $q->where('name', 'LIKE', '%' . $keyword . '%');
+        });
     }
 
     /**
      * Scope to filter by category ID
      */
-    public function scopeFilterByCategory($query, ?int $categoryId)
+    public function scopeFilterByCategory(Builder $query, ?int $categoryId): Builder
     {
-        if (empty($categoryId)) {
-            return $query;
-        }
-
-        return $query->whereHas('categories', function ($query) use ($categoryId) {
-            $query->where('categories.id', $categoryId);
+        return $query->when($categoryId, function (Builder $q) use ($categoryId) {
+            $q->whereHas('categories', function (Builder $sub) use ($categoryId) {
+                $sub->where('categories.id', $categoryId);
+            });
         });
     }
 
     /**
      * Scope to order by latest activity
      */
-    public function scopeOrderByLatest($query)
+    public function scopeOrderByLatest(Builder $query): Builder
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
-            ->orderBy('id', 'desc');
+            ->orderByDesc('id');
     }
 
-    public function scopeGetBannerData($query, ?int $limit = 2)
+    public function scopeGetBannerData(Builder $query, ?int $limit = 2): \Illuminate\Database\Eloquent\Collection
     {
-        return $query->where('is_banner', true)->limit($limit)->orderBy('id', 'desc')->get();
+        return $query->where('is_banner', true)->limit($limit)->orderByDesc('id')->get();
     }
 
-    public function scopeGetMiniBannerData($query, ?int $limit = 4)
+    public function scopeGetMiniBannerData(Builder $query, ?int $limit = 4): \Illuminate\Database\Eloquent\Collection
     {
-        return $query->where('is_mini_banner', true)->limit($limit)->orderBy('id', 'desc')->get();
+        return $query->where('is_mini_banner', true)->limit($limit)->orderByDesc('id')->get();
     }
 
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'category_product');
     }

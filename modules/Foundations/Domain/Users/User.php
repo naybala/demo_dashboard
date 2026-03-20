@@ -5,6 +5,8 @@ use App\Enums\Common\Status;
 use App\Enums\Users\UserType;
 use App\Observers\AuditObserver;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,6 +16,24 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy([AuditObserver::class])]
+#[Fillable([
+    "fullname",
+    "email",
+    "password",
+    "status",
+    "user_type",
+    "phone_number",
+    "avatar",
+    "role_marked",
+    "remember_token",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "created_by",
+    "updated_by",
+    "deleted_by",
+])]
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
@@ -39,23 +59,6 @@ class User extends Authenticatable
         'user_type' => UserType::class,
     ];
 
-    protected $fillable = [
-        "fullname",
-        "email",
-        "password",
-        "status",
-        "user_type",
-        "phone_number",
-        "avatar",
-        "role_marked",
-        "remember_token",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-        "created_by",
-        "updated_by",
-        "deleted_by",
-    ];
 
     public function getAvartarAttribute($value)
     {
@@ -73,65 +76,56 @@ class User extends Authenticatable
      * 
      * Usage: User::filterByKeyword($keyword)->get()
      */
-    public function scopeFilterByKeyword($query, ?string $keyword)
+    /**
+     * Scope to filter users by keyword search
+     */
+    public function scopeFilterByKeyword(Builder $query, ?string $keyword): Builder
     {
-        if (empty($keyword)) {
-            return $query;
-        }
+        return $query->when($keyword, function (Builder $q) use ($keyword) {
+            $keyword = strtolower($keyword);
+            $status_text = [
+                'active'   => 1,
+                'inactive' => 2,
+            ];
 
-        $keyword = strtolower($keyword);
-        $status_text = [
-            'active'   => 1,
-            'inactive' => 2,
-        ];
+            $q->where(function (Builder $sub) use ($keyword, $status_text) {
+                $sub->where(function (Builder $subInner) use ($keyword, $status_text) {
+                    $subInner->where('fullname', 'like', "%{$keyword}%")
+                        ->orWhere('email', 'like', "%{$keyword}%")
+                        ->orWhere('phone_number', 'like', "%{$keyword}%")
+                        ->orWhere('role_marked', 'like', "%{$keyword}%");
 
-        return $query->where(function ($q) use ($keyword, $status_text) {
-            $q->where(function ($subQuery) use ($keyword, $status_text) {
-                $subQuery->where('fullname', 'like', "%{$keyword}%")
-                    ->orWhere('email', 'like', "%{$keyword}%")
-                    ->orWhere('phone_number', 'like', "%{$keyword}%")
-                    ->orWhere('role_marked', 'like', "%{$keyword}%");
-
-                // Interpret 'active'/'inactive' text into status code
-                if (isset($status_text[$keyword])) {
-                    $subQuery->orWhere('status', $status_text[$keyword]);
-                } else {
-                    $subQuery->orWhere('status', 'like', "%{$keyword}%");
-                }
-            });
-
-            // Match roles.name
-            $q->orWhereHas('roles', function ($roleQuery) use ($keyword) {
-                $roleQuery->where('name', 'like', "%{$keyword}%");
-            });
-
-            // Match groups.name (optional, if needed)
-            $q->orWhereHas('groups', function ($groupQuery) use ($keyword) {
-                $groupQuery->where('name', 'like', "%{$keyword}%");
+                    if (isset($status_text[$keyword])) {
+                        $subInner->orWhere('status', $status_text[$keyword]);
+                    } else {
+                        $subInner->orWhere('status', 'like', "%{$keyword}%");
+                    }
+                })
+                ->orWhereHas('roles', function (Builder $roleQuery) use ($keyword) {
+                    $roleQuery->where('name', 'like', "%{$keyword}%");
+                })
+                ->orWhereHas('groups', function (Builder $groupQuery) use ($keyword) {
+                    $groupQuery->where('name', 'like', "%{$keyword}%");
+                });
             });
         });
     }
 
     /**
      * Scope to eager load common user relationships
-     * 
-     * Usage: User::withUserRelations()->get()
      */
-    public function scopeWithUserRelations($query)
+    public function scopeWithUserRelations(Builder $query): Builder
     {
         return $query->with(['roles']);
     }
 
     /**
      * Scope to order users by latest activity
-     * Orders by created_at or updated_at (whichever is more recent), then by id
-     * 
-     * Usage: User::orderByLatest()->get()
      */
-    public function scopeOrderByLatest($query)
+    public function scopeOrderByLatest(Builder $query): Builder
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
-            ->orderBy('id', 'desc');
+            ->orderByDesc('id');
     }
 
 }

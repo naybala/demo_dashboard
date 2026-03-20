@@ -4,8 +4,11 @@ namespace BasicDashboard\Foundations\Domain\Categories;
 use App\Observers\AuditObserver;
 use BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct;
 use BasicDashboard\Foundations\Domain\Products\Product;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -21,6 +24,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 //if you want to audit this model uncomment below code and import
 #[ObservedBy([AuditObserver::class])]
+#[Fillable([
+    'name',
+    'name_other',
+    'description',
+    'description_other',
+    'is_show',
+    'created_at',
+    'updated_at',
+    'deleted_at',
+    'created_by',
+    'updated_by',
+    'deleted_by',
+])]
 class Category extends Model
 {
     use HasFactory, SoftDeletes;
@@ -31,19 +47,6 @@ class Category extends Model
     }
 
       //protected $table = 'table_name';
-    protected $fillable = [
-        'name',
-        'name_other',
-        'description',
-        'description_other',
-        'is_show',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-    ];
 
     // ==========================================
     // Query Scopes for Simplified Architecture
@@ -52,32 +55,24 @@ class Category extends Model
     
     /**
      * Scope to filter categories by keyword search
-     * Searches in: name
-     * 
-     * Usage: Category::filterByKeyword($keyword)->get()
      */
-    public function scopeFilterByKeyword($query, ?string $keyword)
+    public function scopeFilterByKeyword(Builder $query, ?string $keyword): Builder
     {
-        if (empty($keyword)) {
-            return $query;
-        }
-
-        return $query->where('name', 'LIKE', '%' . $keyword . '%');
+        return $query->when($keyword, function (Builder $q) use ($keyword) {
+            $q->where('name', 'LIKE', '%' . $keyword . '%');
+        });
     }
 
     /**
      * Scope to order categories by latest activity
-     * Orders by created_at or updated_at (whichever is more recent), then by id
-     * 
-     * Usage: Category::orderByLatest()->get()
      */
-    public function scopeOrderByLatest($query)
+    public function scopeOrderByLatest(Builder $query): Builder
     {
         return $query->orderByRaw('CASE WHEN created_at IS NULL THEN updated_at ELSE created_at END DESC')
-            ->orderBy('id', 'desc');
+            ->orderByDesc('id');
     }
 
-    public function products()
+    public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'category_product');
     }
@@ -87,7 +82,7 @@ class Category extends Model
         return $this->products()->exists();
     }
 
-    public function ownProducts()
+    public function ownProducts(): HasMany
     {
         return $this->hasMany(OwnProduct::class);
     }
