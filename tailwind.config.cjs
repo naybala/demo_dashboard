@@ -5,7 +5,6 @@ module.exports = {
     "./resources/**/*.js",
     "./resources/**/*.svelte",
     "./resources/**/*.css",
-    "./node_modules/flowbite/**/*.js",
   ],
   safelist: [
     ...[...Array(10).keys()].flatMap((i) => [
@@ -31,9 +30,4 @@ module.exports = {
     },
   },
   darkMode: "class",
-  plugins: [
-    require("flowbite/plugin")({
-      charts: true,
-    }),
-  ],
 };

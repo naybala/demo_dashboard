@@ -143,7 +143,7 @@
                         id="amount_{i}"
                         bind:value={item.amount}
                         on:input={() => calculateProfit(i)}
-                        class="w-full text-sm"
+                        class="w-full text-sm text-center"
                         decimals={0}
                         showButtons={true}
                         required
