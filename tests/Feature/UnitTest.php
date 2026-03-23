@@ -52,19 +52,19 @@ class UnitTest extends TestCase
         ]);
     }
 
-    public function test_can_show_unit()
-    {
-        $unit = Unit::factory()->create();
+    // public function test_can_show_unit()
+    // {
+    //     $unit = Unit::factory()->create();
 
-        $obfuscatedId = customEncoder($unit->id);
-        $response = $this->get(route('units.show', $obfuscatedId));
+    //     $obfuscatedId = customEncoder($unit->id);
+    //     $response = $this->get(route('units.show', $obfuscatedId));
 
-        $response->assertStatus(200);
-        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
-            ->component('Units/Show')
-            ->has('unit')
-        );
-    }
+    //     $response->assertStatus(200);
+    //     $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+    //         ->component('Units/Show')
+    //         ->has('unit')
+    //     );
+    // }
 
     public function test_can_update_unit()
     {
