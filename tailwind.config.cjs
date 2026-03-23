@@ -5,6 +5,7 @@ module.exports = {
     "./resources/**/*.js",
     "./resources/**/*.svelte",
     "./resources/**/*.css",
+    "./resources/**/*.vue",
   ],
   safelist: [
     ...[...Array(10).keys()].flatMap((i) => [

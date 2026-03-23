@@ -182,7 +182,7 @@ const { form, imagePreview, handleImageChange, submit } =
               <div class="mt-1">
                 <SearchableSelect
                   :options="categoryOptions"
-                  v-model:value="form.category_id"
+                  v-model="form.category_id"
                   :placeholder="
                     __('placeholder.select_category', 'Select Category')
                   "
@@ -197,7 +197,7 @@ const { form, imagePreview, handleImageChange, submit } =
               <div class="mt-1">
                 <SearchableSelect
                   :options="unitOptions"
-                  v-model:value="form.unit_id"
+                  v-model="form.unit_id"
                   :placeholder="__('placeholder.select_unit', 'Select Unit')"
                   required
                 />
