@@ -1,5 +1,5 @@
-import { useForm } from "@inertiajs/svelte";
-import { writable, get } from "svelte/store";
+import { useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 export function useOwnProductForm(ownProduct = null) {
   const form = useForm({
@@ -12,27 +12,26 @@ export function useOwnProductForm(ownProduct = null) {
     image: null,
   });
 
-  const imagePreview = writable(ownProduct?.image || null);
+  const imagePreview = ref(ownProduct?.image || null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      form.update((data) => ({ ...data, image: file }));
-      imagePreview.set(URL.createObjectURL(file));
+      form.image = file;
+      imagePreview.value = URL.createObjectURL(file);
     }
   };
 
   const submit = () => {
-    const formInstance = get(form);
     if (ownProduct) {
-      formInstance
+      form
         .transform((data) => ({
           ...data,
           _method: "PUT",
         }))
         .post(`/own-products/${ownProduct.id}`);
     } else {
-      formInstance.post("/own-products");
+      form.post("/own-products");
     }
   };
 

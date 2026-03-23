@@ -1,31 +1,28 @@
-import { writable, get } from "svelte/store";
-import { router, page } from "@inertiajs/svelte";
+import { ref } from "vue";
+import { router, usePage } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
 
 // State
-export const isSidebarOpen = writable(
+export const isSidebarOpen = ref(
   typeof window !== "undefined" ? window.innerWidth >= 1024 : true,
 );
-export const isDarkMode = writable(false);
-export const showLogoutModal = writable(false);
-export const isOnline = writable(
+export const isDarkMode = ref(false);
+export const showLogoutModal = ref(false);
+export const isOnline = ref(
   typeof window !== "undefined" ? window.navigator.onLine : true,
 );
-export const globalLoading = writable(false);
+export const globalLoading = ref(false);
 
 // Helpers
 export const toggleTheme = () => {
-  isDarkMode.update((dark) => {
-    const next = !dark;
-    if (next) {
-      document.documentElement.classList.add("dark");
-      localStorage.theme = "dark";
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.theme = "light";
-    }
-    return next;
-  });
+  isDarkMode.value = !isDarkMode.value;
+  if (isDarkMode.value) {
+    document.documentElement.classList.add("dark");
+    localStorage.theme = "dark";
+  } else {
+    document.documentElement.classList.remove("dark");
+    localStorage.theme = "light";
+  }
 };
 
 export const changeLanguage = (lang) => {
@@ -39,24 +36,24 @@ export const changeLanguage = (lang) => {
 };
 
 export const isActive = (href) => {
-  const $page = get(page);
-  if (href === "/dashboard") return $page.url === href;
-  return $page.url.startsWith(href);
+  const page = usePage();
+  if (href === "/dashboard") return page.url === href;
+  return page.url.startsWith(href);
 };
 
 export const canSee = (item) => {
-  const $page = get(page);
-  const permissions = $page.props.permissions || [];
+  const page = usePage();
+  const permissions = page.props.permissions || [];
   return !item.permission || permissions.includes(item.permission);
 };
 
 export const handleLogoutClick = () => {
-  showLogoutModal.set(true);
+  showLogoutModal.value = true;
 };
 
 export const confirmLogout = () => {
   router.post("/logout");
-  showLogoutModal.set(false);
+  showLogoutModal.value = false;
 };
 
 // Lifecycle/Initialization logic
@@ -68,35 +65,35 @@ export const initAdminLayout = () => {
       window.matchMedia("(prefers-color-scheme: dark)").matches)
   ) {
     document.documentElement.classList.add("dark");
-    isDarkMode.set(true);
+    isDarkMode.value = true;
   } else {
     document.documentElement.classList.remove("dark");
-    isDarkMode.set(false);
+    isDarkMode.value = false;
   }
 
   // Connectivity listeners
-  const handleOnline = () => isOnline.set(true);
-  const handleOffline = () => isOnline.set(false);
+  const handleOnline = () => (isOnline.value = true);
+  const handleOffline = () => (isOnline.value = false);
 
   window.addEventListener("online", handleOnline);
   window.addEventListener("offline", handleOffline);
 
   // Global loading state
   const unregisterStart = router.on("start", () => {
-    globalLoading.set(true);
+    globalLoading.value = true;
   });
 
   const unregisterFinish = router.on("finish", () => {
     // Small delay to ensure the loading screen is seen and doesn't flicker
     setTimeout(() => {
-      globalLoading.set(false);
+      globalLoading.value = false;
     }, 300);
   });
 
   // Auto-close sidebar on navigation for mobile/tablet
   const unregisterFinishSidebar = router.on("finish", () => {
     if (window.innerWidth < 1024) {
-      isSidebarOpen.set(false);
+      isSidebarOpen.value = false;
     }
   });
 

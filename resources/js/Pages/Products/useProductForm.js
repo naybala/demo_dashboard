@@ -1,5 +1,4 @@
-import { useForm } from "@inertiajs/svelte";
-import { get } from "svelte/store";
+import { useForm } from "@inertiajs/vue3";
 
 export function useProductForm(product = null) {
   const form = useForm({
@@ -17,37 +16,27 @@ export function useProductForm(product = null) {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    form.update((data) => ({
-      ...data,
-      photos: [...data.photos, ...files],
-    }));
+    form.photos = [...form.photos, ...files];
   };
 
   const removeNewPhoto = (index) => {
-    form.update((data) => ({
-      ...data,
-      photos: data.photos.filter((_, i) => i !== index),
-    }));
+    form.photos = form.photos.filter((_, i) => i !== index);
   };
 
   const removeExistingPhoto = (path) => {
-    form.update((data) => ({
-      ...data,
-      existing_photos: data.existing_photos.filter((p) => p !== path),
-    }));
+    form.existing_photos = form.existing_photos.filter((p) => p !== path);
   };
 
   const submit = () => {
-    const formInstance = get(form);
     if (product) {
-      formInstance
+      form
         .transform((data) => ({
           ...data,
           _method: "PUT",
         }))
         .post(`/products/${product.id}`);
     } else {
-      formInstance.post("/products");
+      form.post("/products");
     }
   };
 

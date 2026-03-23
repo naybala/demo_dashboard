@@ -1,33 +1,33 @@
-import { router } from "@inertiajs/svelte";
-import { writable, get } from "svelte/store";
+import { router } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 export function useCategoryActions() {
-  const showModal = writable(false);
-  const showDeleteModal = writable(false);
-  const editingCategory = writable(null);
-  const deletingCategory = writable(null);
+  const showModal = ref(false);
+  const showDeleteModal = ref(false);
+  const editingCategory = ref(null);
+  const deletingCategory = ref(null);
 
   const openCreateModal = () => {
-    editingCategory.set(null);
-    showModal.set(true);
+    editingCategory.value = null;
+    showModal.value = true;
   };
 
   const openEditModal = (category) => {
-    editingCategory.set(category);
-    showModal.set(true);
+    editingCategory.value = category;
+    showModal.value = true;
   };
 
   const openDeleteModal = (category) => {
-    deletingCategory.set(category);
-    showDeleteModal.set(true);
+    deletingCategory.value = category;
+    showDeleteModal.value = true;
   };
 
   const closeDeleteModal = () => {
-    showDeleteModal.set(false);
+    showDeleteModal.value = false;
   };
 
   const confirmDelete = () => {
-    const category = get(deletingCategory);
+    const category = deletingCategory.value;
     if (category) {
       router.delete(`/categories/${category.id}`, {
         onSuccess: () => {

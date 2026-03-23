@@ -1,31 +1,31 @@
-import { router } from "@inertiajs/svelte";
-import { writable, get } from "svelte/store";
+import { router } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 export function useProductActions() {
-  const showDeleteModal = writable(false);
-  const productToDelete = writable(null);
+  const showDeleteModal = ref(false);
+  const productToDelete = ref(null);
 
   const confirmDelete = (product) => {
-    productToDelete.set(product);
-    showDeleteModal.set(true);
+    productToDelete.value = product;
+    showDeleteModal.value = true;
   };
 
   const deleteProduct = () => {
-    const product = get(productToDelete);
+    const product = productToDelete.value;
     if (product) {
       router.delete("/products", {
         data: { id: product.id },
         onSuccess: () => {
-          showDeleteModal.set(false);
-          productToDelete.set(null);
+          showDeleteModal.value = false;
+          productToDelete.value = null;
         },
       });
     }
   };
 
   const closeDeleteModal = () => {
-    showDeleteModal.set(false);
-    productToDelete.set(null);
+    showDeleteModal.value = false;
+    productToDelete.value = null;
   };
 
   return {

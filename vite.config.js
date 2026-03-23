@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import vue from "@vitejs/plugin-vue";
 import path from "path";
 
 export default defineConfig({
@@ -20,10 +20,6 @@ export default defineConfig({
       input: ["resources/js/app.js", "resources/css/app.css"],
       refresh: true,
     }),
-    svelte(),
+    vue(),
   ],
-  compilerOptions: {
-    dev: true,
-    accessors: false,
-  },
 });

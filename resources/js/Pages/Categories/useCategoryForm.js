@@ -1,5 +1,4 @@
-import { useForm } from "@inertiajs/svelte";
-import { get } from "svelte/store";
+import { useForm } from "@inertiajs/vue3";
 
 export function useCategoryForm(category = null, { onSuccess } = {}) {
   const form = useForm({
@@ -12,17 +11,16 @@ export function useCategoryForm(category = null, { onSuccess } = {}) {
   });
 
   const submit = () => {
-    const formInstance = get(form);
-    if (formInstance.id) {
-      formInstance.put(`/categories/${formInstance.id}`, {
+    if (form.id) {
+      form.put(`/categories/${form.id}`, {
         onSuccess: () => {
           if (onSuccess) onSuccess();
         },
       });
     } else {
-      formInstance.post("/categories", {
+      form.post("/categories", {
         onSuccess: () => {
-          formInstance.reset();
+          form.reset();
           if (onSuccess) onSuccess();
         },
       });
