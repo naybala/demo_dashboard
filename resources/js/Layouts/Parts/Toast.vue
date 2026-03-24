@@ -18,31 +18,37 @@ let connErrorTimer;
 let connSuccessTimer;
 
 watch(
-  () => page.props.flash?.success,
-  (newVal) => {
-    if (newVal) {
-      showSuccessToast.value = true;
+  () => page.props.flash,
+  (newFlash) => {
+    if (newFlash?.success) {
+      showSuccessToast.value = false;
+      setTimeout(() => {
+        showSuccessToast.value = true;
+      }, 10);
       clearTimeout(successTimer);
       successTimer = setTimeout(() => {
         showSuccessToast.value = false;
       }, 3000);
     }
   },
-  { immediate: true },
+  { deep: true, immediate: true },
 );
 
 watch(
-  () => page.props.flash?.error,
-  (newVal) => {
-    if (newVal) {
-      showErrorToast.value = true;
+  () => page.props.flash,
+  (newFlash) => {
+    if (newFlash?.error) {
+      showErrorToast.value = false;
+      setTimeout(() => {
+        showErrorToast.value = true;
+      }, 10);
       clearTimeout(errorTimer);
       errorTimer = setTimeout(() => {
         showErrorToast.value = false;
       }, 4000);
     }
   },
-  { immediate: true },
+  { deep: true, immediate: true },
 );
 
 watch(isOnline, (newVal) => {
