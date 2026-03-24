@@ -87,7 +87,7 @@ const deleteUser = () => {
           :placeholder="__('messages.search_item', 'Search users...')"
           v-model="search"
           @keydown.enter="handleSearch"
-          class="w-full"
+          class="w-full md:w-1/3"
         />
         <SecondaryButton @click="handleSearch">
           {{ __("messages.search", "Search") }}
@@ -102,13 +102,19 @@ const deleteUser = () => {
       </div>
       <div class="flex-shrink-0">
         <Link v-if="permissions.includes('create users')" href="/users/create">
-          <PrimaryButton>{{ __("messages.create", "Create User") }}</PrimaryButton>
+          <PrimaryButton>{{
+            __("messages.create", "Create User")
+          }}</PrimaryButton>
         </Link>
       </div>
     </div>
 
     <BaseTable :headers="headers">
-      <tr v-for="user in data" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+      <tr
+        v-for="user in data"
+        :key="user.id"
+        class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+      >
         <td
           class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
         >
@@ -148,7 +154,11 @@ const deleteUser = () => {
         >
           <span
             class="px-2 py-1 rounded-full text-xs font-semibold"
-            :class="user.status === 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+            :class="
+              user.status === 1
+                ? 'bg-green-100 text-green-800'
+                : 'bg-red-100 text-red-800'
+            "
           >
             {{ user.status_text }}
           </span>
@@ -156,10 +166,17 @@ const deleteUser = () => {
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex gap-2 justify-end">
             <Link :href="`/users/${user.id}`">
-              <SecondaryButton>{{ __("messages.view", "View") }}</SecondaryButton>
+              <SecondaryButton>{{
+                __("messages.view", "View")
+              }}</SecondaryButton>
             </Link>
-            <Link v-if="permissions.includes('edit users')" :href="`/users/${user.id}/edit`">
-              <SecondaryButton>{{ __("messages.edit", "Edit") }}</SecondaryButton>
+            <Link
+              v-if="permissions.includes('edit users')"
+              :href="`/users/${user.id}/edit`"
+            >
+              <SecondaryButton>{{
+                __("messages.edit", "Edit")
+              }}</SecondaryButton>
             </Link>
             <button
               v-if="permissions.includes('delete users')"
@@ -181,7 +198,7 @@ const deleteUser = () => {
       :message="
         __(
           'user.delete_message',
-          `Are you sure you want to delete ${userToDelete?.fullname}? This action cannot be undone.`
+          `Are you sure you want to delete ${userToDelete?.fullname}? This action cannot be undone.`,
         )
       "
       @confirm="deleteUser"

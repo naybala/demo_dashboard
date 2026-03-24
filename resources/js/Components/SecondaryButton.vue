@@ -14,7 +14,7 @@ defineProps({
 <template>
   <button
     :type="type"
-    class="inline-flex items-center px-4 py-2 bg-white rounded-md font-semibold text-xs uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
+    class="inline-flex items-center justify-center px-4 h-[2.55rem] min-w-[100px] bg-white rounded-md font-semibold text-xs uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
     :class="
       variant === 'danger'
         ? 'border border-red-400 text-red-600 hover:bg-red-50 focus:ring-red-400 dark:border-red-500 dark:text-red-400 dark:hover:bg-red-900/20'

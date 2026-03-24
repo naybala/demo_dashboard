@@ -75,14 +75,16 @@ const deleteUnit = () => {
       </h2>
     </template>
 
-    <div class="mb-6 flex justify-between items-center">
-      <div class="flex gap-2 w-1/2">
+    <div
+      class="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between"
+    >
+      <div class="flex flex-1 gap-2 min-w-0">
         <TextInput
           type="text"
           :placeholder="__('messages.search_item', 'Search units...')"
           v-model="search"
           @keydown.enter="handleSearch"
-          class="w-full"
+          class="w-full md:w-1/3"
         />
         <SecondaryButton @click="handleSearch">
           {{ __("messages.search", "Search") }}
@@ -95,9 +97,13 @@ const deleteUnit = () => {
           {{ __("messages.reset", "Clear") }}
         </SecondaryButton>
       </div>
-      <Link v-if="permissions.includes('create units')" href="/units/create">
-        <PrimaryButton>{{ __("messages.create", "Create Unit") }}</PrimaryButton>
-      </Link>
+      <div class="flex-shrink-0">
+        <Link v-if="permissions.includes('create units')" href="/units/create">
+          <PrimaryButton>{{
+            __("messages.create", "Create Unit")
+          }}</PrimaryButton>
+        </Link>
+      </div>
     </div>
 
     <BaseTable :headers="headers">

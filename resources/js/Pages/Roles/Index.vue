@@ -89,7 +89,7 @@ const deleteRole = () => {
           :placeholder="__('messages.search_item', 'Search roles...')"
           v-model="search"
           @keydown.enter="handleSearch"
-          class="w-full"
+          class="w-full md:w-1/3"
         />
         <SecondaryButton @click="handleSearch">
           {{ __("messages.search", "Search") }}
