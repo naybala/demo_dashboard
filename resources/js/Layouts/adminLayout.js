@@ -37,8 +37,9 @@ export const changeLanguage = (lang) => {
 
 export const isActive = (href) => {
   const page = usePage();
-  if (href === "/dashboard") return page.url === href;
-  return page.url.startsWith(href);
+  const currentPath = page.url.split("?")[0];
+  if (href === "/dashboard") return currentPath === href;
+  return currentPath.startsWith(href);
 };
 
 export const canSee = (item) => {
