@@ -31,3 +31,20 @@ Route::post('upload/image/local', function (Illuminate\Http\Request $request) {
         'url'  => $url,
     ]);
 })->name('uploadImageLocal');
+
+Route::post('upload/image/local/quill', function (Illuminate\Http\Request $request) {
+    if (!$request->hasFile('image')) {
+        return response()->json(['error' => 'No image uploaded'], 400);
+    }
+    $path = $request->input('path', 'uploads/quill');
+    $file = $request->file('image');
+    $url  = uploadImageToLocal($file, $path);
+    if (!$url) {
+        return response()->json(['error' => 'Failed to save image locally'], 500);
+    }
+    return response()->json([
+        'data' => 'success',
+        'code' => 200,
+        'url'  => $url,
+    ]);
+})->name('uploadImageLocalQuill');

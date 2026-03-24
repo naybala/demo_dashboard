@@ -68,7 +68,7 @@
       />
       <textarea
         id="description"
-        class="mt-1 block w-3/4 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
+        class="mt-1 block w-3/4 border-gray-300 border-2 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
         bind:value={$form.description}
       ></textarea>
       <InputError message={$form.errors.description} class="mt-2" />

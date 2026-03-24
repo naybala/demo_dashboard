@@ -19,5 +19,5 @@
   bind:value
   type="text"
   {...$$restProps}
-  class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
+  class="border-gray-300 border-2 p-2 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
 />

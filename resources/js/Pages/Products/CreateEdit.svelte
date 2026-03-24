@@ -9,9 +9,10 @@
   import { useProductForm } from "./useProductForm";
   import { page, router } from "@inertiajs/svelte";
   import CurrencyInput from "@/Components/CurrencyInput.svelte";
-  import { onMount } from "svelte";
   import MultiSelectUi from "../../Components/MultiSelectUi.svelte";
   import { __ } from "@/helpers";
+  import RichTextEditor from "@/Components/RichTextEditor.svelte";
+  import ProductPhotoGallery from "./Partials/ProductPhotoGallery.svelte";
 
   export let product = null;
   export let categories = [];
@@ -25,55 +26,6 @@
     removeExistingPhoto,
     submit,
   } = useProductForm(product);
-
-  let quillEn;
-  let quillOther;
-  let fileInput;
-
-  onMount(async () => {
-    // Lazy-load Quill — only fetched when this page is visited
-    const [{ default: Quill }] = await Promise.all([
-      import("quill"),
-      import("quill/dist/quill.snow.css"),
-    ]);
-
-    const toolbarOptions = [
-      ["bold", "italic", "underline", "strike"],
-      ["blockquote", "code-block"],
-      [{ header: 1 }, { header: 2 }],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ script: "sub" }, { script: "super" }],
-      [{ indent: "-1" }, { indent: "+1" }],
-      [{ direction: "rtl" }],
-      [{ size: ["small", false, "large", "huge"] }],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      [{ color: [] }, { background: [] }],
-      [{ font: [] }],
-      [{ align: [] }],
-      ["image", "clean"],
-    ];
-
-    quillEn = new Quill("#editor-en", {
-      theme: "snow",
-      modules: { toolbar: toolbarOptions },
-    });
-
-    quillOther = new Quill("#editor-other", {
-      theme: "snow",
-      modules: { toolbar: toolbarOptions },
-    });
-
-    quillEn.root.innerHTML = $form.description;
-    quillOther.root.innerHTML = $form.description_other;
-
-    quillEn.on("text-change", () => {
-      $form.description = quillEn.root.innerHTML;
-    });
-
-    quillOther.on("text-change", () => {
-      $form.description_other = quillOther.root.innerHTML;
-    });
-  });
 </script>
 
 <svelte:head>
@@ -101,102 +53,14 @@
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-6">
       <!-- Image Upload -->
-      <div>
-        <InputLabel value={__("product.photo", "Product Photos")} />
-        <div class="mt-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {#each $form.existing_photos as path}
-            <div
-              class="relative group aspect-square rounded-lg overflow-hidden border border-gray-200"
-            >
-              <img
-                src={path}
-                alt="product"
-                class="w-full h-full object-cover"
-              />
-              <button
-                type="button"
-                on:click={() => removeExistingPhoto(path)}
-                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  ><path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  /></svg
-                >
-              </button>
-            </div>
-          {/each}
-
-          {#each $form.photos as file, i}
-            <div
-              class="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center"
-            >
-              <img
-                src={URL.createObjectURL(file)}
-                alt="preview"
-                class="w-full h-full object-cover"
-                on:load={(e) => URL.revokeObjectURL(e.target.src)}
-              />
-              <button
-                type="button"
-                on:click={() => removeNewPhoto(i)}
-                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-sm"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  ><path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  /></svg
-                >
-              </button>
-            </div>
-          {/each}
-
-          <button
-            type="button"
-            on:click={() => fileInput.click()}
-            class="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-500 hover:border-indigo-500 hover:text-indigo-500 transition-colors"
-          >
-            <svg
-              class="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              /></svg
-            >
-            <span class="mt-1 text-xs"
-              >{__("product.add_photo", "Add Photo")}</span
-            >
-          </button>
-          <input
-            type="file"
-            multiple
-            class="hidden"
-            bind:this={fileInput}
-            on:change={handleFileChange}
-            accept="image/*"
-          />
-        </div>
-        <InputError message={$form.errors.photos} />
-      </div>
+      <ProductPhotoGallery
+        photos={$form.photos}
+        existing_photos={$form.existing_photos}
+        {handleFileChange}
+        {removeNewPhoto}
+        {removeExistingPhoto}
+        error={$form.errors.photos}
+      />
 
       <div
         class="grid grid-cols-1 md:grid-cols-3 gap-6 border border-gray-200 p-3 rounded-2xl"
@@ -270,25 +134,19 @@
         </label>
       </div>
 
-      <div>
-        <InputLabel value={__("product.description", "Description (EN)")} />
-        <div
-          class="mt-1 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 min-h-[200px]"
-          id="editor-en"
-        ></div>
-        <InputError message={$form.errors.description} />
-      </div>
+      <RichTextEditor
+        bind:value={$form.description}
+        uploadedPath="products/quill"
+        label={__("product.description", "Description (EN)")}
+        error={$form.errors.description}
+      />
 
-      <div>
-        <InputLabel
-          value={__("product.description_other", "Description (Other)")}
-        />
-        <div
-          class="mt-1 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 min-h-[200px]"
-          id="editor-other"
-        ></div>
-        <InputError message={$form.errors.description_other} />
-      </div>
+      <RichTextEditor
+        bind:value={$form.description_other}
+        uploadedPath="products/quill"
+        label={__("product.description_other", "Description (Other)")}
+        error={$form.errors.description_other}
+      />
 
       <div class="flex items-center justify-end gap-4">
         <SecondaryButton on:click={() => router.get("/products")}

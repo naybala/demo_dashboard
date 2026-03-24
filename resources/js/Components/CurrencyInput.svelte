@@ -104,7 +104,7 @@
     value={displayValue}
     on:input={handleInput}
     {...$$restProps}
-    class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm dark:bg-gray-800 dark:text-gray-100 {!showButtons
+    class="block w-full border-2 p-2 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm dark:bg-gray-800 dark:text-gray-100 {!showButtons
       ? 'rounded-md'
       : 'border-x-0'} {$$props.class || ''}"
   />
