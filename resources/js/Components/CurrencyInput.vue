@@ -119,7 +119,12 @@ onMounted(() => {
       class="flex items-center justify-center h-full px-2 border border-r-0 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-l-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
       tabindex="-1"
     >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -137,7 +142,7 @@ onMounted(() => {
       inputmode="numeric"
       :value="displayValue"
       @input="handleInput"
-      class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm dark:bg-gray-800 dark:text-gray-100"
+      class="block w-full border-2 p-2 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm dark:bg-gray-800 dark:text-gray-100"
       :class="[!showButtons ? 'rounded-md' : 'border-x-0', props.class]"
     />
     <button
@@ -147,7 +152,12 @@ onMounted(() => {
       class="flex items-center justify-center h-full px-2 border border-l-0 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-r-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
       tabindex="-1"
     >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"

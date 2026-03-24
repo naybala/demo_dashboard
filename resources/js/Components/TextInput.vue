@@ -29,6 +29,6 @@ onMounted(() => {
     type="text"
     :value="modelValue"
     @input="emit('update:modelValue', $event.target.value)"
-    class="border-gray-300 border-2 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
+    class="border-gray-300 p-2 border-2 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:bg-gray-800 dark:text-gray-100"
   />
 </template>
