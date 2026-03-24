@@ -17,10 +17,8 @@ import {
   handleLogoutClick,
   confirmLogout,
   initAdminLayout,
-  globalLoading,
 } from "./adminLayout.js";
 import Toast from "./Parts/Toast.vue";
-import LoadingOverlay from "@/Components/LoadingOverlay.vue";
 
 const page = usePage();
 
@@ -90,7 +88,6 @@ const navigation = navigations;
 
       <!-- Page Content -->
       <div class="relative flex-1 overflow-hidden flex flex-col">
-        <LoadingOverlay :show="globalLoading" />
         <main
           class="flex-1 overflow-y-auto shadow-inner custom-scrollbar bg-gray-50 dark:bg-gray-900/50 p-1 md:p-4"
         >

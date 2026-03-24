@@ -11,7 +11,6 @@ export const showLogoutModal = ref(false);
 export const isOnline = ref(
   typeof window !== "undefined" ? window.navigator.onLine : true,
 );
-export const globalLoading = ref(false);
 
 // Helpers
 export const toggleTheme = () => {
@@ -57,7 +56,14 @@ export const confirmLogout = () => {
   showLogoutModal.value = false;
 };
 
-// Lifecycle/Initialization logic
+// Auto-close sidebar on navigation for mobile/tablet (registered once at module level)
+router.on("finish", () => {
+  if (typeof window !== "undefined" && window.innerWidth < 1024) {
+    isSidebarOpen.value = false;
+  }
+});
+
+// Lifecycle/Initialization logic (called from onMounted — component-only concerns)
 export const initAdminLayout = () => {
   // Theme initialization
   if (
@@ -79,29 +85,7 @@ export const initAdminLayout = () => {
   window.addEventListener("online", handleOnline);
   window.addEventListener("offline", handleOffline);
 
-  // Global loading state
-  const unregisterStart = router.on("start", () => {
-    globalLoading.value = true;
-  });
-
-  const unregisterFinish = router.on("finish", () => {
-    // Small delay to ensure the loading screen is seen and doesn't flicker
-    setTimeout(() => {
-      globalLoading.value = false;
-    }, 300);
-  });
-
-  // Auto-close sidebar on navigation for mobile/tablet
-  const unregisterFinishSidebar = router.on("finish", () => {
-    if (window.innerWidth < 1024) {
-      isSidebarOpen.value = false;
-    }
-  });
-
   return () => {
-    unregisterStart();
-    unregisterFinish();
-    unregisterFinishSidebar();
     window.removeEventListener("online", handleOnline);
     window.removeEventListener("offline", handleOffline);
   };
