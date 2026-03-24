@@ -29,16 +29,14 @@ class RoleService
 
     public function getFormattedPermissions(): array
     {
-        $features = config('numbers.permissions');
-        $permissions      = $this->permission->orderBy('id', 'asc')->get(['id', 'name'])->toArray(); 
-        $finalPermissions = [];
-        foreach ($features as $feature) {
-            $finalPermissions[$feature] = array_values(array_filter($permissions, function ($permission) use ($feature) {
-                $getPermissionFeature = explode(' ', $permission['name'])[1];
-                return $getPermissionFeature == $feature;
-            }));
-        }
-        return $finalPermissions;
+        return $this->permission
+            ->orderBy('id', 'asc')
+            ->get(['id', 'name'])
+            ->groupBy(function ($permission) {
+                $parts = explode(' ', $permission->name);
+                return $parts[1] ?? 'other';
+            })
+            ->toArray();
     }
 
     public function store(array $request): Role
