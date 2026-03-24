@@ -13,8 +13,7 @@ export function useProductActions() {
   const deleteProduct = () => {
     const product = productToDelete.value;
     if (product) {
-      router.delete("/products", {
-        data: { id: product.id },
+      router.delete(`/products/${product.id}`, {
         onSuccess: () => {
           showDeleteModal.value = false;
           productToDelete.value = null;

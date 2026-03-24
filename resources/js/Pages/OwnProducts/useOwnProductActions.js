@@ -13,8 +13,7 @@ export function useOwnProductActions() {
   const deleteProduct = () => {
     const product = productToDelete.value;
     if (product) {
-      router.delete("/own-products", {
-        data: { id: product.id },
+      router.delete(`/own-products/${product.id}`, {
         onSuccess: () => {
           showDeleteModal.value = false;
           productToDelete.value = null;

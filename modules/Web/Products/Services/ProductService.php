@@ -101,6 +101,7 @@ class ProductService
             if ($product->photos) {
                 $this->filesystemManager->forceDeleteFilesFromLocal($product->photos);
             }
+            $product->categories()->detach();
             $product->delete();
         });
     }
