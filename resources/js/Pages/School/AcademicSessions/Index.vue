@@ -12,6 +12,7 @@ import { ref, computed } from "vue";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
+import SearchableSelect from "@/Components/SearchableSelect.vue";
 
 const props = defineProps({
   data: {
@@ -289,14 +290,16 @@ const deleteSession = () => {
 
           <div>
             <InputLabel for="status" :value="__('school.status', 'Status')" />
-            <select
+            <SearchableSelect
               id="status"
               v-model="form.status"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+              :options="[
+                { id: 'active', label: 'Active' },
+                { id: 'inactive', label: 'Inactive' },
+              ]"
+              class="mt-1 block w-full"
+              :error="form.errors.status"
+            />
             <InputError :message="errors.status" class="mt-2" />
           </div>
         </div>

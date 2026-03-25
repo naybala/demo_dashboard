@@ -1,5 +1,7 @@
 <script setup>
 import { __ } from "@/helpers.js";
+import SearchableSelect from "@/Components/SearchableSelect.vue";
+import { computed } from "vue";
 defineProps({
   selectedYear: {
     type: [String, Number],
@@ -12,8 +14,16 @@ defineProps({
 });
 const emit = defineEmits(["change"]);
 
-const handleChange = (e) => {
-  emit("change", e.target.value);
+const yearOptions = computed(() => [
+  { id: "", label: __("messages.last_12_months", "Last 12 Months") },
+  ...props.availableYears.map((year) => ({
+    id: year.toString(),
+    label: year.toString(),
+  })),
+]);
+
+const handleChange = (id) => {
+  emit("change", id);
 };
 </script>
 
@@ -24,16 +34,12 @@ const handleChange = (e) => {
       class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
       >{{ __("messages.year", "Year") }}</label
     >
-    <select
+    <SearchableSelect
       id="year"
-      :value="selectedYear?.toString() || ''"
-      @change="handleChange"
-      class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-    >
-      <option value="">{{ __("messages.last_12_months", "Last 12 Months") }}</option>
-      <option v-for="year in availableYears" :key="year" :value="year.toString()">
-        {{ year }}
-      </option>
-    </select>
+      :model-value="selectedYear?.toString() || ''"
+      @update:model-value="handleChange"
+      :options="yearOptions"
+      class="w-full"
+    />
   </div>
 </template>

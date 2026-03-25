@@ -30,6 +30,10 @@ const props = defineProps({
     type: String,
     default: "keyword",
   },
+  error: {
+    type: [String, Boolean],
+    default: false,
+  },
 });
 
 const emit = defineEmits(["update:modelValue", "change"]);
@@ -171,9 +175,7 @@ onUnmounted(() => {
     <div
       class="relative cursor-pointer bg-white dark:bg-gray-900 border rounded-md shadow-sm px-3 py-2 text-left focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
       :class="[
-        props.required && !props.modelValue
-          ? 'border-red-300 dark:border-red-700'
-          : 'border-gray-300 dark:border-gray-700',
+        error ? 'border-red-500 dark:border-red-600' : 'border-gray-300 dark:border-gray-700',
         props.disabled ? 'bg-gray-100 cursor-not-allowed' : '',
       ]"
       @click="toggleOpen"

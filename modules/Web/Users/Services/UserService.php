@@ -2,123 +2,96 @@
 
 namespace BasicDashboard\Web\Users\Services;
 
-use BasicDashboard\Foundations\Actions\WebFileStoreAction;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use BasicDashboard\Foundations\Domain\Users\User;
-use BasicDashboard\Foundations\Domain\Roles\Role;
-use Illuminate\Filesystem\FilesystemManager;
+use App\Enums\Users\UserType;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\WarningException;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    const ROOT      = "Users";
-
-    public function __construct(
-        private User $user,
-        private Role $role,
-        private FilesystemManager $fileSystemManager,
-        private WebFileStoreAction $webFileStoreAction,
-    ) {}
-
-    public function paginate(array $request)
+    public function getPaginatedUsers(array $filters)
     {
-        return $this->user
-            ->withUserRelations()                                    
-            ->filterByKeyword($request['keyword'] ?? null)          
-            ->orderByLatest()                                        
-            ->paginate($request['paginate'] ?? config('numbers.paginate'));
+        return User::query()
+            ->where('user_type', UserType::User)
+            ->filterByKeyword($filters['keyword'] ?? null)
+            ->with(['profile', 'roles', 'guardians'])
+            ->orderByLatest()
+            ->paginate(10);
     }
 
-    public function store(array $request): User
+    public function createUser(array $data)
     {
-        return DB::transaction(function () use ($request) {
-            $image    = $request['avatar'] ?? null;
-            $roleId   = $request['role_id'];
-            $roleName = $this->getRoleName($roleId);
-            $payload  = Arr::except($request, ['avatar', 'role_id']);
-            $payload['role_marked'] = $roleName;
-            $payload['created_by']  = Auth::id();
-            $user = $this->user->create($payload);
-            $user->assignRole($roleName);
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'fullname'     => $data['fullname'],
+                'staff_id'     => $data['staff_id'],
+                'email'        => $data['email'] ?? null,
+                'password'     => Hash::make($data['password'] ?? 'password'),
+                'user_type'    => $data['user_type'],
+                'gender'       => $data['gender'] ?? null,
+                'dob'          => $data['dob'] ?? null,
+                'phone_number' => $data['phone_number'] ?? null,
+                'status'       => $data['status'] ?? 'active',
+            ]);
 
-            if ($image) {
-                $fileData = $this->webFileStoreAction->store($user, $image,self::ROOT,'avatar');
-                $user->forceFill($fileData)->save();
+            $user->profile()->create($data['profile'] ?? []);
+
+            if (!empty($data['spouse']) && !empty($data['spouse']['name'])) {
+                $user->guardians()->create(array_merge($data['spouse'], ['relation' => 'spouse']));
+            }
+
+            if (!empty($data['role'])) {
+                $user->assignRole($data['role']);
             }
 
             return $user;
         });
     }
 
-    public function findOrFail(string $id): User
+    public function updateUser(User $user, array $data)
     {
-        return $this->user->findOrFail($id);
-    }
+        return DB::transaction(function () use ($user, $data) {
+            $user->update([
+                'fullname'     => $data['fullname'],
+                'staff_id'     => $data['staff_id'],
+                'email'        => $data['email'] ?? $user->email,
+                'user_type'    => $data['user_type'],
+                'gender'       => $data['gender'] ?? $user->gender,
+                'dob'          => $data['dob'] ?? $user->dob,
+                'phone_number' => $data['phone_number'] ?? $user->phone_number,
+            ]);
 
-    public function find($id): ?User
-    {
-        return $this->user->find($id);
-    }
-
-    public function update(array $request, string $id): User
-    {
-        return DB::transaction(function () use ($request, $id) {
-            $decodedId = customDecoder($id);
-            $user      = $this->user->findOrFail($decodedId);
-            $image     = $request['avatar'] ?? null;
-            $roleId    = $request['role_id'] ?? null;
-            $payload   = Arr::except($request, ['avatar', 'role_id']);
-            $roleName  = $roleId ? $this->getRoleName($roleId) : null;
-
-            if ($roleName) {
-                $payload['role_marked'] = $roleName;
+            if (isset($data['password'])) {
+                $user->update(['password' => Hash::make($data['password'])]);
             }
 
-            if ($image) {
-                $fileData = $this->webFileStoreAction->update($user, $image,config('cache.file_system_disk'),'avatar',self::ROOT);
-                $payload  = array_merge($payload, $fileData);
+            $user->profile()->updateOrCreate(['user_id' => $user->id], $data['profile'] ?? []);
+
+            if (isset($data['spouse'])) {
+                if (empty($data['spouse']['name'])) {
+                    $user->guardians()->where(['relation' => 'spouse'])->delete();
+                } else {
+                    $user->guardians()->updateOrCreate(
+                        ['relation' => 'spouse'],
+                        $data['spouse']
+                    );
+                }
             }
 
-            $user->update($payload);
-
-            if ($roleName) {
-                $user->syncRoles($roleName);
+            if (!empty($data['role'])) {
+                $user->syncRoles([$data['role']]);
             }
 
             return $user;
         });
     }
 
-
-    public function delete(string $id): void
+    public function deleteUser(User $user)
     {
-        DB::transaction(function () use ($id) {
-            $decodedId = customDecoder($id);
-            if ($decodedId == Auth::id()) {
-                throw new WarningException('user.cannot_delete_self');
-            }
-            $user = $this->user->findOrFail($decodedId);
-            $user->roles()->detach();
-            $this->webFileStoreAction->delete($user, config('cache.file_system_disk'),'avatar');
-            $user->delete();
+        return DB::transaction(function () use ($user) {
+            $user->profile()?->delete();
+            $user->guardians()->where(['relation' => 'spouse'])->delete();
+            return $user->delete();
         });
     }
-
-    public function profile(): User
-    {
-        $id = Auth::id();
-        return $this->user->findOrFail($id);
-    }
-
-    // ==========================================
-    // Private Helper Methods
-    // ==========================================
-    private function getRoleName(string $roleId)
-    {
-        return $this->role->where('id', $roleId)->value('name');
-    }
-
-
 }

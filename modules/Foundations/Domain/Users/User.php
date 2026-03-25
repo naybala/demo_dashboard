@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[ObservedBy([AuditObserver::class])]
 #[Fillable([
     "fullname",
+    "staff_id",
     "email",
     "password",
     "status",
@@ -63,6 +64,22 @@ class User extends Authenticatable
     public function getAvartarAttribute($value)
     {
         return 'upload/profile.png';
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function guardians()
+    {
+        return $this->morphMany(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner');
+    }
+
+    public function spouse()
+    {
+        return $this->hasOne(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner_id')
+            ->where(['owner_type' => User::class, 'relation' => 'spouse']);
     }
 
     // ==========================================

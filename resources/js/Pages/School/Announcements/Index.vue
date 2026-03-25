@@ -9,6 +9,7 @@ import InputError from "@/Components/InputError.vue";
 import Modal from "@/Components/Modal.vue";
 import Pagination from "@/Components/Pagination.vue";
 import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.vue";
+import SearchableSelect from "@/Components/SearchableSelect.vue";
 import { Head, useForm, router, usePage } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
 import { ref, computed } from "vue";
@@ -23,6 +24,14 @@ const props = defineProps({
 
 const page = usePage();
 const permissions = computed(() => page.props.permissions || []);
+
+const departmentOptions = computed(() =>
+  props.departments.map((dept) => ({ id: dept.value, label: dept.label })),
+);
+
+const destinationOptions = computed(() =>
+  props.destinations.map((dest) => ({ id: dest.value, label: dest.label })),
+);
 
 const search = ref(props.filters.keyword || "");
 const startDate = ref(props.filters.start_date || "");
@@ -335,7 +344,7 @@ const deleteAnnouncement = () => {
             <textarea
               id="description"
               v-model="form.description"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+              class="p-1 mt-1 block w-full border-2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
               rows="4"
               required
               :placeholder="
@@ -354,23 +363,16 @@ const deleteAnnouncement = () => {
                 for="department"
                 :value="__('announcement.department', 'Department') + ' *'"
               />
-              <select
+              <SearchableSelect
                 id="department"
                 v-model="form.department"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                required
-              >
-                <option value="" disabled>
-                  {{ __("announcement.choose_dept", "Choose department...") }}
-                </option>
-                <option
-                  v-for="dept in departments"
-                  :key="dept.value"
-                  :value="dept.value"
-                >
-                  {{ dept.label }}
-                </option>
-              </select>
+                :options="departmentOptions"
+                :placeholder="
+                  __('announcement.choose_dept', 'Select Department')
+                "
+                class="mt-1 block w-full"
+                :error="form.errors.department"
+              />
               <InputError :message="form.errors.department" class="mt-2" />
             </div>
 
@@ -395,23 +397,16 @@ const deleteAnnouncement = () => {
               for="destination"
               :value="__('announcement.to', 'To') + ' *'"
             />
-            <select
+            <SearchableSelect
               id="destination"
               v-model="form.destination"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-              required
-            >
-              <option value="" disabled>
-                {{ __("announcement.choose_dest", "Choose destination...") }}
-              </option>
-              <option
-                v-for="dest in destinations"
-                :key="dest.value"
-                :value="dest.value"
-              >
-                {{ dest.label }}
-              </option>
-            </select>
+              :options="destinationOptions"
+              :placeholder="
+                __('announcement.choose_dest', 'Select Destination')
+              "
+              class="mt-1 block w-full"
+              :error="form.errors.destination"
+            />
             <InputError :message="form.errors.destination" class="mt-2" />
           </div>
 

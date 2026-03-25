@@ -1,32 +1,53 @@
 <?php
+
 namespace BasicDashboard\Web\Users\Resources;
 
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
 {
-    public function toArray($request): array
+    public function toArray($request)
     {
-
-        $avatarCloudPhoto = $this->avatar ?: config('cache.default_profile_photo_cloud');
-        $avatarLocalPhoto = $this->avatar ?: config('cache.default_profile_photo_local');
-        $avatar = config('cache.file_system_disk') == 'local' ? $avatarLocalPhoto : Storage::url($avatarCloudPhoto);
         return [
-            "id"              => customEncoder($this->id),
-            'fullname'        => $this->fullname,
-            'user_type'       => $this->user_type,
-            'user_type_label' => $this->user_type?->label(),
-            'phone_number'    => $this->phone_number,
-            "email"           => $this->email,
-            'password'        => $this->password,
-            "avatar"          => $avatar,
-            "status"          => $this->status,
-            "status_text"     => $this->status->label(),
-            'role_name'       => $this->roles->value('name'),
-            'can_be_deleted'  => $this->id !== 1, // Example logic: don't delete first user
-            'created_at'      => $this->created_at ? Carbon::parse($this->created_at)->format('d/F/Y') : '---',
+            'id'           => customEncoder($this->id),
+            'fullname'     => $this->fullname,
+            'staff_id'     => $this->staff_id,
+            'email'        => $this->email,
+            'phone_number' => $this->phone_number,
+            'gender'       => $this->gender ? $this->gender->value : null,
+            'gender_label' => $this->gender ? $this->gender->label() : null,
+            'dob'          => $this->dob?->format('Y-m-d'),
+            'avatar'       => $this->avatar,
+            'user_type'    => $this->user_type->value,
+            'user_type_label' => $this->user_type->label(),
+            'profile'      => [
+                'marital_status'       => $this->profile->marital_status ?? null,
+                'place_of_birth'       => $this->profile->place_of_birth ?? null,
+                'nrc'                  => $this->profile->nrc ?? null,
+                'religion'             => $this->profile->religion ?? null,
+                'nationality'          => $this->profile->nationality ?? null,
+                'professional_subject' => $this->profile->professional_subject ?? null,
+                'possessive_grade'     => $this->profile->possessive_grade ?? null,
+                'current_address'      => $this->profile->current_address ?? null,
+                'permanent_address'    => $this->profile->permanent_address ?? null,
+                'education_background' => $this->profile->education_background ?? null,
+                'work_experience'      => $this->profile->work_experience ?? null,
+                'professional_qualifications' => $this->profile->professional_qualifications ?? null,
+                'department_name'      => $this->profile->department_name ?? null,
+                'position'             => $this->profile->position ?? null,
+            ],
+            'spouse'       => (function() {
+                $spouse = $this->guardians->where('relation', 'spouse')->first();
+                return $spouse ? [
+                    'name'         => $spouse->name,
+                    'nrc'          => $spouse->nrc,
+                    'job'          => $spouse->job,
+                    'phone'        => $spouse->phone,
+                    'email'        => $spouse->email,
+                    'address'      => $spouse->address,
+                    'alive_status' => $spouse->alive_status,
+                ] : null;
+            })(),
         ];
     }
 }

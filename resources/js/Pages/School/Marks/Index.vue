@@ -12,6 +12,7 @@ import { ref, computed } from "vue";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
+import SearchableSelect from "@/Components/SearchableSelect.vue";
 
 const props = defineProps({
   data: {
@@ -38,6 +39,18 @@ const props = defineProps({
 
 const page = usePage();
 const permissions = computed(() => page.props.permissions || []);
+
+const studentOptions = computed(() =>
+  props.students.map((s) => ({ id: s.id, label: s.name })),
+);
+
+const examOptions = computed(() =>
+  props.exams.map((e) => ({ id: e.id, label: e.name })),
+);
+
+const subjectOptions = computed(() =>
+  props.subjects.map((s) => ({ id: s.id, label: s.name })),
+);
 
 const search = ref("");
 const showDeleteModal = ref(false);
@@ -271,43 +284,40 @@ const deleteMark = () => {
         <div class="mt-4 space-y-4">
           <div>
             <InputLabel for="student_id" :value="__('school.student', 'Student')" />
-            <select
+            <SearchableSelect
               id="student_id"
               v-model="form.student_id"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-            >
-              <option v-for="student in students" :key="student.id" :value="student.id">
-                {{ student.name }}
-              </option>
-            </select>
+              :options="studentOptions"
+              :placeholder="__('school.select_student', 'Select Student')"
+              class="mt-1 block w-full"
+              :error="form.errors.student_id"
+            />
             <InputError :message="errors.student_id" class="mt-2" />
           </div>
 
           <div>
             <InputLabel for="exam_id" :value="__('school.exam', 'Exam')" />
-            <select
+            <SearchableSelect
               id="exam_id"
               v-model="form.exam_id"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-            >
-              <option v-for="exam in exams" :key="exam.id" :value="exam.id">
-                {{ exam.name }}
-              </option>
-            </select>
+              :options="examOptions"
+              :placeholder="__('school.select_exam', 'Select Exam')"
+              class="mt-1 block w-full"
+              :error="form.errors.exam_id"
+            />
             <InputError :message="errors.exam_id" class="mt-2" />
           </div>
 
           <div>
             <InputLabel for="subject_id" :value="__('school.subject', 'Subject')" />
-            <select
+            <SearchableSelect
               id="subject_id"
               v-model="form.subject_id"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-            >
-              <option v-for="subject in subjects" :key="subject.id" :value="subject.id">
-                {{ subject.name }}
-              </option>
-            </select>
+              :options="subjectOptions"
+              :placeholder="__('school.select_subject', 'Select Subject')"
+              class="mt-1 block w-full"
+              :error="form.errors.subject_id"
+            />
             <InputError :message="errors.subject_id" class="mt-2" />
           </div>
 

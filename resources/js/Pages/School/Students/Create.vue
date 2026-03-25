@@ -5,8 +5,10 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
-import { useForm, Head, Link } from "@inertiajs/vue3";
+import SearchableSelect from "@/Components/SearchableSelect.vue";
+import { useForm, Head, Link, router } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
+import { computed } from "vue";
 
 const props = defineProps({
   student: {
@@ -21,6 +23,19 @@ const props = defineProps({
     default: false,
   },
 });
+
+const classOptions = computed(() =>
+  props.classes.map((c) => ({ id: c.id, label: c.name })),
+);
+
+const gradeOptions = computed(() =>
+  props.grades.map((g) => ({ id: g.id, label: g.name })),
+);
+
+const aliveStatusOptions = [
+  { id: "alive", label: __("school.alive", "Alive") },
+  { id: "dead", label: __("school.dead", "Dead") },
+];
 
 const form = useForm({
   academic_year: props.student?.academic_year || "",
@@ -111,10 +126,14 @@ const submit = () => {
               </div>
               <div>
                 <InputLabel for="class_id" :value="__('school.class')" />
-                <select id="class_id" v-model="form.class_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                  <option value="">{{ __("messages.select") }}</option>
-                  <option v-for="c in classes" :key="c.id" :value="c.id">{{ c.name }}</option>
-                </select>
+                  <SearchableSelect
+                    id="class_id"
+                    v-model="form.class_id"
+                    :options="classOptions"
+                    :placeholder="__('student.select_class', 'Select Class')"
+                    class="mt-1 block w-full"
+                    :error="form.errors.class_id"
+                  />
                 <InputError :message="form.errors.class_id" />
               </div>
               <div>
@@ -225,10 +244,14 @@ const submit = () => {
               </div>
               <div>
                 <InputLabel for="grade_id" :value="__('school.grade')" />
-                <select id="grade_id" v-model="form.grade_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                  <option value="">{{ __("messages.select") }}</option>
-                  <option v-for="g in grades" :key="g.id" :value="g.id">{{ g.name }}</option>
-                </select>
+                  <SearchableSelect
+                    id="grade_id"
+                    v-model="form.grade_id"
+                    :options="gradeOptions"
+                    :placeholder="__('student.select_grade', 'Select Grade')"
+                    class="mt-1 block w-full"
+                    :error="form.errors.grade_id"
+                  />
                 <InputError :message="form.errors.grade_id" />
               </div>
             </div>
@@ -272,10 +295,13 @@ const submit = () => {
                 </div>
                 <div>
                   <InputLabel :value="__('school.father_alive_status')" />
-                  <select v-model="form.father_alive_status" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                    <option value="alive">{{ __("school.alive") }}</option>
-                    <option value="dead">{{ __("school.dead") }}</option>
-                  </select>
+                  <SearchableSelect
+                    id="father_alive_status"
+                    v-model="form.father_alive_status"
+                    :options="aliveStatusOptions"
+                    class="mt-1 block w-full"
+                    :error="form.errors.father_alive_status"
+                  />
                 </div>
               </div>
             </section>
@@ -316,10 +342,13 @@ const submit = () => {
                 </div>
                 <div>
                   <InputLabel :value="__('school.mother_alive_status')" />
-                  <select v-model="form.mother_alive_status" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                    <option value="alive">{{ __("school.alive") }}</option>
-                    <option value="dead">{{ __("school.dead") }}</option>
-                  </select>
+                  <SearchableSelect
+                    id="mother_alive_status"
+                    v-model="form.mother_alive_status"
+                    :options="aliveStatusOptions"
+                    class="mt-1 block w-full"
+                    :error="form.errors.mother_alive_status"
+                  />
                 </div>
               </div>
             </section>
@@ -361,10 +390,13 @@ const submit = () => {
               </div>
               <div>
                 <InputLabel :value="__('school.guardian_alive_status')" />
-                <select v-model="form.guardian_alive_status" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                  <option value="alive">{{ __("school.alive") }}</option>
-                  <option value="dead">{{ __("school.dead") }}</option>
-                </select>
+                <SearchableSelect
+                  id="guardian_alive_status"
+                  v-model="form.guardian_alive_status"
+                  :options="aliveStatusOptions"
+                  class="mt-1 block w-full"
+                  :error="form.errors.guardian_alive_status"
+                />
               </div>
             </div>
           </section>

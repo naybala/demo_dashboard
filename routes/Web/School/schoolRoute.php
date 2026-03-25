@@ -9,6 +9,7 @@ use BasicDashboard\Web\Students\Controllers\StudentController;
 use BasicDashboard\Web\Announcements\Controllers\AnnouncementController;
 use BasicDashboard\Web\Events\Controllers\EventController;
 use BasicDashboard\Web\Subjects\Controllers\SubjectController;
+use BasicDashboard\Web\Users\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 Route::resource('grades', GradeController::class);

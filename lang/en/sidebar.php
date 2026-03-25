@@ -17,4 +17,7 @@ return [
     'announcements'      => "Announcement",
     'events'             => "Events",
     'other'              => "Other",
+    'teacher_staff_management' => "Teacher & Staff Management",
+    'teacher_staff_list'       => "Teacher & Staff List",
+    'leave_management'         => "Leave Management",
 ];

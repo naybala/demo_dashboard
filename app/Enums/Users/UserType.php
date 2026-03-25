@@ -17,4 +17,12 @@ enum UserType : int
             self::User => "Teacher",
         };
     }
+
+    public static function options(): array
+    {
+        return array_map(fn($case) => [
+            'value' => $case->value,
+            'label' => $case->label(),
+        ], self::cases());
+    }
 }

@@ -9,6 +9,7 @@ import InputError from "@/Components/InputError.vue";
 import Modal from "@/Components/Modal.vue";
 import Pagination from "@/Components/Pagination.vue";
 import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.vue";
+import SearchableSelect from "@/Components/SearchableSelect.vue";
 import { Head, useForm, router, usePage, Link } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
 import { ref, computed } from "vue";
@@ -22,6 +23,10 @@ const props = defineProps({
 
 const page = usePage();
 const permissions = computed(() => page.props.permissions || []);
+
+const typeOptions = computed(() =>
+  props.types.map((type) => ({ id: type.value, label: type.label })),
+);
 
 const search = ref(props.filters.keyword || "");
 const startDate = ref(props.filters.start_date || "");
@@ -125,11 +130,16 @@ const deleteEvent = () => {
 
 const getTypeColor = (type) => {
   switch (type) {
-    case 'meeting': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
-    case 'sport': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-    case 'academic': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-    case 'culture': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
-    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    case "meeting":
+      return "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400";
+    case "sport":
+      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+    case "academic":
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+    case "culture":
+      return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
   }
 };
 </script>
@@ -257,9 +267,7 @@ const getTypeColor = (type) => {
               >
                 {{ event.title }}
               </td>
-              <td
-                class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400"
-              >
+              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                 {{ event.time_formatted }}
               </td>
               <td
@@ -330,44 +338,29 @@ const getTypeColor = (type) => {
           <button
             @click="closeModal"
             class="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+          ></button>
         </div>
 
         <form @submit.prevent="submit" class="space-y-4">
           <div>
             <InputLabel for="type" :value="__('event.type', 'Type') + ' *'" />
-            <select
+            <SearchableSelect
               id="type"
               v-model="form.type"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+              :options="typeOptions"
+              :placeholder="__('event.choose_type', 'Select type...')"
+              class="mt-1 block w-full"
               required
-            >
-              <option value="" disabled>
-                {{ __("event.choose_type", "Select type...") }}
-              </option>
-              <option v-for="t in types" :key="t.value" :value="t.value">
-                {{ t.label }}
-              </option>
-            </select>
+              :error="form.errors.type"
+            />
             <InputError :message="form.errors.type" class="mt-2" />
           </div>
 
           <div>
-            <InputLabel for="title" :value="__('event.title', 'Title') + ' *'" />
+            <InputLabel
+              for="title"
+              :value="__('event.title', 'Title') + ' *'"
+            />
             <TextInput
               id="title"
               v-model="form.title"
@@ -387,7 +380,7 @@ const getTypeColor = (type) => {
             <textarea
               id="description"
               v-model="form.description"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+              class="p-1 mt-1 block w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
               rows="3"
               required
               :placeholder="
@@ -451,7 +444,9 @@ const getTypeColor = (type) => {
                 type="text"
                 class="mt-1 block w-full"
                 required
-                :placeholder="__('event.location_placeholder', 'Enter location...')"
+                :placeholder="
+                  __('event.location_placeholder', 'Enter location...')
+                "
               />
               <InputError :message="form.errors.location" class="mt-2" />
             </div>

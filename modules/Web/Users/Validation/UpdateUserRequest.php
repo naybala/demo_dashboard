@@ -25,19 +25,21 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = customDecoder($this->user);
         return [
-            "fullname"          => "required",
-            "email"             => [
-                "required",
-                "email",
-                Rule::unique('users', 'email')->ignore(customDecoder($this->id))->where(fn($query) => $query->whereNull('deleted_at'))
-            ],
-            "password"          => "nullable|confirmed",
-            "status"            => "required",
-            "role_id"           => "required",
-            "user_type"         => "required",
-            "phone_number"      => "nullable",
-            "avatar"            => "nullable|image|max:2048",
+            "fullname"     => "required|string|max:100",
+            "staff_id"     => ["required", "string", Rule::unique('users', 'staff_id')->ignore($id)->whereNull('deleted_at')],
+            "email"        => ["nullable", "email", Rule::unique('users', 'email')->ignore($id)->whereNull('deleted_at')],
+            "password"     => "nullable|confirmed|min:8",
+            "status"       => "required",
+            "role"         => "nullable|string",
+            "user_type"    => "required|integer",
+            "gender"       => "nullable|integer",
+            "dob"          => "nullable|date",
+            "phone_number" => "nullable|string|max:50",
+            "avatar"       => "nullable|image|max:2048",
+            "profile"      => "nullable|array",
+            "spouse"       => "nullable|array",
         ];
     }
 
