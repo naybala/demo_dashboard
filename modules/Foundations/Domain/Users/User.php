@@ -83,23 +83,13 @@ class User extends Authenticatable
     {
         return $query->when($keyword, function (Builder $q) use ($keyword) {
             $keyword = strtolower($keyword);
-            $status_text = [
-                'active'   => 1,
-                'inactive' => 2,
-            ];
-
-            $q->where(function (Builder $sub) use ($keyword, $status_text) {
-                $sub->where(function (Builder $subInner) use ($keyword, $status_text) {
+            $q->where(function (Builder $sub) use ($keyword) {
+                $sub->where(function (Builder $subInner) use ($keyword) {
                     $subInner->where('fullname', 'like', "%{$keyword}%")
                         ->orWhere('email', 'like', "%{$keyword}%")
                         ->orWhere('phone_number', 'like', "%{$keyword}%")
-                        ->orWhere('role_marked', 'like', "%{$keyword}%");
-
-                    if (isset($status_text[$keyword])) {
-                        $subInner->orWhere('status', $status_text[$keyword]);
-                    } else {
-                        $subInner->orWhere('status', 'like', "%{$keyword}%");
-                    }
+                        ->orWhere('role_marked', 'like', "%{$keyword}%")
+                        ->orWhere('status', 'like', "%{$keyword}%");
                 })
                 ->orWhereHas('roles', function (Builder $roleQuery) use ($keyword) {
                     $roleQuery->where('name', 'like', "%{$keyword}%");

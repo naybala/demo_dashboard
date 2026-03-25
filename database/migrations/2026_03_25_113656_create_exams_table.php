@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('session_id')->constrained('academic_sessions');
 
+            $table->enum('status', \App\Enums\Common\Status::toArray())->default(\App\Enums\Common\Status::Active->value);
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->unsignedInteger('deleted_by')->nullable();

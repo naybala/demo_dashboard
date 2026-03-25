@@ -22,6 +22,10 @@ class Exam extends Model
         'deleted_by',
     ];
 
+    protected $casts = [
+        'status' => \App\Enums\Common\Status::class,
+    ];
+
     public function marks()
     {
         return $this->hasMany(Mark::class);

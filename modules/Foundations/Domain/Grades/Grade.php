@@ -19,6 +19,10 @@ class Grade extends Model
         'deleted_by',
     ];
 
+    protected $casts = [
+        'status' => \App\Enums\Common\Status::class,
+    ];
+
     public function schoolClasses()
     {
         return $this->hasMany(SchoolClass::class);

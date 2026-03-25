@@ -30,7 +30,7 @@ const form = useForm({
   password: "",
   password_confirmation: "",
   role_id: props.user?.role_id || "",
-  status: props.user?.status || 1,
+  status: props.user?.status,
   user_type: props.user?.user_type || 1,
   phone_number: props.user?.phone_number || "",
   avatar: null,
@@ -82,7 +82,11 @@ const submit = () => {
       </h2>
     </template>
     <PageHeader
-      :title="user ? __('user.edit_user', 'Edit User') : __('user.create_user', 'Create User')"
+      :title="
+        user
+          ? __('user.edit_user', 'Edit User')
+          : __('user.create_user', 'Create User')
+      "
     />
 
     <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
@@ -147,7 +151,10 @@ const submit = () => {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <InputLabel for="fullname" :value="__('user.fullname', 'Full Name')" />
+            <InputLabel
+              for="fullname"
+              :value="__('user.fullname', 'Full Name')"
+            />
             <TextInput
               id="fullname"
               type="text"
@@ -178,7 +185,9 @@ const submit = () => {
               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
               required
             >
-              <option value="">{{ __("user.select_role", "Select Role") }}</option>
+              <option value="">
+                {{ __("user.select_role", "Select Role") }}
+              </option>
               <option v-for="role in roles" :key="role.id" :value="role.id">
                 {{ role.name }}
               </option>
@@ -194,10 +203,26 @@ const submit = () => {
               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
               required
             >
-              <option :value="1">{{ __("messages.active", "Active") }}</option>
-              <option :value="2">{{ __("messages.inactive", "Inactive") }}</option>
+              <option value="active">{{ __("messages.active", "Active") }}</option>
+              <option value="inactive">
+                {{ __("messages.inactive", "Inactive") }}
+              </option>
             </select>
             <InputError :message="form.errors.status" />
+          </div>
+
+          <div>
+            <InputLabel for="user_type" :value="__('user.user_type', 'User Type')" />
+            <select
+              id="user_type"
+              v-model="form.user_type"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              required
+            >
+              <option :value="1">{{ __("user.admin", "Administrator") }}</option>
+              <option :value="2">{{ __("user.teacher", "Teacher") }}</option>
+            </select>
+            <InputError :message="form.errors.user_type" />
           </div>
         </div>
 
@@ -205,7 +230,11 @@ const submit = () => {
           <div>
             <InputLabel
               for="password"
-              :value="user ? __('user.new_password_optional', 'New Password (Optional)') : __('user.password', 'Password')"
+              :value="
+                user
+                  ? __('user.new_password_optional', 'New Password (Optional)')
+                  : __('user.password', 'Password')
+              "
             />
             <TextInput
               id="password"
@@ -239,9 +268,18 @@ const submit = () => {
           <SecondaryButton @click="router.get('/users')">
             {{ __("messages.cancel", "Cancel") }}
           </SecondaryButton>
-          <template v-if="(user && permissions.includes('edit users')) || (!user && permissions.includes('create users'))">
+          <template
+            v-if="
+              (user && permissions.includes('edit users')) ||
+              (!user && permissions.includes('create users'))
+            "
+          >
             <PrimaryButton type="submit" :disabled="form.processing">
-              {{ user ? __("messages.update", "Update User") : __("messages.create", "Create User") }}
+              {{
+                user
+                  ? __("messages.update", "Update User")
+                  : __("messages.create", "Create User")
+              }}
             </PrimaryButton>
           </template>
         </div>

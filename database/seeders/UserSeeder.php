@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             'fullname' => 'Korea Bala',
             'email' => 'adminbala@gmail.com',
             'password' => Hash::make('password'),
-            'status' => 1,
+            'status' => "active",
             'user_type' => 1,
             'created_at' => now(),
             'updated_at' => now(),

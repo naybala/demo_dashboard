@@ -4,11 +4,11 @@ namespace App\Enums\Common;
 
 use App\Traits\Enum\EnumCaseToArray;
 
-enum Status : int
+enum Status : string
 {
     use EnumCaseToArray;
-    case Active = 1;
-    case Inactive = 0;
+    case Active = "active";
+    case Inactive = "inactive";
     
     public function label() : string
     {

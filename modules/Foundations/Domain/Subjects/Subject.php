@@ -15,11 +15,14 @@ class Subject extends Model
     protected $fillable = [
         'name',
         'code',
-        'type',
         'status',
         'created_by',
         'updated_by',
         'deleted_by',
+    ];
+
+    protected $casts = [
+        'status' => \App\Enums\Common\Status::class,
     ];
 
     public function classes()

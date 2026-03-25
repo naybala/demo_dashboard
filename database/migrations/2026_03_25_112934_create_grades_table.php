@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Common\Status;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code')->nullable();
+            $table->enum('status',Status::toArray());
             $table->text('description')->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();

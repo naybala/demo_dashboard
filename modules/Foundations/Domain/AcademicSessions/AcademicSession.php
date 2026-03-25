@@ -23,6 +23,7 @@ class AcademicSession extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date'   => 'date',
+        'status'     => \App\Enums\Common\Status::class,
     ];
 
     public function scopeFilterByKeyword($query, ?string $keyword)

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->enum('status', \App\Enums\Common\Status::toArray())->default(\App\Enums\Common\Status::Active->value);
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->unsignedInteger('deleted_by')->nullable();

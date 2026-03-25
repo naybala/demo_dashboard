@@ -37,7 +37,6 @@ const form = ref({
   id: null,
   name: "",
   code: "",
-  type: "theory",
   status: "active",
 });
 const errors = ref({});
@@ -45,7 +44,6 @@ const errors = ref({});
 const headers = [
   __("school.subject_name", "Subject Name"),
   __("school.code", "Code"),
-  __("school.type", "Type"),
   __("school.status", "Status"),
   __("table.action", "Action"),
 ];
@@ -65,7 +63,12 @@ const handleReset = () => {
 
 const openCreateModal = () => {
   isEditing.value = false;
-  form.value = { id: null, name: "", code: "", type: "theory", status: "active" };
+  form.value = {
+    id: null,
+    name: "",
+    code: "",
+    status: "active",
+  };
   errors.value = {};
   showCreateEditModal.value = true;
 };
@@ -165,11 +168,7 @@ const deleteSubject = () => {
         >
           {{ subject.code }}
         </td>
-        <td
-          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 capitalize"
-        >
-          {{ subject.type }}
-        </td>
+
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
@@ -206,12 +205,19 @@ const deleteSubject = () => {
     <Modal :show="showCreateEditModal" @close="showCreateEditModal = false">
       <div class="p-6">
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-          {{ isEditing ? __("school.edit_subject", "Edit Subject") : __("school.create_subject", "Create Subject") }}
+          {{
+            isEditing
+              ? __("school.edit_subject", "Edit Subject")
+              : __("school.create_subject", "Create Subject")
+          }}
         </h3>
 
         <div class="mt-4 space-y-4">
           <div>
-            <InputLabel for="name" :value="__('school.subject_name', 'Subject Name')" />
+            <InputLabel
+              for="name"
+              :value="__('school.subject_name', 'Subject Name')"
+            />
             <TextInput
               id="name"
               type="text"
@@ -232,20 +238,6 @@ const deleteSubject = () => {
               required
             />
             <InputError :message="errors.code" class="mt-2" />
-          </div>
-
-          <div>
-            <InputLabel for="type" :value="__('school.type', 'Type')" />
-            <select
-              id="type"
-              v-model="form.type"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-            >
-              <option value="theory">Theory</option>
-              <option value="practical">Practical</option>
-              <option value="both">Both</option>
-            </select>
-            <InputError :message="errors.type" class="mt-2" />
           </div>
 
           <div>

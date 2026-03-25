@@ -12,7 +12,6 @@ class SubjectResource extends JsonResource
             'id'     => customEncoder($this->id),
             'name'   => $this->name,
             'code'   => $this->code,
-            'type'   => $this->type,
             'status' => $this->status,
         ];
     }

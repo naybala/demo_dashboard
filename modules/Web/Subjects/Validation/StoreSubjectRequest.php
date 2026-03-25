@@ -17,7 +17,6 @@ class StoreSubjectRequest extends FormRequest
         return [
             'name'   => 'required|string|max:255',
             'code'   => 'required|string|max:50|unique:subjects,code,' . $subjectId,
-            'type'   => 'required|string|in:theory,practical,both',
             'status' => 'nullable|string',
         ];
     }
