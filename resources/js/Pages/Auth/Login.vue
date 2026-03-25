@@ -63,19 +63,19 @@ const togglePasswordVisibility = () => {
               <p
                 class="text-lg font-serif font-bold text-[#1b1b1b] leading-tight"
               >
-                Tha Dar Aung
+                IBEC Private School
               </p>
               <p class="text-sm text-gray-500">Admin Portal</p>
             </div>
           </div>
 
           <h1
-            class="hidden lg:block text-5xl xl:text-6xl font-serif text-[#1b1b1b] leading-tight mb-2"
+            class="hidden lg:block text-3xl xl:text-4xl font-serif text-[#1b1b1b] leading-tight mb-2"
           >
-            Tha Dar Aung
+            IBEC Private School
           </h1>
           <h2
-            class="hidden lg:block text-5xl xl:text-6xl font-serif text-[#1b1b1b] leading-tight mb-10"
+            class="hidden lg:block text-3xl xl:text-4xl font-serif text-[#1b1b1b] leading-tight mb-10"
           >
             Admin Portal
           </h2>
@@ -167,7 +167,7 @@ const togglePasswordVisibility = () => {
                 type="button"
                 class="text-xs font-semibold text-gray-800 hover:text-[#2cb699] transition-colors"
               >
-                Contact : 09763684400
+                Contact : 09xxxxxxxx
               </button>
             </div>
 

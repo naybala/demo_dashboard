@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Common\Status;
+use App\Enums\Users\Gender;
 use App\Enums\Users\UserType;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,6 +20,9 @@ return new class extends Migration
             $table->id();
             $table->enum('user_type',UserType::toArray());
             $table->string('fullname',100)->nullable();
+            $table->string('user_code')->nullable();
+            $table->enum('gender',Gender::toArray())->nullable();
+            $table->date('dob')->nullable();
             $table->string('phone_number',50)->nullable();
             $table->string('email',50)->nullable();
             $table->string('password',100);
@@ -42,6 +46,6 @@ return new class extends Migration
      */
     public function down()
     {
-        // Schema::dropIfExists('users');
+        Schema::dropIfExists('users');
     }
 };

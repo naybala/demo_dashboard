@@ -4,17 +4,20 @@ namespace App\Enums\Users;
 
 use App\Traits\Enum\EnumCaseToArray;
 
-enum UserType : int
+enum Gender : int
 {
     use EnumCaseToArray;
-    case Administrator = 1;
-    case User = 2;
+    case Male = 1;
+    case Female = 2;
+
+    case Other = 3;
     
     public function label() : string
     {
         return match($this){
-            self::Administrator => "Administrator",
-            self::User => "Teacher",
+            self::Male => "Male",
+            self::Female => "Female",
+            self::Other => "Other",
         };
     }
 }

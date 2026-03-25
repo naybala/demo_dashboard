@@ -3,7 +3,7 @@
 return [
  
     'dashboard'          => "Dashboard",
-    'user'               => "User",
+    'user'               => "Teacher & Staff List",
     'role'               => "Role",
     'category'           => "Category",
     'product'            => "Product",
