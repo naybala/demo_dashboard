@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\Announcements\AnnouncementDepartment;
+use App\Enums\Announcements\AnnouncementDestination;
+use App\Enums\Common\Status;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,10 +22,11 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
 
-            $table->string('department')->nullable();
+            $table->enum('department', AnnouncementDepartment::toArray())->nullable();
 
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
+            $table->date('date')->nullable();
+            $table->enum('destination', AnnouncementDestination::toArray())->nullable();
+            $table->enum('status',Status::toArray())->default(Status::Active->value);
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();

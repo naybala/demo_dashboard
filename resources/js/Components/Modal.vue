@@ -1,11 +1,25 @@
 <script setup>
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, computed } from "vue";
 
 const props = defineProps({
   show: {
     type: Boolean,
     default: false,
   },
+  maxWidth: {
+    type: String,
+    default: "2xl",
+  },
+});
+
+const maxWidthClass = computed(() => {
+  return {
+    sm: "max-w-sm",
+    md: "max-w-md",
+    lg: "max-w-lg",
+    xl: "max-w-xl",
+    "2xl": "max-w-2xl",
+  }[props.maxWidth];
 });
 
 const emit = defineEmits(["close"]);
@@ -60,7 +74,8 @@ onUnmounted(() => {
       >
         <div
           v-if="show"
-          class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg pointer-events-auto relative overflow-hidden"
+          class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full pointer-events-auto relative overflow-hidden"
+          :class="maxWidthClass"
           role="dialog"
           aria-modal="true"
         >

@@ -1,10 +1,10 @@
 <?php
 return [
     'mm_no'                     => ['၀', '၁', '၂', '၃', '၄', '၅', '၆', '၇', '၈', '၉'],
-    'kh_no'                     => ['០', '១', '២', '៣', '៤', '៥', '၆', '៧', '៨', '៩'],
+    'kh_no'                     => ['០', '១', '២', '៣', '៤', '၅', '၆', '၇', '៨', '៩'],
     'paginate'                  => 10,
     'hash_length'               => 5,
-    'permissions'               => ['users','roles','permissions','students','grades','classes','exams','marks','academic-sessions','subjects'],
+    'permissions'               => ['users','roles','permissions','students','grades','classes','exams','marks','academic-sessions','subjects','announcements','events'],
     'max_upload_for_single_img' => 2,
     'default_password'          => "asdfghjkl",
 ];

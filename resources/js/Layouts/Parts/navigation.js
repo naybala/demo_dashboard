@@ -4,6 +4,7 @@ import { salesNav } from "./navigation/sales.js";
 import { userManagementNav } from "./navigation/userManagement.js";
 import { maintenanceNav } from "./navigation/maintenance.js";
 import { schoolNav } from "./navigation/school.js";
+import { announcementNav } from "./navigation/announcement.js";
 
 export const navigations = [
   dashboardNav,
@@ -12,4 +13,5 @@ export const navigations = [
   salesNav,
   userManagementNav,
   maintenanceNav,
+  announcementNav,
 ];

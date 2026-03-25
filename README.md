@@ -8,9 +8,10 @@ A modular **Laravel 12** admin dashboard with a scalable architecture, feature s
 
 - **Modular Architecture**: Clean separation into `modules/` structure.
 - **CRUD Scaffolding**: Custom Artisan commands for rapid feature development.
-- **Inertia.js + Svelte**: Modern, reactive frontend with seamless Laravel integration.
+- **Inertia.js + Vue 3**: Modern, reactive frontend with seamless Laravel integration.
 - **Service Layer**: Decoupled business logic for maintainability.
 - **Advanced Permissions**: Comprehensive Role/Permission management via Spatie.
+- **School Management**: Features like Students, Classes, and **Announcements** with built-in filters (Duration, Search).
 - **ID Obfuscation**: Secure, encoded IDs in public URLs.
 - **Deletion Guards**: Proactive checks to prevent orphaned data.
 
@@ -25,7 +26,7 @@ modules/
   FeatureName/
     Domain/        → Eloquent Models, Repositories, core logic
     Application/   → Business Logic / Services (Cross-module or complex logic)
-    Web/           → Controllers, Requests, Resources, Views (Svelte)
+    Web/           → Controllers, Requests, Resources, Views (Vue 3)
     Routes.php     → Module-specific routes
 ```
 
@@ -110,9 +111,9 @@ if ($item->hasDependencies()) {
 
 | Command                             | Description                                             |
 | :---------------------------------- | :------------------------------------------------------ |
-| `make:coreFeature --all {Name}`     | Generates full module structure including Svelte views. |
+| `make:coreFeature --all {Name}`     | Generates full module structure including Vue 3 views.    |
 | `make:coreFeature --logic {Name}`   | Generates Domain and Application layers only.           |
-| `make:coreFeature --view {Name}`    | Generates Svelte views only.                            |
+| `make:coreFeature --view {Name}`    | Generates Vue 3 views only.                               |
 | `add-fields-to-view --model={Name}` | Appends new fields to existing generated views.         |
 
 ---
@@ -131,8 +132,8 @@ php artisan test
 
 - **PHP**: ^8.0.2
 - **Laravel**: v12.0
-- **Frontend**: Inertia.js (v2.0) + Svelte (v4.2)
-- **Styling**: TailwindCSS + Flowbite UI
+- **Frontend**: Inertia.js (v2.3) + Vue 3 (v3.5)
+- **Styling**: TailwindCSS + Preline UI
 - **Database**: MySQL
 - **Permissions**: Spatie Laravel Permission (v6.9)
 - **Utilities**: ApexCharts, CropperJS

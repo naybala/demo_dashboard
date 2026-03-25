@@ -6,6 +6,7 @@ use BasicDashboard\Web\Exams\Controllers\ExamController;
 use BasicDashboard\Web\Grades\Controllers\GradeController;
 use BasicDashboard\Web\Marks\Controllers\MarkController;
 use BasicDashboard\Web\Students\Controllers\StudentController;
+use BasicDashboard\Web\Announcements\Controllers\AnnouncementController;
 use BasicDashboard\Web\Subjects\Controllers\SubjectController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,3 +17,4 @@ Route::resource('academic-sessions', AcademicSessionController::class);
 Route::resource('exams', ExamController::class);
 Route::resource('subjects', SubjectController::class);
 Route::resource('marks', MarkController::class);
+Route::resource('announcements', AnnouncementController::class);
