@@ -27,7 +27,7 @@ const togglePasswordVisibility = () => {
 
 <template>
   <Head>
-    <title>Login - Tha Dar Aung</title>
+    <title>Login - IBEC</title>
   </Head>
 
   <div

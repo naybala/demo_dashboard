@@ -50,7 +50,7 @@ const headers = [
   __("school.student_name", "Full Name"),
   __("school.gender", "Gender"),
   __("school.dob", "DOB"),
-  __("table.action", "Action"),
+  { label: __("table.action", "Action"), class: "text-center" },
 ];
 
 const handleSearch = () => {

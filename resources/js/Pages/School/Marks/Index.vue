@@ -62,7 +62,7 @@ const headers = [
   __("school.subject", "Subject"),
   __("school.marks", "Marks"),
   __("school.grade", "Grade"),
-  __("table.action", "Action"),
+  { label: __("table.action", "Action"), class: "text-center" },
 ];
 
 const handleSearch = () => {

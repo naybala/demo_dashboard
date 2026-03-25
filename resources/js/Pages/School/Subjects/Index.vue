@@ -45,7 +45,7 @@ const headers = [
   __("school.subject_name", "Subject Name"),
   __("school.code", "Code"),
   __("school.status", "Status"),
-  __("table.action", "Action"),
+  { label: __("table.action", "Action"), class: "text-center" },
 ];
 
 const handleSearch = () => {

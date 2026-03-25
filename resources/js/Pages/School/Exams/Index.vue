@@ -51,7 +51,7 @@ const headers = [
   __("school.academic_session", "Academic Session"),
   __("school.term", "Term"),
   __("school.status", "Status"),
-  __("table.action", "Action"),
+  { label: __("table.action", "Action"), class: "text-center" },
 ];
 
 const handleSearch = () => {

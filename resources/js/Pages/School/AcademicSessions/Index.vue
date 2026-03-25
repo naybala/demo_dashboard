@@ -47,7 +47,7 @@ const headers = [
   __("school.start_date", "Start Date"),
   __("school.end_date", "End Date"),
   __("school.status", "Status"),
-  __("table.action", "Action"),
+  { label: __("table.action", "Action"), class: "text-center" },
 ];
 
 const handleSearch = () => {

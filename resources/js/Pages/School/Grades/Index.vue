@@ -45,7 +45,7 @@ const headers = [
   __("school.grade_name", "Grade Name"),
   __("school.grade_code", "Code"),
   __("school.status", "Status"),
-  __("table.action", "Action"),
+  { label: __("table.action", "Action"), class: "text-center" },
 ];
 
 const handleSearch = () => {
@@ -177,8 +177,8 @@ const deleteGrade = () => {
             {{ grade.status }}
           </span>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div class="flex gap-2 justify-end">
+        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+          <div class="flex gap-2 justify-center">
             <SecondaryButton @click="openEditModal(grade)">{{
               __("messages.edit", "Edit")
             }}</SecondaryButton>
@@ -199,12 +199,19 @@ const deleteGrade = () => {
     <Modal :show="showCreateEditModal" @close="showCreateEditModal = false">
       <div class="p-6">
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-          {{ isEditing ? __("school.edit_grade", "Edit Grade") : __("school.create_grade", "Create Grade") }}
+          {{
+            isEditing
+              ? __("school.edit_grade", "Edit Grade")
+              : __("school.create_grade", "Create Grade")
+          }}
         </h3>
 
         <div class="mt-4 space-y-4">
           <div>
-            <InputLabel for="name" :value="__('school.grade_name', 'Grade Name')" />
+            <InputLabel
+              for="name"
+              :value="__('school.grade_name', 'Grade Name')"
+            />
             <TextInput
               id="name"
               type="text"
@@ -216,7 +223,10 @@ const deleteGrade = () => {
           </div>
 
           <div>
-            <InputLabel for="code" :value="__('school.grade_code', 'Grade Code')" />
+            <InputLabel
+              for="code"
+              :value="__('school.grade_code', 'Grade Code')"
+            />
             <TextInput
               id="code"
               type="text"
