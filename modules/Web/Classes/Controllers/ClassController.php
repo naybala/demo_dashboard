@@ -55,7 +55,7 @@ class ClassController extends BaseController
                 'id' => customEncoder($s->id),
                 'name' => $s->name
             ]),
-            'teachers' => $this->userService->paginate(['paginate' => 1000])->filter(fn($u) => $u->user_type->value == 2)->map(fn($u) => [
+            'teachers' => $this->userService->getPaginatedUsers(['paginate' => 1000])->filter(fn($u) => $u->user_type->value == 2)->map(fn($u) => [
                 'id' => customEncoder($u->id),
                 'fullname' => $u->fullname
             ])->values(),
@@ -91,7 +91,7 @@ class ClassController extends BaseController
                 'id' => customEncoder($s->id),
                 'name' => $s->name
             ]),
-            'teachers' => $this->userService->paginate(['paginate' => 1000])->filter(fn($u) => $u->user_type->value == 2)->map(fn($u) => [
+            'teachers' => $this->userService->getPaginatedUsers(['paginate' => 1000])->filter(fn($u) => $u->user_type->value == 2)->map(fn($u) => [
                 'id' => customEncoder($u->id),
                 'fullname' => $u->fullname
             ])->values(),

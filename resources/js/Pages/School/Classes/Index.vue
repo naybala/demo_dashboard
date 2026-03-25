@@ -279,9 +279,7 @@ const stats = computed(() => {
                     <td
                       class="py-4 px-6 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 font-medium"
                     >
-                      {{ cls.teaching_days }},{{
-                        cls.daily_time ? cls.daily_time.replace(/\s+/g, "") : ""
-                      }}
+                      {{ cls.teaching_days }}, {{ cls.start_time }}-{{ cls.end_time }}
                     </td>
                     <td class="py-4 px-6 text-sm text-center">
                       <div class="flex items-center justify-center gap-2">

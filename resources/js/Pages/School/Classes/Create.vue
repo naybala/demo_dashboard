@@ -51,7 +51,8 @@ const form = useForm({
   name: editRecord.name || "",
   capacity: editRecord.capacity || "",
   teaching_days: editRecord.teaching_days || "Mon to Fri",
-  daily_time: editRecord.daily_time || "9:00 am - 4:00 pm",
+  start_time: editRecord.start_time || "09:00",
+  end_time: editRecord.end_time || "16:00",
   attendance_mode: editRecord.attendance_mode || "Daily",
   allow_makeup_attendance: editRecord.allow_makeup_attendance || "enable",
   head_teacher_id: editRecord.head_teacher_id || "",
@@ -215,19 +216,33 @@ const cancel = () => {
                     class="mt-2"
                   />
                 </div>
-                <div>
-                  <InputLabel
-                    for="daily_time"
-                    :value="__('school.daily_time', 'Daily time')"
-                  />
-                  <TextInput
-                    id="daily_time"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.daily_time"
-                    placeholder="e.g 9:00 am - 4:00 pm"
-                  />
-                  <InputError :message="form.errors.daily_time" class="mt-2" />
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <InputLabel
+                      for="start_time"
+                      :value="__('school.start_time', 'Start time')"
+                    />
+                    <TextInput
+                      id="start_time"
+                      type="time"
+                      class="mt-1 block w-full"
+                      v-model="form.start_time"
+                    />
+                    <InputError :message="form.errors.start_time" class="mt-2" />
+                  </div>
+                  <div>
+                    <InputLabel
+                      for="end_time"
+                      :value="__('school.end_time', 'End time')"
+                    />
+                    <TextInput
+                      id="end_time"
+                      type="time"
+                      class="mt-1 block w-full"
+                      v-model="form.end_time"
+                    />
+                    <InputError :message="form.errors.end_time" class="mt-2" />
+                  </div>
                 </div>
                 <div>
                   <InputLabel
@@ -391,7 +406,7 @@ const cancel = () => {
                 id="notes"
                 v-model="form.notes"
                 rows="3"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm"
+                class="mt-1 block p-1 border w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 rounded-md shadow-sm"
                 :placeholder="
                   __(
                     'school.notes_placeholder',

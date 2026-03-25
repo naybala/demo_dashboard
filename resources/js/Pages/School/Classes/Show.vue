@@ -118,10 +118,16 @@ const cls = computed(() => props.classInfo?.data || props.classInfo || {});
               {{ cls.attendance_mode || "-" }}
             </div>
 
-            <div class="text-gray-600 dark:text-gray-400">Daily time</div>
+            <div class="text-gray-600 dark:text-gray-400">Start time</div>
             <div class="text-gray-400">-</div>
             <div class="text-gray-900 dark:text-white font-medium">
-              {{ cls.daily_time || "-" }}
+              {{ cls.start_time || "-" }}
+            </div>
+
+            <div class="text-gray-600 dark:text-gray-400">End time</div>
+            <div class="text-gray-400">-</div>
+            <div class="text-gray-900 dark:text-white font-medium">
+              {{ cls.end_time || "-" }}
             </div>
           </div>
         </div>
