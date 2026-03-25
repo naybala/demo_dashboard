@@ -40,6 +40,11 @@ class ClassController extends BaseController
         ]);
     }
 
+    public function overview(): Response
+    {
+        return Inertia::render('School/Classes/ClassSubject');
+    }
+
     public function create(): Response
     {
         return Inertia::render('School/Classes/Create', [

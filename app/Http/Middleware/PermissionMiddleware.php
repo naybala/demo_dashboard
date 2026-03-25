@@ -46,17 +46,17 @@ class PermissionMiddleware
                 return $next($request);
             }
 
-            if($request->route()->uri == "daily-incomes/import"){
+            if($request->route()->uri == "overview-classes"){
                 return $next($request);
             }
 
-            if($request->route()->uri == "daily-incomes/sample-excel"){
-                return $next($request);
-            }
+           
 
             if (str_ends_with($request->route()->getName(), ".search")) {
                 return $next($request);
             }
+
+            
         }
 
         $arrPermission = explode(",", $sessionPermission); //['manage users','create users','manage countries','create countries']
