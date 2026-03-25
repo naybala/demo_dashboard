@@ -1,7 +1,7 @@
 <script setup>
 import { Link, usePage } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
-import Logo from "../../../../public/images/logo.png";
+import Logo from "../../../../public/images/logo.jpg";
 
 const props = defineProps({
   isSidebarOpen: {
@@ -50,7 +50,7 @@ const page = usePage();
         <h1
           class="text-xl font-black tracking-tight text-indigo-600 dark:text-indigo-400"
         >
-          Tha Dar Aung
+          I B E C
         </h1>
         <button
           @click="onClose"
@@ -193,7 +193,9 @@ const page = usePage();
               class="w-full h-full object-cover"
             />
             <template v-else>
-              {{ (user?.fullname || user?.name || "A").charAt(0).toUpperCase() }}
+              {{
+                (user?.fullname || user?.name || "A").charAt(0).toUpperCase()
+              }}
             </template>
           </div>
           <div class="flex-1 min-w-0">

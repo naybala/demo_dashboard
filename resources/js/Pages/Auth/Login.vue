@@ -1,7 +1,7 @@
 <script setup>
 import { useForm, usePage, Head } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
-import Logo from "../../../../public/images/logo.png";
+import Logo from "../../../../public/images/logo.jpg";
 import { ref, computed } from "vue";
 
 const page = usePage();

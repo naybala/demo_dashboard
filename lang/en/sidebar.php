@@ -13,4 +13,5 @@ return [
     'exams'              => "Exams",
     'marks'              => "Marks",
     'academic-sessions'  => "Academic Sessions",
+    'school'             => "School",
 ];
