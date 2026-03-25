@@ -6,25 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('guardians', function (Blueprint $table) {
             $table->id();
-            $table->morphs('owner');
-            $table->string('relation'); // father, mother, spouse, etc.
+            $table->morphs('owner'); // student or teacher
+            $table->string('relation'); // father, mother, guardian
             $table->string('name');
             $table->string('nrc')->nullable();
-            $table->string('qualification')->nullable();
-            $table->string('occupation')->nullable();
+            $table->text('qualification')->nullable();
+            $table->text('job')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->text('address')->nullable();
-            $table->boolean('is_alive')->default(true);
+            $table->string('alive_status')->default('alive'); // alive, dead
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->unsignedInteger('deleted_by')->nullable();
@@ -33,11 +28,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('guardians');

@@ -66,41 +66,12 @@ const handleReset = () => {
   router.get("/students");
 };
 
-const openCreateModal = () => {
-  isEditing.value = false;
-  form.value = {
-    id: null,
-    student_code: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    gender: "male",
-    dob: "",
-    registration_date: "",
-  };
-  errors.value = {};
-  showCreateEditModal.value = true;
+const openCreatePage = () => {
+  router.get("/students/create");
 };
 
-const openEditModal = (student) => {
-  isEditing.value = true;
-  form.value = { ...student };
-  errors.value = {};
-  showCreateEditModal.value = true;
-};
-
-const submitForm = () => {
-  const url = isEditing.value ? `/school/students/${form.value.id}` : "/school/students";
-  const method = isEditing.value ? "put" : "post";
-
-  router[method](url, form.value, {
-    onSuccess: () => {
-      showCreateEditModal.value = false;
-    },
-    onError: (err) => {
-      errors.value = err;
-    },
-  });
+const openEditPage = (student) => {
+  router.get(`/students/${student.id}/edit`);
 };
 
 const confirmDelete = (student) => {
@@ -155,7 +126,7 @@ const deleteStudent = () => {
         </SecondaryButton>
       </div>
       <div class="flex-shrink-0">
-        <PrimaryButton @click="openCreateModal">{{
+        <PrimaryButton @click="openCreatePage">{{
           __("messages.create", "Add Student")
         }}</PrimaryButton>
       </div>
@@ -175,7 +146,7 @@ const deleteStudent = () => {
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
         >
-          {{ student.fullname }}
+          {{ student.full_name }}
         </td>
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 uppercase"
@@ -189,7 +160,7 @@ const deleteStudent = () => {
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex gap-2 justify-end">
-            <SecondaryButton @click="openEditModal(student)">{{
+            <SecondaryButton @click="openEditPage(student)">{{
               __("messages.edit", "Edit")
             }}</SecondaryButton>
             <button
@@ -204,98 +175,6 @@ const deleteStudent = () => {
     </BaseTable>
 
     <Pagination :meta="meta" />
-
-    <!-- Create/Edit Modal -->
-    <Modal :show="showCreateEditModal" @close="showCreateEditModal = false">
-      <div class="p-6">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-          {{ isEditing ? __("school.edit_student", "Edit Student") : __("school.create_student", "Add Student") }}
-        </h3>
-
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <InputLabel for="student_code" :value="__('school.student_code', 'Student Code')" />
-            <TextInput
-              id="student_code"
-              type="text"
-              class="mt-1 block w-full"
-              v-model="form.student_code"
-              required
-            />
-            <InputError :message="errors.student_code" class="mt-2" />
-          </div>
-
-          <div>
-            <InputLabel for="first_name" :value="__('school.first_name', 'First Name')" />
-            <TextInput
-              id="first_name"
-              type="text"
-              class="mt-1 block w-full"
-              v-model="form.first_name"
-              required
-            />
-            <InputError :message="errors.first_name" class="mt-2" />
-          </div>
-
-          <div>
-            <InputLabel for="last_name" :value="__('school.last_name', 'Last Name')" />
-            <TextInput
-              id="last_name"
-              type="text"
-              class="mt-1 block w-full"
-              v-model="form.last_name"
-              required
-            />
-            <InputError :message="errors.last_name" class="mt-2" />
-          </div>
-
-          <div>
-            <InputLabel for="email" :value="__('school.email', 'Email')" />
-            <TextInput
-              id="email"
-              type="email"
-              class="mt-1 block w-full"
-              v-model="form.email"
-            />
-            <InputError :message="errors.email" class="mt-2" />
-          </div>
-
-          <div>
-            <InputLabel for="gender" :value="__('school.gender', 'Gender')" />
-            <select
-              id="gender"
-              v-model="form.gender"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-            >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-            <InputError :message="errors.gender" class="mt-2" />
-          </div>
-
-          <div>
-            <InputLabel for="dob" :value="__('school.dob', 'Date of Birth')" />
-            <TextInput
-              id="dob"
-              type="date"
-              class="mt-1 block w-full"
-              v-model="form.dob"
-            />
-            <InputError :message="errors.dob" class="mt-2" />
-          </div>
-        </div>
-
-        <div class="mt-6 flex justify-end gap-3">
-          <SecondaryButton @click="showCreateEditModal = false">
-            {{ __("messages.cancel", "Cancel") }}
-          </SecondaryButton>
-          <PrimaryButton @click="submitForm">
-            {{ __("messages.save", "Save") }}
-          </PrimaryButton>
-        </div>
-      </div>
-    </Modal>
 
     <DeleteConfirmationModal
       :show="showDeleteModal"
