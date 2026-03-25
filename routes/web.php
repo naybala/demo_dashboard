@@ -53,6 +53,7 @@ Route::group(['middleware' => ['auth', 'permission.check']], function (): void {
     Route::get('own-products/search', [OwnProductController::class, 'search'])->name('own-products.search');
     Route::resource('own-products' ,OwnProductController::class);
     require __DIR__ . "/Web/User/userRoute.php";
+    require __DIR__ . "/Web/School/schoolRoute.php";
 });
 
 require __DIR__ . "/Web/Storage/storageApi.php";
