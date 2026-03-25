@@ -4,7 +4,7 @@ import BaseTable from "@/Components/BaseTable.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { usePage, router, Link, Head } from "@inertiajs/vue3";
+import { usePage, router, Link, Head, useForm } from "@inertiajs/vue3";
 import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { __ } from "@/helpers.js";
@@ -42,14 +42,13 @@ const examToDelete = ref(null);
 
 const showCreateEditModal = ref(false);
 const isEditing = ref(false);
-const form = ref({
+const form = useForm({
   id: null,
   name: "",
   academic_session_id: "",
   term: "",
   status: "active",
 });
-const errors = ref({});
 
 const headers = [
   __("school.exam_name", "Exam Name"),
@@ -74,34 +73,29 @@ const handleReset = () => {
 
 const openCreateModal = () => {
   isEditing.value = false;
-  form.value = {
-    id: null,
-    name: "",
-    academic_session_id: props.academic_sessions[0]?.id || "",
-    term: "",
-    status: "active",
-  };
-  errors.value = {};
+  form.reset();
+  form.academic_session_id = props.academic_sessions[0]?.id || "";
+  form.clearErrors();
   showCreateEditModal.value = true;
 };
 
 const openEditModal = (exam) => {
   isEditing.value = true;
-  form.value = { ...exam };
-  errors.value = {};
+  form.clearErrors();
+  form.id = exam.id;
+  form.name = exam.name;
+  form.academic_session_id = exam.academic_session_id;
+  form.term = exam.term;
+  form.status = exam.status;
   showCreateEditModal.value = true;
 };
 
 const submitForm = () => {
-  const url = isEditing.value ? `/exams/${form.value.id}` : "/exams";
+  const url = isEditing.value ? `/exams/${form.id}` : "/exams";
   const method = isEditing.value ? "put" : "post";
-
-  router[method](url, form.value, {
+  form[method](url, {
     onSuccess: () => {
       showCreateEditModal.value = false;
-    },
-    onError: (err) => {
-      errors.value = err;
     },
   });
 };
@@ -138,13 +132,17 @@ const deleteExam = () => {
     <div class="py-6">
       <div class="mx-auto sm:px-6 lg:px-8">
         <!-- Header & Stats -->
-        <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div
+          class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
           <div>
             <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
               {{ __("school.exams", "Exams") }}
             </h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {{ __("school.exams_subtitle", "Manage school exams and terms.") }}
+              {{
+                __("school.exams_subtitle", "Manage school exams and terms.")
+              }}
             </p>
           </div>
           <div class="flex items-center gap-3">
@@ -152,8 +150,18 @@ const deleteExam = () => {
               @click="openCreateModal"
               class="flex items-center gap-2 text-sm font-medium bg-blue-600 hover:bg-blue-700"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
               {{ __("messages.create", "Create Exam") }}
             </PrimaryButton>
@@ -161,7 +169,9 @@ const deleteExam = () => {
         </div>
 
         <!-- Filter Bar -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+        <div
+          class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
+        >
           <div class="flex flex-col md:flex-row gap-4 items-end">
             <div class="flex-1 w-full">
               <TextInput
@@ -176,7 +186,10 @@ const deleteExam = () => {
               <SecondaryButton @click="handleReset" v-if="search">
                 {{ __("messages.reset", "Reset") }}
               </SecondaryButton>
-              <PrimaryButton @click="handleSearch" class="bg-gray-700 hover:bg-gray-800">
+              <PrimaryButton
+                @click="handleSearch"
+                class="bg-gray-700 hover:bg-gray-800"
+              >
                 {{ __("messages.search", "Search") }}
               </PrimaryButton>
             </div>
@@ -184,28 +197,38 @@ const deleteExam = () => {
         </div>
 
         <!-- Table -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+        >
+          <div
+            class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500"
+          >
             Showing {{ data.length }} of {{ meta.total }} exams
           </div>
-          
+
           <BaseTable :headers="headers">
             <tr
               v-for="exam in data"
               :key="exam.id"
               class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0"
             >
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
+              >
                 {{ exam.name }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium"
+              >
                 {{ exam.academic_session_name }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+              >
                 {{ exam.term }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-                 <span
+                <span
                   class="px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center mx-auto"
                   :class="
                     exam.status === 'active'
@@ -213,7 +236,12 @@ const deleteExam = () => {
                       : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                   "
                 >
-                  <span class="w-1.5 h-1.5 rounded-full mr-1.5" :class="exam.status === 'active' ? 'bg-green-500' : 'bg-red-500'"></span>
+                  <span
+                    class="w-1.5 h-1.5 rounded-full mr-1.5"
+                    :class="
+                      exam.status === 'active' ? 'bg-green-500' : 'bg-red-500'
+                    "
+                  ></span>
                   {{ exam.status }}
                 </span>
               </td>
@@ -250,22 +278,32 @@ const deleteExam = () => {
     </div>
 
     <!-- Create/Edit Modal -->
-    <Modal :show="showCreateEditModal" @close="showCreateEditModal = false" maxWidth="2xl">
+    <Modal
+      :show="showCreateEditModal"
+      @close="showCreateEditModal = false"
+      maxWidth="2xl"
+    >
       <div class="p-6">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-            {{ isEditing ? __("school.edit_exam", "Edit Exam") : __("school.create_exam", "Create Exam") }}
+            {{
+              isEditing
+                ? __("school.edit_exam", "Edit Exam")
+                : __("school.create_exam", "Create Exam")
+            }}
           </h3>
-          <button @click="showCreateEditModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <button
+            @click="showCreateEditModal = false"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+          ></button>
         </div>
 
         <div class="mt-4 space-y-4">
           <div>
-            <InputLabel for="name" :value="__('school.exam_name', 'Exam Name')" />
+            <InputLabel
+              for="name"
+              :value="__('school.exam_name', 'Exam Name')"
+            />
             <TextInput
               id="name"
               type="text"
@@ -273,24 +311,31 @@ const deleteExam = () => {
               v-model="form.name"
               required
             />
-            <InputError :message="errors.name" class="mt-2" />
+            <InputError :message="form.errors.name" class="mt-2" />
           </div>
 
           <div>
-            <InputLabel for="academic_session_id" :value="__('school.academic_session', 'Academic Session')" />
+            <InputLabel
+              for="academic_session_id"
+              :value="__('school.academic_session', 'Academic Session') + ' *'"
+            />
             <SearchableSelect
               id="academic_session_id"
               v-model="form.academic_session_id"
               :options="sessionOptions"
               :placeholder="__('school.select_session', 'Select Session')"
               class="mt-1 block w-full"
+              required
               :error="form.errors.academic_session_id"
             />
-            <InputError :message="errors.academic_session_id" class="mt-2" />
+            <InputError
+              :message="form.errors.academic_session_id"
+              class="mt-2"
+            />
           </div>
 
           <div>
-            <InputLabel for="term" :value="__('school.term', 'Term')" />
+            <InputLabel for="term" :value="__('school.term', 'Term') + ' *'" />
             <TextInput
               id="term"
               type="text"
@@ -298,11 +343,14 @@ const deleteExam = () => {
               v-model="form.term"
               required
             />
-            <InputError :message="errors.term" class="mt-2" />
+            <InputError :message="form.errors.term" class="mt-2" />
           </div>
 
           <div>
-            <InputLabel for="status" :value="__('school.status', 'Status')" />
+            <InputLabel
+              for="status"
+              :value="__('school.status', 'Status') + ' *'"
+            />
             <SearchableSelect
               id="status"
               v-model="form.status"
@@ -310,10 +358,12 @@ const deleteExam = () => {
                 { id: 'active', label: 'Active' },
                 { id: 'inactive', label: 'Inactive' },
               ]"
+              :placeholder="__('school.select_status', 'Select Status')"
               class="mt-1 block w-full"
+              required
               :error="form.errors.status"
             />
-            <InputError :message="errors.status" class="mt-2" />
+            <InputError :message="form.errors.status" class="mt-2" />
           </div>
         </div>
 
@@ -321,7 +371,11 @@ const deleteExam = () => {
           <SecondaryButton @click="showCreateEditModal = false">
             {{ __("messages.cancel", "Cancel") }}
           </SecondaryButton>
-          <PrimaryButton @click="submitForm">
+          <PrimaryButton
+            @click="submitForm"
+            :class="{ 'opacity-25': form.processing }"
+            :disabled="form.processing"
+          >
             {{ __("messages.save", "Save") }}
           </PrimaryButton>
         </div>

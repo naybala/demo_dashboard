@@ -4,7 +4,7 @@ import BaseTable from "@/Components/BaseTable.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { usePage, router, Link, Head } from "@inertiajs/vue3";
+import { usePage, router, Link, Head, useForm } from "@inertiajs/vue3";
 import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { __ } from "@/helpers.js";
@@ -34,14 +34,13 @@ const sessionToDelete = ref(null);
 
 const showCreateEditModal = ref(false);
 const isEditing = ref(false);
-const form = ref({
+const form = useForm({
   id: null,
   name: "",
   start_date: "",
   end_date: "",
   status: "active",
 });
-const errors = ref({});
 
 const headers = [
   __("school.session_name", "Session Name"),
@@ -66,28 +65,31 @@ const handleReset = () => {
 
 const openCreateModal = () => {
   isEditing.value = false;
-  form.value = { id: null, name: "", start_date: "", end_date: "", status: "active" };
-  errors.value = {};
+  form.reset();
+  form.clearErrors();
   showCreateEditModal.value = true;
 };
 
 const openEditModal = (session) => {
   isEditing.value = true;
-  form.value = { ...session };
-  errors.value = {};
+  form.clearErrors();
+  form.id = session.id;
+  form.name = session.name;
+  form.start_date = session.start_date;
+  form.end_date = session.end_date;
+  form.status = session.status;
   showCreateEditModal.value = true;
 };
 
 const submitForm = () => {
-  const url = isEditing.value ? `/academic-sessions/${form.value.id}` : "/academic-sessions";
+  const url = isEditing.value
+    ? `/academic-sessions/${form.id}`
+    : "/academic-sessions";
   const method = isEditing.value ? "put" : "post";
 
-  router[method](url, form.value, {
+  form[method](url, {
     onSuccess: () => {
       showCreateEditModal.value = false;
-    },
-    onError: (err) => {
-      errors.value = err;
     },
   });
 };
@@ -124,13 +126,20 @@ const deleteSession = () => {
     <div class="py-6">
       <div class="mx-auto sm:px-6 lg:px-8">
         <!-- Header & Stats -->
-        <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div
+          class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
           <div>
             <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
               {{ __("school.academic_sessions", "Academic Sessions") }}
             </h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {{ __("school.academic_sessions_subtitle", "Manage academic sessions and durations.") }}
+              {{
+                __(
+                  "school.academic_sessions_subtitle",
+                  "Manage academic sessions and durations.",
+                )
+              }}
             </p>
           </div>
           <div class="flex items-center gap-3">
@@ -138,8 +147,18 @@ const deleteSession = () => {
               @click="openCreateModal"
               class="flex items-center gap-2 text-sm font-medium bg-blue-600 hover:bg-blue-700"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
               {{ __("messages.create", "Create Session") }}
             </PrimaryButton>
@@ -147,7 +166,9 @@ const deleteSession = () => {
         </div>
 
         <!-- Filter Bar -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+        <div
+          class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
+        >
           <div class="flex flex-col md:flex-row gap-4 items-end">
             <div class="flex-1 w-full">
               <TextInput
@@ -162,7 +183,10 @@ const deleteSession = () => {
               <SecondaryButton @click="handleReset" v-if="search">
                 {{ __("messages.reset", "Reset") }}
               </SecondaryButton>
-              <PrimaryButton @click="handleSearch" class="bg-gray-700 hover:bg-gray-800">
+              <PrimaryButton
+                @click="handleSearch"
+                class="bg-gray-700 hover:bg-gray-800"
+              >
                 {{ __("messages.search", "Search") }}
               </PrimaryButton>
             </div>
@@ -170,28 +194,40 @@ const deleteSession = () => {
         </div>
 
         <!-- Table -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+        >
+          <div
+            class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500"
+          >
             Showing {{ data.length }} of {{ meta.total }} sessions
           </div>
-          
+
           <BaseTable :headers="headers">
             <tr
               v-for="session in data"
               :key="session.id"
               class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0"
             >
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
+              >
                 {{ session.name }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium"
+              >
                 {{ session.start_date }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium"
+              >
                 {{ session.end_date }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                 <span
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+              >
+                <span
                   class="px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center"
                   :class="
                     session.status === 'active'
@@ -199,20 +235,27 @@ const deleteSession = () => {
                       : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                   "
                 >
-                  <span class="w-1.5 h-1.5 rounded-full mr-1.5" :class="session.status === 'active' ? 'bg-green-500' : 'bg-red-500'"></span>
+                  <span
+                    class="w-1.5 h-1.5 rounded-full mr-1.5"
+                    :class="
+                      session.status === 'active'
+                        ? 'bg-green-500'
+                        : 'bg-red-500'
+                    "
+                  ></span>
                   {{ session.status }}
                 </span>
               </td>
               <td class="px-6 py-4 text-sm text-center">
                 <div class="flex items-center justify-center gap-2">
                   <SecondaryButton
-                    v-if="permissions.includes('edit academic sessions')"
+                    v-if="permissions.includes('edit academic-sessions')"
                     @click="openEditModal(session)"
                   >
                     {{ __("messages.edit", "Edit") }}
                   </SecondaryButton>
                   <SecondaryButton
-                    v-if="permissions.includes('delete academic sessions')"
+                    v-if="permissions.includes('delete academic-sessions')"
                     variant="danger"
                     @click="confirmDelete(session)"
                   >
@@ -236,22 +279,32 @@ const deleteSession = () => {
     </div>
 
     <!-- Create/Edit Modal -->
-    <Modal :show="showCreateEditModal" @close="showCreateEditModal = false" maxWidth="2xl">
+    <Modal
+      :show="showCreateEditModal"
+      @close="showCreateEditModal = false"
+      maxWidth="2xl"
+    >
       <div class="p-6">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-            {{ isEditing ? __("school.edit_session", "Edit Session") : __("school.create_session", "Create Session") }}
+            {{
+              isEditing
+                ? __("school.edit_session", "Edit Session")
+                : __("school.create_session", "Create Session")
+            }}
           </h3>
-          <button @click="showCreateEditModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <button
+            @click="showCreateEditModal = false"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+          ></button>
         </div>
 
         <div class="mt-4 space-y-4">
           <div>
-            <InputLabel for="name" :value="__('school.session_name', 'Session Name')" />
+            <InputLabel
+              for="name"
+              :value="__('school.session_name', 'Session Name') + ' *'"
+            />
             <TextInput
               id="name"
               type="text"
@@ -259,12 +312,15 @@ const deleteSession = () => {
               v-model="form.name"
               required
             />
-            <InputError :message="errors.name" class="mt-2" />
+            <InputError :message="form.errors.name" class="mt-2" />
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <InputLabel for="start_date" :value="__('school.start_date', 'Start Date')" />
+              <InputLabel
+                for="start_date"
+                :value="__('school.start_date', 'Start Date') + ' *'"
+              />
               <TextInput
                 id="start_date"
                 type="date"
@@ -272,11 +328,14 @@ const deleteSession = () => {
                 v-model="form.start_date"
                 required
               />
-              <InputError :message="errors.start_date" class="mt-2" />
+              <InputError :message="form.errors.start_date" class="mt-2" />
             </div>
 
             <div>
-              <InputLabel for="end_date" :value="__('school.end_date', 'End Date')" />
+              <InputLabel
+                for="end_date"
+                :value="__('school.end_date', 'End Date') + ' *'"
+              />
               <TextInput
                 id="end_date"
                 type="date"
@@ -284,12 +343,15 @@ const deleteSession = () => {
                 v-model="form.end_date"
                 required
               />
-              <InputError :message="errors.end_date" class="mt-2" />
+              <InputError :message="form.errors.end_date" class="mt-2" />
             </div>
           </div>
 
           <div>
-            <InputLabel for="status" :value="__('school.status', 'Status')" />
+            <InputLabel
+              for="status"
+              :value="__('school.status', 'Status') + ' *'"
+            />
             <SearchableSelect
               id="status"
               v-model="form.status"
@@ -297,10 +359,12 @@ const deleteSession = () => {
                 { id: 'active', label: 'Active' },
                 { id: 'inactive', label: 'Inactive' },
               ]"
+              :placeholder="__('messages.select', 'Select...')"
               class="mt-1 block w-full"
+              required
               :error="form.errors.status"
             />
-            <InputError :message="errors.status" class="mt-2" />
+            <InputError :message="form.errors.status" class="mt-2" />
           </div>
         </div>
 
@@ -308,7 +372,11 @@ const deleteSession = () => {
           <SecondaryButton @click="showCreateEditModal = false">
             {{ __("messages.cancel", "Cancel") }}
           </SecondaryButton>
-          <PrimaryButton @click="submitForm">
+          <PrimaryButton
+            @click="submitForm"
+            :class="{ 'opacity-25': form.processing }"
+            :disabled="form.processing"
+          >
             {{ __("messages.save", "Save") }}
           </PrimaryButton>
         </div>

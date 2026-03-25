@@ -4,7 +4,7 @@ import BaseTable from "@/Components/BaseTable.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { usePage, router, Link, Head } from "@inertiajs/vue3";
+import { usePage, router, Link, Head, useForm } from "@inertiajs/vue3";
 import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { __ } from "@/helpers.js";
@@ -34,13 +34,12 @@ const subjectToDelete = ref(null);
 
 const showCreateEditModal = ref(false);
 const isEditing = ref(false);
-const form = ref({
+const form = useForm({
   id: null,
   name: "",
   code: "",
   status: "active",
 });
-const errors = ref({});
 
 const headers = [
   __("school.subject_name", "Subject Name"),
@@ -64,33 +63,28 @@ const handleReset = () => {
 
 const openCreateModal = () => {
   isEditing.value = false;
-  form.value = {
-    id: null,
-    name: "",
-    code: "",
-    status: "active",
-  };
-  errors.value = {};
+  form.reset();
+  form.clearErrors();
   showCreateEditModal.value = true;
 };
 
 const openEditModal = (subject) => {
   isEditing.value = true;
-  form.value = { ...subject };
-  errors.value = {};
+  form.clearErrors();
+  form.id = subject.id;
+  form.name = subject.name;
+  form.code = subject.code;
+  form.status = subject.status;
   showCreateEditModal.value = true;
 };
 
 const submitForm = () => {
-  const url = isEditing.value ? `/subjects/${form.value.id}` : "/subjects";
+  const url = isEditing.value ? `/subjects/${form.id}` : "/subjects";
   const method = isEditing.value ? "put" : "post";
 
-  router[method](url, form.value, {
+  form[method](url, {
     onSuccess: () => {
       showCreateEditModal.value = false;
-    },
-    onError: (err) => {
-      errors.value = err;
     },
   });
 };
@@ -290,28 +284,14 @@ const deleteSubject = () => {
           <button
             @click="showCreateEditModal = false"
             class="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+          ></button>
         </div>
 
         <div class="mt-4 space-y-4">
           <div>
             <InputLabel
               for="name"
-              :value="__('school.subject_name', 'Subject Name')"
+              :value="__('school.subject_name', 'Subject Name') + ' *'"
             />
             <TextInput
               id="name"
@@ -320,11 +300,11 @@ const deleteSubject = () => {
               v-model="form.name"
               required
             />
-            <InputError :message="errors.name" class="mt-2" />
-          </div>
+             <InputError :message="form.errors.name" class="mt-2" />
+           </div>
 
           <div>
-            <InputLabel for="code" :value="__('school.code', 'Code')" />
+            <InputLabel for="code" :value="__('school.code', 'Code') + ' *'" />
             <TextInput
               id="code"
               type="text"
@@ -332,8 +312,8 @@ const deleteSubject = () => {
               v-model="form.code"
               required
             />
-            <InputError :message="errors.code" class="mt-2" />
-          </div>
+             <InputError :message="form.errors.code" class="mt-2" />
+           </div>
 
           <div>
             <InputLabel for="status" :value="__('school.status', 'Status')" />
@@ -344,18 +324,24 @@ const deleteSubject = () => {
                 { id: 'active', label: 'Active' },
                 { id: 'inactive', label: 'Inactive' },
               ]"
+              :placeholder="__('messages.select', 'Select...')"
               class="mt-1 block w-full"
+              required
               :error="form.errors.status"
             />
-            <InputError :message="errors.status" class="mt-2" />
-          </div>
+             <InputError :message="form.errors.status" class="mt-2" />
+           </div>
         </div>
 
         <div class="mt-6 flex justify-end gap-3">
           <SecondaryButton @click="showCreateEditModal = false">
             {{ __("messages.cancel", "Cancel") }}
           </SecondaryButton>
-          <PrimaryButton @click="submitForm">
+          <PrimaryButton
+            @click="submitForm"
+            :class="{ 'opacity-25': form.processing }"
+            :disabled="form.processing"
+          >
             {{ __("messages.save", "Save") }}
           </PrimaryButton>
         </div>

@@ -2,7 +2,7 @@
 import { __ } from "@/helpers.js";
 import SearchableSelect from "@/Components/SearchableSelect.vue";
 import { computed } from "vue";
-defineProps({
+const props = defineProps({
   selectedYear: {
     type: [String, Number],
     default: "",
@@ -16,7 +16,7 @@ const emit = defineEmits(["change"]);
 
 const yearOptions = computed(() => [
   { id: "", label: __("messages.last_12_months", "Last 12 Months") },
-  ...props.availableYears.map((year) => ({
+  ...(props.availableYears || []).map((year) => ({
     id: year.toString(),
     label: year.toString(),
   })),

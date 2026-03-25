@@ -4,7 +4,7 @@ import BaseTable from "@/Components/BaseTable.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { usePage, router, Link, Head } from "@inertiajs/vue3";
+import { usePage, router, Link, Head, useForm } from "@inertiajs/vue3";
 import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { __ } from "@/helpers.js";
@@ -58,7 +58,7 @@ const markToDelete = ref(null);
 
 const showCreateEditModal = ref(false);
 const isEditing = ref(false);
-const form = ref({
+const form = useForm({
   id: null,
   student_id: "",
   exam_id: "",
@@ -67,7 +67,6 @@ const form = ref({
   grade: "",
   status: "active",
 });
-const errors = ref({});
 
 const headers = [
   __("school.student", "Student"),
@@ -93,36 +92,37 @@ const handleReset = () => {
 
 const openCreateModal = () => {
   isEditing.value = false;
-  form.value = {
-    id: null,
-    student_id: props.students[0]?.id || "",
-    exam_id: props.exams[0]?.id || "",
-    subject_id: props.subjects[0]?.id || "",
-    marks_obtained: "",
-    grade: "",
-    status: "active",
-  };
-  errors.value = {};
+  form.reset();
+  form.student_id = props.students[0]?.id || "";
+  form.exam_id = props.exams[0]?.id || "";
+  form.subject_id = props.subjects[0]?.id || "";
+  form.clearErrors();
   showCreateEditModal.value = true;
 };
 
 const openEditModal = (mark) => {
   isEditing.value = true;
-  form.value = { ...mark };
-  errors.value = {};
+  form.clearErrors();
+  form.id = mark.id;
+  form.student_id = mark.student_id;
+  form.exam_id = mark.exam_id;
+  form.subject_id = mark.subject_id;
+  form.marks_obtained = mark.marks_obtained;
+  form.grade = mark.grade;
+  form.status = mark.status;
   showCreateEditModal.value = true;
 };
 
 const submitForm = () => {
-  const url = isEditing.value ? `/marks/${form.value.id}` : "/marks";
+  const url = isEditing.value ? `/marks/${form.id}` : "/marks";
   const method = isEditing.value ? "put" : "post";
 
-  router[method](url, form.value, {
+  form[method](url, {
     onSuccess: () => {
       showCreateEditModal.value = false;
     },
-    onError: (err) => {
-      errors.value = err;
+    onError: () => {
+      // Errors are automatically handled by useForm
     },
   });
 };
@@ -159,13 +159,20 @@ const deleteMark = () => {
     <div class="py-6">
       <div class="mx-auto sm:px-6 lg:px-8">
         <!-- Header & Stats -->
-        <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div
+          class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
           <div>
             <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
               {{ __("school.marks", "Marks") }}
             </h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {{ __("school.marks_subtitle", "Manage student marks and exam results.") }}
+              {{
+                __(
+                  "school.marks_subtitle",
+                  "Manage student marks and exam results.",
+                )
+              }}
             </p>
           </div>
           <div class="flex items-center gap-3">
@@ -173,8 +180,18 @@ const deleteMark = () => {
               @click="openCreateModal"
               class="flex items-center gap-2 text-sm font-medium bg-blue-600 hover:bg-blue-700"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
               {{ __("messages.create", "Record Mark") }}
             </PrimaryButton>
@@ -182,7 +199,9 @@ const deleteMark = () => {
         </div>
 
         <!-- Filter Bar -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+        <div
+          class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
+        >
           <div class="flex flex-col md:flex-row gap-4 items-end">
             <div class="flex-1 w-full">
               <TextInput
@@ -197,7 +216,10 @@ const deleteMark = () => {
               <SecondaryButton @click="handleReset" v-if="search">
                 {{ __("messages.reset", "Reset") }}
               </SecondaryButton>
-              <PrimaryButton @click="handleSearch" class="bg-gray-700 hover:bg-gray-800">
+              <PrimaryButton
+                @click="handleSearch"
+                class="bg-gray-700 hover:bg-gray-800"
+              >
                 {{ __("messages.search", "Search") }}
               </PrimaryButton>
             </div>
@@ -205,31 +227,43 @@ const deleteMark = () => {
         </div>
 
         <!-- Table -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+        >
+          <div
+            class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500"
+          >
             Showing {{ data.length }} of {{ meta.total }} marks
           </div>
-          
+
           <BaseTable :headers="headers">
             <tr
               v-for="mark in data"
               :key="mark.id"
               class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0"
             >
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
+              >
                 {{ mark.student_name }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium"
+              >
                 {{ mark.exam_name }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+              >
                 {{ mark.subject_name }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-bold">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-bold"
+              >
                 {{ mark.marks_obtained }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-                 <span
+                <span
                   class="px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center mx-auto bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                 >
                   {{ mark.grade }}
@@ -268,62 +302,81 @@ const deleteMark = () => {
     </div>
 
     <!-- Create/Edit Modal -->
-    <Modal :show="showCreateEditModal" @close="showCreateEditModal = false" maxWidth="2xl">
+    <Modal
+      :show="showCreateEditModal"
+      @close="showCreateEditModal = false"
+      maxWidth="2xl"
+    >
       <div class="p-6">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-            {{ isEditing ? __("school.edit_mark", "Edit Mark") : __("school.record_mark", "Record Mark") }}
+            {{
+              isEditing
+                ? __("school.edit_mark", "Edit Mark")
+                : __("school.record_mark", "Record Mark")
+            }}
           </h3>
-          <button @click="showCreateEditModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <button
+            @click="showCreateEditModal = false"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+          ></button>
         </div>
 
         <div class="mt-4 space-y-4">
           <div>
-            <InputLabel for="student_id" :value="__('school.student', 'Student')" />
+            <InputLabel
+              for="student_id"
+              :value="__('school.student', 'Student')"
+            />
             <SearchableSelect
               id="student_id"
               v-model="form.student_id"
               :options="studentOptions"
               :placeholder="__('school.select_student', 'Select Student')"
               class="mt-1 block w-full"
+              required
               :error="form.errors.student_id"
             />
-            <InputError :message="errors.student_id" class="mt-2" />
-          </div>
+             <InputError :message="form.errors.student_id" class="mt-2" />
+           </div>
 
           <div>
-            <InputLabel for="exam_id" :value="__('school.exam', 'Exam')" />
+            <InputLabel for="exam_id" :value="__('school.exam', 'Exam') + ' *'" />
             <SearchableSelect
               id="exam_id"
               v-model="form.exam_id"
               :options="examOptions"
               :placeholder="__('school.select_exam', 'Select Exam')"
               class="mt-1 block w-full"
+              required
               :error="form.errors.exam_id"
             />
-            <InputError :message="errors.exam_id" class="mt-2" />
-          </div>
+             <InputError :message="form.errors.exam_id" class="mt-2" />
+           </div>
 
           <div>
-            <InputLabel for="subject_id" :value="__('school.subject', 'Subject')" />
+            <InputLabel
+              for="subject_id"
+              :value="__('school.subject', 'Subject')"
+            />
             <SearchableSelect
               id="subject_id"
               v-model="form.subject_id"
               :options="subjectOptions"
               :placeholder="__('school.select_subject', 'Select Subject')"
               class="mt-1 block w-full"
+              required
               :error="form.errors.subject_id"
             />
-            <InputError :message="errors.subject_id" class="mt-2" />
-          </div>
+             <InputError :message="form.errors.subject_id" class="mt-2" />
+           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <InputLabel for="marks_obtained" :value="__('school.marks_obtained', 'Marks')" />
+              <InputLabel
+                for="marks_obtained"
+                :value="__('school.marks_obtained', 'Marks')"
+              />
               <TextInput
                 id="marks_obtained"
                 type="number"
@@ -331,7 +384,7 @@ const deleteMark = () => {
                 v-model="form.marks_obtained"
                 required
               />
-              <InputError :message="errors.marks_obtained" class="mt-2" />
+              <InputError :message="form.errors.marks_obtained" class="mt-2" />
             </div>
 
             <div>
@@ -342,7 +395,7 @@ const deleteMark = () => {
                 class="mt-1 block w-full"
                 v-model="form.grade"
               />
-              <InputError :message="errors.grade" class="mt-2" />
+              <InputError :message="form.errors.grade" class="mt-2" />
             </div>
           </div>
         </div>
@@ -351,7 +404,11 @@ const deleteMark = () => {
           <SecondaryButton @click="showCreateEditModal = false">
             {{ __("messages.cancel", "Cancel") }}
           </SecondaryButton>
-          <PrimaryButton @click="submitForm">
+          <PrimaryButton
+            @click="submitForm"
+            :class="{ 'opacity-25': form.processing }"
+            :disabled="form.processing"
+          >
             {{ __("messages.save", "Save") }}
           </PrimaryButton>
         </div>

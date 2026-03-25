@@ -230,7 +230,7 @@ const handleReset = () => {
         />
         <StatCard
           :label="__('dashboard.non_instant', 'Non-Instant')"
-          :value="props.stats.total_price - props.stats.is_instant"
+          :value="(props.stats.total_price || 0) - (props.stats.is_instant || 0)"
         />
         <StatCard
           :label="__('dashboard.total_investment', 'Total Investment')"
@@ -245,6 +245,7 @@ const handleReset = () => {
       <!-- Charts -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Chart
+          v-if="props.stats.sales_distribution?.series?.length > 0"
           :title="__('dashboard.sales_by_category', 'Sales By Category')"
           type="pie"
           :series="props.stats.sales_distribution?.series || []"
@@ -253,6 +254,7 @@ const handleReset = () => {
           :options="pieChartOptions"
         />
         <Chart
+          v-if="props.stats.product_sales_distribution?.series?.length > 0"
           :title="__('dashboard.sale_by_product', 'Sale By Product')"
           type="donut"
           :series="props.stats.product_sales_distribution?.series || []"
@@ -265,6 +267,7 @@ const handleReset = () => {
       <!-- Instant And Non Instant -->
       <div class="grid grid-cols-1 md:grid-cols-1 gap-6 shadow-xl rounded-lg">
         <Chart
+          v-if="props.stats.instant_sales_distribution?.series?.length > 0"
           :title="
             __('dashboard.instant_vs_non_instant', 'Instant vs Non-Instant Sales')
           "
@@ -284,6 +287,7 @@ const handleReset = () => {
           @change="handleYearChange"
         />
         <Chart
+          v-if="props.monthly_revenue?.series?.length > 0"
           :title="__('dashboard.monthly_revenue', 'Monthly Revenue')"
           type="area"
           :series="props.monthly_revenue.series"
