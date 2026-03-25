@@ -137,7 +137,10 @@ const deleteRole = () => {
           </span>
         </td>
         <td class="flex gap-2 px-6 py-4">
-          <Link :href="`/roles/${role.id}`">
+          <Link
+            :href="`/roles/${role.id}`"
+            v-if="permissions.includes('show roles')"
+          >
             <SecondaryButton>{{ __("messages.view", "View") }}</SecondaryButton>
           </Link>
           <Link

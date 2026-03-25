@@ -3,7 +3,7 @@ import AdminLayout from "@/Layouts/AdminLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, router } from "@inertiajs/vue3";
+import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
 import { ref, computed } from "vue";
 import Pagination from "@/Components/Pagination.vue";
@@ -18,6 +18,8 @@ const search = ref(props.filters.keyword || "");
 const filterGrade = ref("All");
 const filterSection = ref("All");
 const filterSession = ref("25-26");
+const page = usePage();
+const permissions = computed(() => page.props.permissions || []);
 
 const handleSearch = () => {
   router.get(
@@ -245,7 +247,7 @@ const stats = computed(() => {
                     </th>
                     <th
                       scope="col"
-                      class="py-3 px-6 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                      class="py-3 px-6 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider"
                     >
                       Action
                     </th>
@@ -281,27 +283,32 @@ const stats = computed(() => {
                         cls.daily_time ? cls.daily_time.replace(/\s+/g, "") : ""
                       }}
                     </td>
-                    <td
-                      class="py-4 px-6 whitespace-nowrap text-sm flex items-center gap-2"
-                    >
-                      <button
-                        @click="router.visit(`/classes/${cls.id}`)"
-                        class="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 transition-colors"
-                      >
-                        View
-                      </button>
-                      <button
-                        @click="router.visit(`/classes/${cls.id}/edit`)"
-                        class="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 transition-colors"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        @click="deleteClass(cls.id)"
-                        class="px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 transition-colors"
-                      >
-                        Delete
-                      </button>
+                    <td class="py-4 px-6 text-sm text-center">
+                      <div class="flex items-center justify-center gap-2">
+                        <Link
+                          v-if="permissions.includes('show classes')"
+                          :href="`/classes/${cls.id}`"
+                        >
+                          <SecondaryButton>{{
+                            __("messages.view", "View")
+                          }}</SecondaryButton>
+                        </Link>
+                        <Link
+                          v-if="permissions.includes('edit classes')"
+                          :href="`/classes/${cls.id}/edit`"
+                        >
+                          <SecondaryButton>{{
+                            __("messages.edit", "Edit")
+                          }}</SecondaryButton>
+                        </Link>
+                        <SecondaryButton
+                          v-if="permissions.includes('delete classes')"
+                          variant="danger"
+                          @click="deleteClass(cls.id)"
+                        >
+                          {{ __("messages.delete", "Delete") }}
+                        </SecondaryButton>
+                      </div>
                     </td>
                   </tr>
                 </tbody>

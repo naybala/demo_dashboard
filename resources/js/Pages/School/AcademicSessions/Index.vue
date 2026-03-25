@@ -120,94 +120,133 @@ const deleteSession = () => {
       </h2>
     </template>
 
-    <div
-      class="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between"
-    >
-      <div class="flex flex-1 gap-2 min-w-0">
-        <TextInput
-          type="text"
-          :placeholder="__('messages.search_item', 'Search sessions...')"
-          v-model="search"
-          @keydown.enter="handleSearch"
-          class="w-full md:w-1/3"
-        />
-        <SecondaryButton @click="handleSearch">
-          {{ __("messages.search", "Search") }}
-        </SecondaryButton>
-        <SecondaryButton
-          v-if="search"
-          class="bg-gray-100 dark:bg-gray-700"
-          @click="handleReset"
-        >
-          {{ __("messages.reset", "Clear") }}
-        </SecondaryButton>
-      </div>
-      <div class="flex-shrink-0">
-        <PrimaryButton @click="openCreateModal">{{
-          __("messages.create", "Create Session")
-        }}</PrimaryButton>
+    <div class="py-6">
+      <div class="mx-auto sm:px-6 lg:px-8">
+        <!-- Header & Stats -->
+        <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              {{ __("school.academic_sessions", "Academic Sessions") }}
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+              {{ __("school.academic_sessions_subtitle", "Manage academic sessions and durations.") }}
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <PrimaryButton
+              @click="openCreateModal"
+              class="flex items-center gap-2 text-sm font-medium bg-blue-600 hover:bg-blue-700"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              {{ __("messages.create", "Create Session") }}
+            </PrimaryButton>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+          <div class="flex flex-col md:flex-row gap-4 items-end">
+            <div class="flex-1 w-full">
+              <TextInput
+                type="text"
+                v-model="search"
+                :placeholder="__('messages.search_item', 'Search sessions...')"
+                @keyup.enter="handleSearch"
+                class="w-full"
+              />
+            </div>
+            <div class="flex gap-2 shrink-0">
+              <SecondaryButton @click="handleReset" v-if="search">
+                {{ __("messages.reset", "Reset") }}
+              </SecondaryButton>
+              <PrimaryButton @click="handleSearch" class="bg-gray-700 hover:bg-gray-800">
+                {{ __("messages.search", "Search") }}
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500">
+            Showing {{ data.length }} of {{ meta.total }} sessions
+          </div>
+          
+          <BaseTable :headers="headers">
+            <tr
+              v-for="session in data"
+              :key="session.id"
+              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0"
+            >
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                {{ session.name }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium">
+                {{ session.start_date }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium">
+                {{ session.end_date }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                 <span
+                  class="px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center"
+                  :class="
+                    session.status === 'active'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                      : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                  "
+                >
+                  <span class="w-1.5 h-1.5 rounded-full mr-1.5" :class="session.status === 'active' ? 'bg-green-500' : 'bg-red-500'"></span>
+                  {{ session.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <SecondaryButton
+                    v-if="permissions.includes('edit academic sessions')"
+                    @click="openEditModal(session)"
+                  >
+                    {{ __("messages.edit", "Edit") }}
+                  </SecondaryButton>
+                  <SecondaryButton
+                    v-if="permissions.includes('delete academic sessions')"
+                    variant="danger"
+                    @click="confirmDelete(session)"
+                  >
+                    {{ __("messages.delete", "Delete") }}
+                  </SecondaryButton>
+                </div>
+              </td>
+            </tr>
+            <tr v-if="data.length === 0">
+              <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                {{ __("messages.no_data", "No academic sessions found.") }}
+              </td>
+            </tr>
+          </BaseTable>
+
+          <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
+            <Pagination :meta="meta" />
+          </div>
+        </div>
       </div>
     </div>
 
-    <BaseTable :headers="headers">
-      <tr
-        v-for="session in data"
-        :key="session.id"
-        class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-      >
-        <td
-          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
-        >
-          {{ session.name }}
-        </td>
-        <td
-          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
-        >
-          {{ session.start_date }}
-        </td>
-        <td
-          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
-        >
-          {{ session.end_date }}
-        </td>
-        <td
-          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
-        >
-          <span
-            class="px-2 py-1 rounded-full text-xs font-semibold"
-            :class="
-              session.status === 'active'
-                ? 'bg-green-100 text-green-800'
-                : 'bg-red-100 text-red-800'
-            "
-          >
-            {{ session.status }}
-          </span>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <div class="flex gap-2 justify-end">
-            <SecondaryButton @click="openEditModal(session)">{{
-              __("messages.edit", "Edit")
-            }}</SecondaryButton>
-            <button
-              @click="confirmDelete(session)"
-              class="text-red-600 hover:text-red-900 font-medium ml-2"
-            >
-              {{ __("messages.delete", "Delete") }}
-            </button>
-          </div>
-        </td>
-      </tr>
-    </BaseTable>
-
-    <Pagination :meta="meta" />
-
     <!-- Create/Edit Modal -->
-    <Modal :show="showCreateEditModal" @close="showCreateEditModal = false">
+    <Modal :show="showCreateEditModal" @close="showCreateEditModal = false" maxWidth="2xl">
       <div class="p-6">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-          {{ isEditing ? __("school.edit_session", "Edit Session") : __("school.create_session", "Create Session") }}
-        </h3>
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+            {{ isEditing ? __("school.edit_session", "Edit Session") : __("school.create_session", "Create Session") }}
+          </h3>
+          <button @click="showCreateEditModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
         <div class="mt-4 space-y-4">
           <div>

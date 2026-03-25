@@ -15,4 +15,6 @@ return [
     'academic-sessions'  => "Academic Sessions",
     'school'             => "School",
     'announcements'      => "Announcement",
+    'events'             => "Events",
+    'other'              => "Other",
 ];

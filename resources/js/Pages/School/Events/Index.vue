@@ -9,7 +9,7 @@ import InputError from "@/Components/InputError.vue";
 import Modal from "@/Components/Modal.vue";
 import Pagination from "@/Components/Pagination.vue";
 import DeleteConfirmationModal from "@/Components/DeleteConfirmationModal.vue";
-import { Head, useForm, router, usePage } from "@inertiajs/vue3";
+import { Head, useForm, router, usePage, Link } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
 import { ref, computed } from "vue";
 
@@ -17,8 +17,7 @@ const props = defineProps({
   data: Array,
   meta: Object,
   filters: Object,
-  departments: Array,
-  destinations: Array,
+  types: Array,
 });
 
 const page = usePage();
@@ -31,28 +30,31 @@ const endDate = ref(props.filters.end_date || "");
 const showCreateModal = ref(false);
 const showDeleteModal = ref(false);
 const isEditing = ref(false);
-const announcementToDelete = ref(null);
+const eventToDelete = ref(null);
 
 const form = useForm({
   id: null,
   title: "",
   description: "",
-  department: "",
+  type: "",
   date: "",
-  destination: "",
+  start_time: "",
+  end_time: "",
+  location: "",
 });
 
 const headers = [
-  { label: __("announcement.title_name", "Title name"), class: "text-left" },
-  { label: __("announcement.description", "Description"), class: "text-left" },
-  { label: __("announcement.date", "Date"), class: "text-left" },
-  { label: __("announcement.to", "To"), class: "text-left" },
+  { label: __("event.title", "Title"), class: "text-left" },
+  { label: __("event.time", "Time"), class: "text-left" },
+  { label: __("event.location", "Location"), class: "text-left" },
+  { label: __("event.date", "Date"), class: "text-left" },
+  { label: __("event.type", "Type"), class: "text-center" },
   { label: __("table.actions", "Actions"), class: "text-center" },
 ];
 
 const handleFilter = () => {
   router.get(
-    "/announcements",
+    "/events",
     {
       keyword: search.value,
       start_date: startDate.value,
@@ -76,25 +78,27 @@ const openCreateModal = () => {
   showCreateModal.value = true;
 };
 
-const openEditModal = (announcement) => {
+const openEditModal = (event) => {
   isEditing.value = true;
   form.clearErrors();
-  form.id = announcement.id;
-  form.title = announcement.title;
-  form.description = announcement.description;
-  form.department = announcement.department;
-  form.date = announcement.date;
-  form.destination = announcement.destination;
+  form.id = event.id;
+  form.title = event.title;
+  form.description = event.description;
+  form.type = event.type;
+  form.date = event.date;
+  form.start_time = event.start_time;
+  form.end_time = event.end_time;
+  form.location = event.location;
   showCreateModal.value = true;
 };
 
 const submit = () => {
   if (isEditing.value) {
-    form.put("/announcements/" + form.id, {
+    form.put("/events/" + form.id, {
       onSuccess: () => closeModal(),
     });
   } else {
-    form.post("/announcements", {
+    form.post("/events", {
       onSuccess: () => closeModal(),
     });
   }
@@ -105,30 +109,40 @@ const closeModal = () => {
   form.reset();
 };
 
-const confirmDelete = (announcement) => {
-  announcementToDelete.value = announcement;
+const confirmDelete = (event) => {
+  eventToDelete.value = event;
   showDeleteModal.value = true;
 };
 
-const deleteAnnouncement = () => {
-  router.delete("/announcements/" + announcementToDelete.value.id, {
+const deleteEvent = () => {
+  router.delete("/events/" + eventToDelete.value.id, {
     onSuccess: () => {
       showDeleteModal.value = false;
-      announcementToDelete.value = null;
+      eventToDelete.value = null;
     },
   });
+};
+
+const getTypeColor = (type) => {
+  switch (type) {
+    case 'meeting': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
+    case 'sport': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+    case 'academic': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+    case 'culture': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+  }
 };
 </script>
 
 <template>
-  <Head :title="__('announcement.management', 'Announcement Management')" />
+  <Head :title="__('event.management', 'Event Management')" />
 
   <AdminLayout>
     <template #header>
       <h2
         class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
       >
-        {{ __("announcement.management", "Announcement Management") }}
+        {{ __("event.management", "Event Management") }}
       </h2>
     </template>
 
@@ -137,12 +151,10 @@ const deleteAnnouncement = () => {
         <!-- Header & Stats -->
         <div class="mb-6">
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
-            {{ __("announcement.management", "Announcement Management") }}
+            {{ __("event.management", "Event Management") }}
           </h3>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {{
-              __("announcement.subtitle", "Manage your school announcements.")
-            }}
+            {{ __("event.subtitle", "Manage your school events.") }}
           </p>
         </div>
 
@@ -154,7 +166,7 @@ const deleteAnnouncement = () => {
             <!-- Duration Section -->
             <div class="shrink-0 w-full md:w-auto">
               <InputLabel
-                :value="__('announcement.duration', 'Duration')"
+                :value="__('event.duration', 'Duration')"
                 class="mb-1"
               />
               <div class="flex items-center gap-2">
@@ -201,6 +213,7 @@ const deleteAnnouncement = () => {
                 {{ __("messages.reset", "Reset") }}
               </SecondaryButton>
               <PrimaryButton
+                v-if="permissions.includes('create events')"
                 @click="openCreateModal"
                 class="bg-blue-600 hover:bg-blue-700 whitespace-nowrap flex-1 md:flex-none justify-center"
               >
@@ -217,7 +230,7 @@ const deleteAnnouncement = () => {
                     d="M12 4v16m8-8H4"
                   />
                 </svg>
-                {{ __("announcement.create_btn", "Create Announce") }}
+                {{ __("event.create_btn", "Create Event") }}
               </PrimaryButton>
             </div>
           </div>
@@ -230,49 +243,59 @@ const deleteAnnouncement = () => {
           <div
             class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500"
           >
-            Showing {{ data.length }} of {{ meta.total }} announcements
+            Showing {{ data.length }} of {{ meta.total }} events
           </div>
 
           <BaseTable :headers="headers">
             <tr
-              v-for="announcement in data"
-              :key="announcement.id"
+              v-for="event in data"
+              :key="event.id"
               class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0"
             >
               <td
                 class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white max-w-xs truncate"
               >
-                {{ announcement.title }}
+                {{ event.title }}
               </td>
               <td
-                class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 max-w-md truncate"
+                class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400"
               >
-                {{ announcement.description }}
+                {{ event.time_formatted }}
+              </td>
+              <td
+                class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate"
+              >
+                {{ event.location }}
               </td>
               <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                {{ announcement.date_formatted }}
+                {{ event.date_formatted }}
               </td>
-              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                {{ announcement.destination_label }}
+              <td class="px-6 py-4 text-sm text-center">
+                <span
+                  class="px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center"
+                  :class="getTypeColor(event.type)"
+                >
+                  {{ event.type_label }}
+                </span>
               </td>
               <td class="px-6 py-4 text-sm text-center">
                 <div class="flex items-center justify-center gap-2">
                   <SecondaryButton
-                    v-if="permissions.includes('show announcements')"
-                    @click="openEditModal(announcement)"
+                    v-if="permissions.includes('show events')"
+                    @click="openEditModal(event)"
                   >
                     {{ __("messages.view", "View") }}
                   </SecondaryButton>
                   <SecondaryButton
-                    v-if="permissions.includes('edit announcements')"
-                    @click="openEditModal(announcement)"
+                    v-if="permissions.includes('edit events')"
+                    @click="openEditModal(event)"
                   >
                     {{ __("messages.edit", "Edit") }}
                   </SecondaryButton>
                   <SecondaryButton
-                    v-if="permissions.includes('delete announcements')"
+                    v-if="permissions.includes('delete events')"
                     variant="danger"
-                    @click="confirmDelete(announcement)"
+                    @click="confirmDelete(event)"
                   >
                     {{ __("messages.delete", "Delete") }}
                   </SecondaryButton>
@@ -280,8 +303,8 @@ const deleteAnnouncement = () => {
               </td>
             </tr>
             <tr v-if="data.length === 0">
-              <td colspan="5" class="px-6 py-10 text-center text-gray-500">
-                {{ __("messages.no_data", "No announcements found.") }}
+              <td colspan="6" class="px-6 py-10 text-center text-gray-500">
+                {{ __("messages.no_data", "No events found.") }}
               </td>
             </tr>
           </BaseTable>
@@ -300,29 +323,58 @@ const deleteAnnouncement = () => {
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
             {{
               isEditing
-                ? __("announcement.edit", "Edit Announcement")
-                : __("announcement.create", "Create Announcement")
+                ? __("event.edit", "Edit Event")
+                : __("event.create", "Create Event")
             }}
           </h3>
           <button
             @click="closeModal"
             class="text-gray-400 hover:text-gray-600 transition-colors"
-          ></button>
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
 
         <form @submit.prevent="submit" class="space-y-4">
           <div>
-            <InputLabel
-              for="title"
-              :value="__('announcement.title', 'Title') + ' *'"
-            />
+            <InputLabel for="type" :value="__('event.type', 'Type') + ' *'" />
+            <select
+              id="type"
+              v-model="form.type"
+              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+              required
+            >
+              <option value="" disabled>
+                {{ __("event.choose_type", "Select type...") }}
+              </option>
+              <option v-for="t in types" :key="t.value" :value="t.value">
+                {{ t.label }}
+              </option>
+            </select>
+            <InputError :message="form.errors.type" class="mt-2" />
+          </div>
+
+          <div>
+            <InputLabel for="title" :value="__('event.title', 'Title') + ' *'" />
             <TextInput
               id="title"
               v-model="form.title"
               type="text"
               class="mt-1 block w-full"
               required
-              :placeholder="__('announcement.title_placeholder', 'e.g. Water')"
+              :placeholder="__('event.title_placeholder', 'e.g. Winter Break')"
             />
             <InputError :message="form.errors.title" class="mt-2" />
           </div>
@@ -330,19 +382,16 @@ const deleteAnnouncement = () => {
           <div>
             <InputLabel
               for="description"
-              :value="__('announcement.description', 'Description') + ' *'"
+              :value="__('event.description', 'Description') + ' *'"
             />
             <textarea
               id="description"
               v-model="form.description"
               class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-              rows="4"
+              rows="3"
               required
               :placeholder="
-                __(
-                  'announcement.description_placeholder',
-                  'Writing description...',
-                )
+                __('event.description_placeholder', 'Writing description...')
               "
             ></textarea>
             <InputError :message="form.errors.description" class="mt-2" />
@@ -351,34 +400,37 @@ const deleteAnnouncement = () => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <InputLabel
-                for="department"
-                :value="__('announcement.department', 'Department') + ' *'"
+                for="start_time"
+                :value="__('event.start_time', 'Start Time') + ' *'"
               />
-              <select
-                id="department"
-                v-model="form.department"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+              <TextInput
+                id="start_time"
+                v-model="form.start_time"
+                type="time"
+                class="mt-1 block w-full"
                 required
-              >
-                <option value="" disabled>
-                  {{ __("announcement.choose_dept", "Choose department...") }}
-                </option>
-                <option
-                  v-for="dept in departments"
-                  :key="dept.value"
-                  :value="dept.value"
-                >
-                  {{ dept.label }}
-                </option>
-              </select>
-              <InputError :message="form.errors.department" class="mt-2" />
+              />
+              <InputError :message="form.errors.start_time" class="mt-2" />
             </div>
-
             <div>
               <InputLabel
-                for="date"
-                :value="__('announcement.date', 'Date') + ' *'"
+                for="end_time"
+                :value="__('event.end_time', 'End Time') + ' *'"
               />
+              <TextInput
+                id="end_time"
+                v-model="form.end_time"
+                type="time"
+                class="mt-1 block w-full"
+                required
+              />
+              <InputError :message="form.errors.end_time" class="mt-2" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <InputLabel for="date" :value="__('event.date', 'Date') + ' *'" />
               <TextInput
                 id="date"
                 v-model="form.date"
@@ -388,31 +440,21 @@ const deleteAnnouncement = () => {
               />
               <InputError :message="form.errors.date" class="mt-2" />
             </div>
-          </div>
-
-          <div>
-            <InputLabel
-              for="destination"
-              :value="__('announcement.to', 'To') + ' *'"
-            />
-            <select
-              id="destination"
-              v-model="form.destination"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-              required
-            >
-              <option value="" disabled>
-                {{ __("announcement.choose_dest", "Choose destination...") }}
-              </option>
-              <option
-                v-for="dest in destinations"
-                :key="dest.value"
-                :value="dest.value"
-              >
-                {{ dest.label }}
-              </option>
-            </select>
-            <InputError :message="form.errors.destination" class="mt-2" />
+            <div>
+              <InputLabel
+                for="location"
+                :value="__('event.location', 'Location') + ' *'"
+              />
+              <TextInput
+                id="location"
+                v-model="form.location"
+                type="text"
+                class="mt-1 block w-full"
+                required
+                :placeholder="__('event.location_placeholder', 'Enter location...')"
+              />
+              <InputError :message="form.errors.location" class="mt-2" />
+            </div>
           </div>
 
           <div class="flex items-center justify-end gap-3 mt-6">
@@ -437,14 +479,14 @@ const deleteAnnouncement = () => {
     <!-- Delete Modal -->
     <DeleteConfirmationModal
       :show="showDeleteModal"
-      :title="__('announcement.delete_title', 'Delete Announcement')"
+      :title="__('event.delete_title', 'Delete Event')"
       :message="
         __(
-          'announcement.delete_message',
-          'Are you sure you want to delete this announcement? This action cannot be undone.',
+          'event.delete_message',
+          'Are you sure you want to delete this event? This action cannot be undone.',
         )
       "
-      @confirm="deleteAnnouncement"
+      @confirm="deleteEvent"
       @close="showDeleteModal = false"
     />
   </AdminLayout>
