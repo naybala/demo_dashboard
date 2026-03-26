@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('academic_year')->nullable();
             $table->unsignedBigInteger('class_id')->nullable();
             $table->string('full_name')->nullable();
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('other_name')->nullable();
 
             $table->string('email')->nullable();

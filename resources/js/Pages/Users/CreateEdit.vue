@@ -7,7 +7,8 @@ import TextInput from "@/Components/TextInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import SearchableSelect from "@/Components/SearchableSelect.vue";
-import { Head, useForm, Link } from "@inertiajs/vue3";
+import AvatarUpload from "@/Components/AvatarUpload.vue";
+import { Head, useForm } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
 
 const props = defineProps({
@@ -23,30 +24,36 @@ const isEditing = !!props.user;
 const currentStep = ref(1);
 const totalSteps = 8;
 
-const typeOptions = computed(() =>
-  props.types?.map((type) => ({ id: type.value, label: type.label })) || []
+const typeOptions = computed(
+  () =>
+    props.types?.map((type) => ({ id: type.value, label: type.label })) || [],
 );
 
-const genderOptions = computed(() =>
-  props.genders?.map((gender) => ({ id: gender.value, label: gender.label })) || []
+const genderOptions = computed(
+  () =>
+    props.genders?.map((gender) => ({
+      id: gender.value,
+      label: gender.label,
+    })) || [],
 );
 
-const roleOptions = computed(() =>
-  props.roles?.map((role) => ({ id: role.name, label: role.name })) || []
+const roleOptions = computed(
+  () => props.roles?.map((role) => ({ id: role.name, label: role.name })) || [],
 );
 
-const classOptions = computed(() =>
-  props.classes?.map((c) => ({ id: c.id, label: c.name })) || []
+const classOptions = computed(
+  () => props.classes?.map((c) => ({ id: c.id, label: c.name })) || [],
 );
 
 const form = useForm({
+  avatar: props.user?.avatar || "",
   class_id: props.user?.class_id || "",
   fullname: props.user?.fullname || "",
   staff_id: props.user?.staff_id || "",
   email: props.user?.email || "",
   password: "",
   password_confirmation: "",
-  user_type: props.user?.user_type || (props.types?.[0]?.value || ""),
+  user_type: props.user?.user_type || props.types?.[0]?.value || "",
   gender: props.user?.gender || "",
   dob: props.user?.dob || "",
   phone_number: props.user?.phone_number || "",
@@ -64,10 +71,8 @@ const form = useForm({
     permanent_address: props.user?.profile?.permanent_address || "",
     education_background: {
       degree: props.user?.profile?.education_background?.degree || "",
-      certificate:
-        props.user?.profile?.education_background?.certificate || "",
-      institution:
-        props.user?.profile?.education_background?.institution || "",
+      certificate: props.user?.profile?.education_background?.certificate || "",
+      institution: props.user?.profile?.education_background?.institution || "",
       year: props.user?.profile?.education_background?.year || "",
       specialization:
         props.user?.profile?.education_background?.specialization || "",
@@ -146,27 +151,44 @@ const submit = () => {
     </template>
 
     <div class="py-12">
-      <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
-          
+      <div class="mx-auto sm:px-6 lg:px-8">
+        <div
+          class="bg-white dark:bg-gray-800 shadow-sm rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700"
+        >
           <div class="p-8 border-b border-gray-100 dark:border-gray-700">
+            <div class="mb-6 flex justify-center">
+              <AvatarUpload v-model="form.avatar" />
+            </div>
+
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              {{ isEditing ? 'Edit Staff' : 'Add New Staff' }}
+              {{ isEditing ? "Edit Staff" : "Add New Staff" }}
             </h2>
-            
-            <div class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+
+            <div
+              class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 mb-2"
+            >
               <span>Section {{ currentStep }} of {{ totalSteps }}</span>
-              <span>{{ Math.round((currentStep / totalSteps) * 100) }}% Complete</span>
+              <span
+                >{{ Math.round((currentStep / totalSteps) * 100) }}%
+                Complete</span
+              >
             </div>
             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" :style="`width: ${(currentStep / totalSteps) * 100}%`"></div>
+              <div
+                class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                :style="`width: ${(currentStep / totalSteps) * 100}%`"
+              ></div>
             </div>
             <!-- Section Title underneath progress bar representing the current active section-->
-            <h3 class="mt-6 text-lg font-semibold text-blue-600 dark:text-blue-400">
+            <h3
+              class="mt-6 text-lg font-semibold text-blue-600 dark:text-blue-400"
+            >
               <span v-if="currentStep === 1">Basic Information</span>
               <span v-else-if="currentStep === 2">Personal Details</span>
               <span v-else-if="currentStep === 3">Educational Background</span>
-              <span v-else-if="currentStep === 4">Professional Qualifications</span>
+              <span v-else-if="currentStep === 4"
+                >Professional Qualifications</span
+              >
               <span v-else-if="currentStep === 5">Work Experience</span>
               <span v-else-if="currentStep === 6">Spouse's Information</span>
               <span v-else-if="currentStep === 7">Father's Information</span>
@@ -175,7 +197,6 @@ const submit = () => {
           </div>
 
           <form @submit.prevent="submit" class="p-8 space-y-6">
-            
             <div v-show="currentStep === 1" class="space-y-6">
               <div>
                 <InputLabel for="class_id" value="Class" />
@@ -239,33 +260,33 @@ const submit = () => {
                 />
                 <InputError :message="form.errors.gender" class="mt-2" />
               </div>
-              
+
               <div class="grid grid-cols-2 gap-4">
-                 <div>
-                    <InputLabel for="user_type" value="User Type *" />
-                    <SearchableSelect
-                      id="user_type"
-                      v-model="form.user_type"
-                      :options="typeOptions"
-                      placeholder="Select User Type"
-                      class="mt-1 block w-full"
-                      :error="form.errors.user_type"
-                      required
-                    />
-                    <InputError :message="form.errors.user_type" class="mt-2" />
+                <div>
+                  <InputLabel for="user_type" value="User Type *" />
+                  <SearchableSelect
+                    id="user_type"
+                    v-model="form.user_type"
+                    :options="typeOptions"
+                    placeholder="Select User Type"
+                    class="mt-1 block w-full"
+                    :error="form.errors.user_type"
+                    required
+                  />
+                  <InputError :message="form.errors.user_type" class="mt-2" />
                 </div>
                 <div>
-                    <InputLabel for="role" value="Role *" />
-                    <SearchableSelect
-                      id="role"
-                      v-model="form.role"
-                      :options="roleOptions"
-                      placeholder="Select Role"
-                      class="mt-1 block w-full"
-                      :error="form.errors.role"
-                      required
-                    />
-                    <InputError :message="form.errors.role" class="mt-2" />
+                  <InputLabel for="role" value="Role *" />
+                  <SearchableSelect
+                    id="role"
+                    v-model="form.role"
+                    :options="roleOptions"
+                    placeholder="Select Role"
+                    class="mt-1 block w-full"
+                    :error="form.errors.role"
+                    required
+                  />
+                  <InputError :message="form.errors.role" class="mt-2" />
                 </div>
               </div>
             </div>
@@ -398,7 +419,10 @@ const submit = () => {
 
             <div v-show="currentStep === 4" class="space-y-6">
               <div>
-                <InputLabel for="professional_subject" value="Professional Subject" />
+                <InputLabel
+                  for="professional_subject"
+                  value="Professional Subject"
+                />
                 <TextInput
                   id="professional_subject"
                   v-model="form.profile.professional_subject"
@@ -441,7 +465,7 @@ const submit = () => {
                 />
                 <InputError :message="form.errors.phone_number" class="mt-2" />
               </div>
-              
+
               <div>
                 <InputLabel for="email" value="Email" />
                 <TextInput
@@ -455,7 +479,10 @@ const submit = () => {
               </div>
 
               <div>
-                <InputLabel for="password" :value="'Password' + (!isEditing ? ' *' : '')" />
+                <InputLabel
+                  for="password"
+                  :value="'Password' + (!isEditing ? ' *' : '')"
+                />
                 <TextInput
                   id="password"
                   v-model="form.password"
@@ -466,9 +493,12 @@ const submit = () => {
                 />
                 <InputError :message="form.errors.password" class="mt-2" />
               </div>
-              
+
               <div v-if="!isEditing">
-                <InputLabel for="password_confirmation" value="Confirm Password *" />
+                <InputLabel
+                  for="password_confirmation"
+                  value="Confirm Password *"
+                />
                 <TextInput
                   id="password_confirmation"
                   v-model="form.password_confirmation"
@@ -572,7 +602,10 @@ const submit = () => {
               </div>
 
               <div>
-                <InputLabel for="partner_alive" value="Partner's Alive or Dead" />
+                <InputLabel
+                  for="partner_alive"
+                  value="Partner's Alive or Dead"
+                />
                 <SearchableSelect
                   id="partner_alive"
                   v-model="form.spouse.alive_status"
@@ -700,49 +733,78 @@ const submit = () => {
               </div>
             </div>
 
-            <div class="mt-10 flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-700">
-              <SecondaryButton 
-                type="button" 
-                @click="prevStep" 
+            <div
+              class="mt-10 flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-700"
+            >
+              <SecondaryButton
+                type="button"
+                @click="prevStep"
                 class="flex items-center gap-2"
                 :disabled="currentStep === 1"
                 :class="{ 'opacity-50 cursor-not-allowed': currentStep === 1 }"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
                 Previous
               </SecondaryButton>
-              
-              <div class="text-sm text-gray-500 font-medium">Step {{ currentStep }} of {{ totalSteps }}</div>
-              
-              <PrimaryButton 
-                v-if="currentStep < totalSteps" 
-                type="button" 
+
+              <div class="text-sm text-gray-500 font-medium">
+                Step {{ currentStep }} of {{ totalSteps }}
+              </div>
+
+              <PrimaryButton
+                v-if="currentStep < totalSteps"
+                type="button"
                 @click="nextStep"
                 class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
               >
                 Next
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </PrimaryButton>
-              
-              <PrimaryButton 
+
+              <PrimaryButton
                 v-if="currentStep === totalSteps"
                 type="submit"
                 :class="{ 'opacity-25': form.processing }"
                 :disabled="form.processing"
                 class="bg-blue-600 hover:bg-blue-700"
               >
-                {{ isEditing ? 'Update Staff Member' : 'Create Staff Member' }}
+                {{ isEditing ? "Update Staff Member" : "Create Staff Member" }}
               </PrimaryButton>
             </div>
 
-            <div v-if="Object.keys(form.errors).length > 0" class="mt-4 p-4 bg-red-50 text-red-600 text-sm rounded-lg">
-              There are some errors in the form. Please check the fields and correct them.
+            <div
+              v-if="Object.keys(form.errors).length > 0"
+              class="mt-4 p-4 bg-red-50 text-red-600 text-sm rounded-lg"
+            >
+              There are some errors in the form. Please check the fields and
+              correct them.
             </div>
-
           </form>
         </div>
       </div>

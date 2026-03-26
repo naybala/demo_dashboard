@@ -78,9 +78,9 @@ class User extends Authenticatable
         'professional_qualifications' => 'json',
     ];
 
-    public function getAvartarAttribute($value)
+    public function getAvatarAttribute($value)
     {
-        return 'upload/profile.png';
+        return $value ? \Illuminate\Support\Facades\Storage::disk('s3')->url($value) : 'upload/profile.png';
     }
 
     public function guardians()

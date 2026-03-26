@@ -14,7 +14,7 @@ class UserService
         return User::query()
             ->where('user_type', UserType::User)
             ->filterByKeyword($filters['keyword'] ?? null)
-            ->with(['profile', 'roles', 'guardians'])
+            ->with(['roles', 'guardians'])
             ->orderByLatest()
             ->paginate(10);
     }
@@ -32,6 +32,7 @@ class UserService
                 'dob'          => $data['dob'] ?? null,
                 'phone_number' => $data['phone_number'] ?? null,
                 'status'       => $data['status'] ?? 'active',
+                'avatar'       => $data['avatar'] ?? null,
             ], $data['profile'] ?? []);
 
             $user = User::create($userData);
@@ -71,6 +72,7 @@ class UserService
                 'gender'       => $data['gender'] ?? $user->gender,
                 'dob'          => $data['dob'] ?? $user->dob,
                 'phone_number' => $data['phone_number'] ?? $user->phone_number,
+                'avatar'       => $data['avatar'] ?? $user->avatar,
             ], $data['profile'] ?? []);
 
             $user->update($userData);

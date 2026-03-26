@@ -49,3 +49,16 @@ Route::post('upload/image/local/quill', function (Illuminate\Http\Request $reque
         'url'  => $url,
     ]);
 })->name('uploadImageLocalQuill');
+
+Route::post('upload/presigned-url', function (Illuminate\Http\Request $request) {
+    $count = $request->input('count', 1);
+    $path = $request->input('path', 'avatars');
+    
+    $links = \Illuminate\Support\Facades\Storage::generatePresignedUrl($count, $path);
+    
+    return response()->json([
+        'data'  => 'success',
+        'code'  => 200,
+        'links' => $links,
+    ]);
+})->name('uploadPresignedUrl');

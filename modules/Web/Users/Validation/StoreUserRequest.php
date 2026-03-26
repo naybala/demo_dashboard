@@ -38,7 +38,7 @@ class StoreUserRequest extends FormRequest
             "gender"       => "nullable|integer",
             "dob"          => "nullable|date",
             "phone_number" => "nullable|string|max:50",
-            "avatar"       => "nullable|image|max:2048",
+            "avatar"       => "nullable|string",
             "profile"      => "nullable|array",
             "spouse"       => "nullable|array",
             "father"       => "nullable|array",

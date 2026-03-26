@@ -61,6 +61,16 @@ class StudentController extends BaseController
         }
     }
 
+    public function show(string $id): Response
+    {
+        $decodedId = customDecoder($id);
+        $student = $this->studentService->findOrFail($decodedId);
+        
+        return Inertia::render('School/Students/Show', [
+            'student' => clone (new StudentResource($student))->resolve(),
+        ]);
+    }
+
     public function edit(string $id): Response
     {
         $decodedId = customDecoder($id);

@@ -57,6 +57,7 @@ class StudentService
     {
         $relations = ['father', 'mother', 'guardian'];
         
+        foreach ($relations as $prefix) {
             $data = [
                 'name'          => $request["{$prefix}_name"] ?? null,
                 'nrc'           => $request["{$prefix}_nrc"] ?? null,
@@ -78,7 +79,10 @@ class StudentService
                     ['relation' => $prefix],
                     $data
                 );
+            } else {
+                $student->guardians()->where('relation', $prefix)->delete();
             }
+        }
     }
 
     public function delete(string $id): void

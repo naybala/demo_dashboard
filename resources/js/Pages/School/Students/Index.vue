@@ -178,6 +178,11 @@ const deleteStudent = () => {
               <td class="px-6 py-4 text-sm text-center">
                 <div class="flex items-center justify-center gap-2">
                   <Link
+                    :href="`/students/${student.id}`"
+                  >
+                    <SecondaryButton>{{ __("messages.view", "View") }}</SecondaryButton>
+                  </Link>
+                  <Link
                     v-if="permissions.includes('edit students')"
                     :href="`/students/${student.id}/edit`"
                   >
