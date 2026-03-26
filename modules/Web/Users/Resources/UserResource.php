@@ -15,12 +15,10 @@ class UserResource extends JsonResource
             'staff_id'     => $this->staff_id,
             'email'        => $this->email,
             'phone_number' => $this->phone_number,
-            'gender'       => $this->gender ? $this->gender->value : null,
-            'gender_label' => $this->gender ? $this->gender->label() : null,
-            'dob'          => $this->dob?->format('Y-m-d'),
+            'gender'       => $this->gender,
+            'dob'          => $this->dob,
             'avatar'       => $this->avatar,
             'user_type'    => $this->user_type->value,
-            'user_type_label' => $this->user_type->label(),
             'profile'      => [
                 'marital_status'       => $this->marital_status ?? null,
                 'place_of_birth'       => $this->place_of_birth ?? null,
@@ -31,8 +29,20 @@ class UserResource extends JsonResource
                 'possessive_grade'     => $this->possessive_grade ?? null,
                 'current_address'      => $this->current_address ?? null,
                 'permanent_address'    => $this->permanent_address ?? null,
-                'education_background' => $this->education_background ?? null,
-                'work_experience'      => $this->work_experience ?? null,
+                'education_background' => [
+                    'year'           => $this->year,
+                    'degree'         => $this->degree,
+                    'certificate'    => $this->certificate,
+                    'institution'    => $this->institution,
+                    'specialization' => $this->specialization,
+                ],
+                'work_experience'      => [
+                    'years'      => $this->work_years,
+                    'duration'   => $this->duration,
+                    'location'   => $this->location,
+                    'department' => $this->department_name,
+                    'position'   => $this->position,
+                ],
                 'professional_qualifications' => $this->professional_qualifications ?? null,
                 'department_name'      => $this->department_name ?? null,
                 'position'             => $this->position ?? null,
@@ -73,4 +83,6 @@ class UserResource extends JsonResource
             })(),
         ];
     }
+
+
 }

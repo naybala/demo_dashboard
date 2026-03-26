@@ -45,8 +45,15 @@ return new class extends Migration
             $table->text('current_address')->nullable();
             $table->text('permanent_address')->nullable();
             
-            $table->json('education_background')->nullable();
-            $table->json('work_experience')->nullable();
+            $table->string('degree')->nullable();
+            $table->string('certificate')->nullable();
+            $table->string('institution')->nullable();
+            $table->string('year')->nullable();
+            $table->string('specialization')->nullable();
+            
+            $table->string('work_years')->nullable();
+            $table->string('duration')->nullable();
+            $table->string('location')->nullable();
             $table->json('professional_qualifications')->nullable();
             
             $table->string('department_name')->nullable();

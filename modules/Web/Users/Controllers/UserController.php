@@ -45,8 +45,8 @@ class UserController extends Controller
     public function show(string $id)
     {
         $decodedId = customDecoder($id);
-        $user = User::with(['roles', 'guardians'])->findOrFail($decodedId);
-        
+        $user = User::with(['roles', 'guardians'])->findOrFail($decodedId);  
+        dd($user);      
         return Inertia::render('Users/Show', [
             'user' => (new UserResource($user))->resolve(),
         ]);
@@ -72,7 +72,7 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $decodedId = customDecoder($id);
-        $user = User::with(['profile', 'roles', 'guardians'])->findOrFail($decodedId);
+        $user = User::with([ 'roles', 'guardians'])->findOrFail($decodedId);
 
         return Inertia::render('Users/CreateEdit', [
             'user'    => (new UserResource($user))->resolve(),

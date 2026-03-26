@@ -29,25 +29,6 @@ const getGenderColor = (gender) => {
         >
           {{ __("user.teacher_details", "Teacher Details") }}
         </h2>
-        <Link
-          href="/users"
-          class="text-sm text-gray-600 hover:text-gray-900 flex items-center"
-        >
-          <svg
-            class="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          {{ __("messages.back_to_list", "Back to list") }}
-        </Link>
       </div>
     </template>
 
@@ -96,9 +77,39 @@ const getGenderColor = (gender) => {
             </div>
 
             <!-- Sections Container -->
+            <div class="pt-2 flex items-center">
+              <label
+                class="text-xs text-gray-400 uppercase tracking-wider mr-4"
+                >{{ __("user.profile_pic", "Profile Picture :") }}</label
+              >
+              <div
+                class="h-40 w-40 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden border border-gray-200 dark:border-gray-600"
+              >
+                <img
+                  v-if="user.avatar"
+                  :src="user.avatar"
+                  class="h-full w-full object-cover"
+                />
+                <svg
+                  v-else
+                  class="h-8 w-8 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <br /><br />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
               <!-- Basic Information -->
-              <div class="space-y-6">
+              <div class="space-y-6 shadow-lg rounded-lg p-3">
                 <div>
                   <h4 class="text-base font-bold text-gray-900 dark:text-white">
                     {{ __("user.basic_info", "Basic Information") }}
@@ -169,7 +180,7 @@ const getGenderColor = (gender) => {
                           getGenderColor(user.gender),
                         ]"
                       >
-                        {{ user.gender_label }}
+                        {{ user.gender }}
                       </span>
                     </div>
                   </div>
@@ -194,36 +205,6 @@ const getGenderColor = (gender) => {
                     >
                       {{ profile.marital_status || "-" }}
                     </p>
-                  </div>
-                </div>
-
-                <div class="pt-2 flex items-center">
-                  <label
-                    class="text-xs text-gray-400 uppercase tracking-wider mr-4"
-                    >{{ __("user.profile_pic", "Profile Picture :") }}</label
-                  >
-                  <div
-                    class="h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden border border-gray-200 dark:border-gray-600"
-                  >
-                    <img
-                      v-if="user.avatar"
-                      :src="user.avatar"
-                      class="h-full w-full object-cover"
-                    />
-                    <svg
-                      v-else
-                      class="h-8 w-8 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="1.5"
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
                   </div>
                 </div>
               </div>

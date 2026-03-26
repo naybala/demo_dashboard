@@ -31,8 +31,19 @@ class UserService
                 'gender'       => $data['gender'] ?? null,
                 'dob'          => $data['dob'] ?? null,
                 'phone_number' => $data['phone_number'] ?? null,
-                'status'       => $data['status'] ?? 'active',
-                'avatar'       => $data['avatar'] ?? null,
+                'status'          => $data['status'] ?? 'active',
+                'avatar'          => $data['avatar'] ?? null,
+                'role_marked'     => $data['role'] ?? null,
+                'department_name' => $data['profile']['work_experience']['department'] ?? null,
+                'position'        => $data['profile']['work_experience']['position'] ?? null,
+                'degree'          => $data['profile']['education_background']['degree'] ?? null,
+                'certificate'     => $data['profile']['education_background']['certificate'] ?? null,
+                'institution'     => $data['profile']['education_background']['institution'] ?? null,
+                'year'            => $data['profile']['education_background']['year'] ?? null,
+                'specialization'  => $data['profile']['education_background']['specialization'] ?? null,
+                'work_years'      => $data['profile']['work_experience']['years'] ?? null,
+                'duration'        => $data['profile']['work_experience']['duration'] ?? null,
+                'location'        => $data['profile']['work_experience']['location'] ?? null,
             ], $data['profile'] ?? []);
 
             $user = User::create($userData);
@@ -71,8 +82,19 @@ class UserService
                 'user_type'    => $data['user_type'],
                 'gender'       => $data['gender'] ?? $user->gender,
                 'dob'          => $data['dob'] ?? $user->dob,
-                'phone_number' => $data['phone_number'] ?? $user->phone_number,
-                'avatar'       => $data['avatar'] ?? $user->avatar,
+                'phone_number'    => $data['phone_number'] ?? $user->phone_number,
+                'avatar'          => $data['avatar'] ?? $user->avatar,
+                'role_marked'     => $data['role'] ?? $user->role_marked,
+                'department_name' => $data['profile']['work_experience']['department'] ?? $user->department_name,
+                'position'        => $data['profile']['work_experience']['position'] ?? $user->position,
+                'degree'          => $data['profile']['education_background']['degree'] ?? $user->degree,
+                'certificate'     => $data['profile']['education_background']['certificate'] ?? $user->certificate,
+                'institution'     => $data['profile']['education_background']['institution'] ?? $user->institution,
+                'year'            => $data['profile']['education_background']['year'] ?? $user->year,
+                'specialization'  => $data['profile']['education_background']['specialization'] ?? $user->specialization,
+                'work_years'      => $data['profile']['work_experience']['years'] ?? $user->work_years,
+                'duration'        => $data['profile']['work_experience']['duration'] ?? $user->duration,
+                'location'        => $data['profile']['work_experience']['location'] ?? $user->location,
             ], $data['profile'] ?? []);
 
             $user->update($userData);

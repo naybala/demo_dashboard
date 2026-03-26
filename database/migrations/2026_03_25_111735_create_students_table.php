@@ -41,7 +41,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->date('registration_date')->nullable();
 
-            $table->string('profile_photo')->nullable();
+            $table->string('avatar')->nullable();
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
