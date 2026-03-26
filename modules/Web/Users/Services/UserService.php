@@ -22,7 +22,7 @@ class UserService
     public function createUser(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $user = User::create([
+            $userData = array_merge([
                 'fullname'     => $data['fullname'],
                 'staff_id'     => $data['staff_id'],
                 'email'        => $data['email'] ?? null,
@@ -32,16 +32,28 @@ class UserService
                 'dob'          => $data['dob'] ?? null,
                 'phone_number' => $data['phone_number'] ?? null,
                 'status'       => $data['status'] ?? 'active',
-            ]);
+            ], $data['profile'] ?? []);
 
-            $user->profile()->create($data['profile'] ?? []);
+            $user = User::create($userData);
 
             if (!empty($data['spouse']) && !empty($data['spouse']['name'])) {
                 $user->guardians()->create(array_merge($data['spouse'], ['relation' => 'spouse']));
             }
 
+            if (!empty($data['father']) && !empty($data['father']['name'])) {
+                $user->guardians()->create(array_merge($data['father'], ['relation' => 'father']));
+            }
+
+            if (!empty($data['mother']) && !empty($data['mother']['name'])) {
+                $user->guardians()->create(array_merge($data['mother'], ['relation' => 'mother']));
+            }
+
             if (!empty($data['role'])) {
                 $user->assignRole($data['role']);
+            }
+
+            if (!empty($data['class_id'])) {
+                DB::table('classes')->where('id', $data['class_id'])->update(['head_teacher_id' => $user->id]);
             }
 
             return $user;
@@ -51,7 +63,7 @@ class UserService
     public function updateUser(User $user, array $data)
     {
         return DB::transaction(function () use ($user, $data) {
-            $user->update([
+            $userData = array_merge([
                 'fullname'     => $data['fullname'],
                 'staff_id'     => $data['staff_id'],
                 'email'        => $data['email'] ?? $user->email,
@@ -59,13 +71,13 @@ class UserService
                 'gender'       => $data['gender'] ?? $user->gender,
                 'dob'          => $data['dob'] ?? $user->dob,
                 'phone_number' => $data['phone_number'] ?? $user->phone_number,
-            ]);
+            ], $data['profile'] ?? []);
+
+            $user->update($userData);
 
             if (isset($data['password'])) {
                 $user->update(['password' => Hash::make($data['password'])]);
             }
-
-            $user->profile()->updateOrCreate(['user_id' => $user->id], $data['profile'] ?? []);
 
             if (isset($data['spouse'])) {
                 if (empty($data['spouse']['name'])) {
@@ -78,8 +90,37 @@ class UserService
                 }
             }
 
+            if (isset($data['father'])) {
+                if (empty($data['father']['name'])) {
+                    $user->guardians()->where(['relation' => 'father'])->delete();
+                } else {
+                    $user->guardians()->updateOrCreate(
+                        ['relation' => 'father'],
+                        $data['father']
+                    );
+                }
+            }
+
+            if (isset($data['mother'])) {
+                if (empty($data['mother']['name'])) {
+                    $user->guardians()->where(['relation' => 'mother'])->delete();
+                } else {
+                    $user->guardians()->updateOrCreate(
+                        ['relation' => 'mother'],
+                        $data['mother']
+                    );
+                }
+            }
+
             if (!empty($data['role'])) {
                 $user->syncRoles([$data['role']]);
+            }
+
+            if (array_key_exists('class_id', $data)) {
+                DB::table('classes')->where('head_teacher_id', $user->id)->update(['head_teacher_id' => null]);
+                if (!empty($data['class_id'])) {
+                    DB::table('classes')->where('id', $data['class_id'])->update(['head_teacher_id' => $user->id]);
+                }
             }
 
             return $user;
@@ -89,8 +130,8 @@ class UserService
     public function deleteUser(User $user)
     {
         return DB::transaction(function () use ($user) {
-            $user->profile()?->delete();
-            $user->guardians()->where(['relation' => 'spouse'])->delete();
+            $user->guardians()->whereIn('relation', ['spouse', 'father', 'mother'])->delete();
+            DB::table('classes')->where('head_teacher_id', $user->id)->update(['head_teacher_id' => null]);
             return $user->delete();
         });
     }

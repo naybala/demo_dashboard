@@ -11,7 +11,7 @@ export const classSubjectManagementNav = {
           name: "sidebar.class_subject_overview",
           label: "Class & Subject",
           href: "/overview-classes", // To be implemented
-          permission: "manage users",
+          permission: "manage overview-classes",
         },
         {
           name: "sidebar.classes_list",

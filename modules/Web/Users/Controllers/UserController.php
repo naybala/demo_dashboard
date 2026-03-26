@@ -58,6 +58,7 @@ class UserController extends Controller
             'types'   => UserType::options(),
             'genders' => Gender::options(),
             'roles'   => Role::where('guard_name', 'web')->get(['id', 'name']),
+            'classes' => \Illuminate\Support\Facades\DB::table('classes')->select('id', 'name')->whereNull('deleted_at')->get(),
         ]);
     }
 
@@ -78,6 +79,7 @@ class UserController extends Controller
             'types'   => UserType::options(),
             'genders' => Gender::options(),
             'roles'   => Role::where('guard_name', 'web')->get(['id', 'name']),
+            'classes' => \Illuminate\Support\Facades\DB::table('classes')->select('id', 'name')->whereNull('deleted_at')->get(),
         ]);
     }
 

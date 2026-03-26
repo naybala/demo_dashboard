@@ -17,6 +17,9 @@ return new class extends Migration
            $table->id();
             $table->string('student_code')->unique();
 
+            $table->string('academic_year')->nullable();
+            $table->unsignedBigInteger('class_id')->nullable();
+            $table->string('full_name')->nullable();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('other_name')->nullable();
@@ -25,9 +28,15 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->date('dob')->nullable();
 
+            $table->string('nrc')->nullable();
             $table->string('place_of_birth')->nullable();
             $table->string('nationality')->nullable();
             $table->string('religion')->nullable();
+
+            $table->string('school_attended')->nullable();
+            $table->string('grade_attended')->nullable();
+            $table->string('year_attended')->nullable();
+            $table->unsignedBigInteger('grade_id')->nullable();
 
             $table->text('address')->nullable();
             $table->date('registration_date')->nullable();

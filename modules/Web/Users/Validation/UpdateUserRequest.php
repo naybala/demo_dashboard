@@ -40,6 +40,9 @@ class UpdateUserRequest extends FormRequest
             "avatar"       => "nullable|image|max:2048",
             "profile"      => "nullable|array",
             "spouse"       => "nullable|array",
+            "father"       => "nullable|array",
+            "mother"       => "nullable|array",
+            "class_id"     => "nullable|integer",
         ];
     }
 

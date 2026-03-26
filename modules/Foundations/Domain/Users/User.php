@@ -26,6 +26,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     "phone_number",
     "avatar",
     "role_marked",
+    "marital_status",
+    "place_of_birth",
+    "nrc",
+    "religion",
+    "nationality",
+    "professional_subject",
+    "possessive_grade",
+    "current_address",
+    "permanent_address",
+    "education_background",
+    "work_experience",
+    "professional_qualifications",
+    "department_name",
+    "position",
+    "service_duration",
     "remember_token",
     "created_at",
     "updated_at",
@@ -58,17 +73,14 @@ class User extends Authenticatable
     protected $casts = [
         'status'    => Status::class,
         'user_type' => UserType::class,
+        'education_background' => 'json',
+        'work_experience' => 'json',
+        'professional_qualifications' => 'json',
     ];
-
 
     public function getAvartarAttribute($value)
     {
         return 'upload/profile.png';
-    }
-
-    public function profile()
-    {
-        return $this->hasOne(UserProfile::class);
     }
 
     public function guardians()
@@ -80,6 +92,18 @@ class User extends Authenticatable
     {
         return $this->hasOne(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner_id')
             ->where(['owner_type' => User::class, 'relation' => 'spouse']);
+    }
+
+    public function father()
+    {
+        return $this->hasOne(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner_id')
+            ->where(['owner_type' => User::class, 'relation' => 'father']);
+    }
+
+    public function mother()
+    {
+        return $this->hasOne(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner_id')
+            ->where(['owner_type' => User::class, 'relation' => 'mother']);
     }
 
     // ==========================================

@@ -51,7 +51,7 @@ class PermissionController extends BaseController
     public function edit(Permission $permission): Response
     {
         return Inertia::render('Permissions/CreateEdit', [
-            'permission' => new PermissionResource($permission)
+            'permission' => (new PermissionResource($permission))->resolve()
         ]);
     }
 
