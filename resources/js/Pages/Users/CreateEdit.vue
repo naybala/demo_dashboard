@@ -494,10 +494,10 @@ const submit = () => {
                 <InputError :message="form.errors.password" class="mt-2" />
               </div>
 
-              <div v-if="!isEditing">
+              <div v-if="!isEditing || form.password.length > 0">
                 <InputLabel
                   for="password_confirmation"
-                  value="Confirm Password *"
+                  :value="'Confirm Password' + (!isEditing || form.password.length > 0 ? ' *' : '')"
                 />
                 <TextInput
                   id="password_confirmation"
@@ -505,7 +505,7 @@ const submit = () => {
                   type="password"
                   class="mt-1 block w-full bg-gray-50"
                   placeholder="Confirm Password"
-                  required
+                  :required="!isEditing || form.password.length > 0"
                 />
               </div>
             </div>

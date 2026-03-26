@@ -58,6 +58,61 @@ class UpdateUserRequest extends FormRequest
         }
     }
 
+
+    public function getUserData(): array
+    {
+        $data = $this->validated();
+        $profile = $this->input('profile', []);
+
+        $userData = [
+            'fullname'     => $data['fullname'],
+            'staff_id'     => $data['staff_id'],
+            'email'        => $data['email'] ?? null,
+            'user_type'    => $data['user_type'],
+            'gender'       => $data['gender'] ?? null,
+            'dob'          => $data['dob'] ?? null,
+            'phone_number' => $data['phone_number'] ?? null,
+            'status'       => $data['status'] ?? 'active',
+            'avatar'       => $data['avatar'] ?? null,
+            'role_marked'  => $data['role'] ?? null,
+            'department_name' => $profile['work_experience']['department'] ?? null,
+            'position'        => $profile['work_experience']['position'] ?? null,
+            'degree'          => $profile['education_background']['degree'] ?? null,
+            'certificate'     => $profile['education_background']['certificate'] ?? null,
+            'institution'     => $profile['education_background']['institution'] ?? null,
+            'year'            => $profile['education_background']['year'] ?? null,
+            'specialization'  => $profile['education_background']['specialization'] ?? null,
+            'work_years'      => $profile['work_experience']['years'] ?? null,
+            'duration'        => $profile['work_experience']['duration'] ?? null,
+            'location'        => $profile['work_experience']['location'] ?? null,
+            'marital_status'  => $profile['marital_status'] ?? null,
+            'place_of_birth'  => $profile['place_of_birth'] ?? null,
+            'nrc'             => $profile['nrc'] ?? null,
+            'religion'        => $profile['religion'] ?? null,
+            'nationality'     => $profile['nationality'] ?? null,
+            'professional_subject' => $profile['professional_subject'] ?? null,
+            'possessive_grade'     => $profile['possessive_grade'] ?? null,
+            'current_address'      => $profile['current_address'] ?? null,
+            'permanent_address'    => $profile['permanent_address'] ?? null,
+            'professional_qualifications' => $profile['professional_qualifications'] ?? null,
+        ];
+
+        if (!empty($data['password'])) {
+            $userData['password'] = Hash::make($data['password']);
+        }
+
+        return [
+            'user_data' => $userData,
+            'relations' => [
+                'spouse'   => $this->input('spouse', null),
+                'father'   => $this->input('father', null),
+                'mother'   => $this->input('mother', null),
+                'role'     => $this->input('role'),
+                'class_id' => $this->input('class_id'),
+            ]
+        ];
+    }
+
     public function messages(): array
     {
         return [

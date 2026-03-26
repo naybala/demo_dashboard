@@ -13,6 +13,7 @@ return new class extends Migration
             $table->morphs('owner'); // student or teacher
             $table->string('relation'); // father, mother, guardian
             $table->string('name');
+            $table->text('avatar')->nullable();
             $table->string('nrc')->nullable();
             $table->text('qualification')->nullable();
             $table->text('job')->nullable();

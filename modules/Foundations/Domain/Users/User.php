@@ -4,6 +4,7 @@ namespace BasicDashboard\Foundations\Domain\Users;
 use App\Enums\Common\Status;
 use App\Enums\Users\UserType;
 use App\Observers\AuditObserver;
+use BasicDashboard\Foundations\Domain\Guardians\Guardian;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -86,7 +88,7 @@ class User extends Authenticatable
 
     public function getAvatarAttribute($value)
     {
-        return $value ? \Illuminate\Support\Facades\Storage::disk('s3')->url($value) : 'upload/profile.png';
+        return $value ? Storage::disk('s3')->url($value) : 'upload/profile.png';
     }
 
     public function setAvatarAttribute($value)
@@ -105,24 +107,24 @@ class User extends Authenticatable
 
     public function guardians()
     {
-        return $this->morphMany(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner');
+        return $this->morphMany(Guardian::class, 'owner');
     }
 
     public function spouse()
     {
-        return $this->hasOne(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner_id')
+        return $this->hasOne(Guardian::class, 'owner_id')
             ->where(['owner_type' => User::class, 'relation' => 'spouse']);
     }
 
     public function father()
     {
-        return $this->hasOne(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner_id')
+        return $this->hasOne(Guardian::class, 'owner_id')
             ->where(['owner_type' => User::class, 'relation' => 'father']);
     }
 
     public function mother()
     {
-        return $this->hasOne(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner_id')
+        return $this->hasOne(Guardian::class, 'owner_id')
             ->where(['owner_type' => User::class, 'relation' => 'mother']);
     }
 

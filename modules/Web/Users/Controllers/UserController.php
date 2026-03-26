@@ -64,7 +64,7 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $this->userService->createUser($request->validated());
+        $this->userService->createUser($request->getUserData());
 
         return redirect()->route('users.index')->with('success', __('user.user_created'));
     }
@@ -87,7 +87,7 @@ class UserController extends Controller
     {
         $decodedId = customDecoder($id);
         $user      = User::findOrFail($decodedId);
-        $this->userService->updateUser($user, $request->validated());
+        $this->userService->updateUser($user, $request->getUserData());
 
         return redirect()->route('users.index')->with('success', __('user.user_updated'));
     }
