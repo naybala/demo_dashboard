@@ -4,6 +4,7 @@ namespace BasicDashboard\Web\Users\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
 {
@@ -15,6 +16,12 @@ class UserResource extends JsonResource
             'staff_id'     => $this->staff_id,
             'email'        => $this->email,
             'phone_number' => $this->phone_number,
+            'role_marked'  => $this->role_marked,
+            'roles'        => $this->whenLoaded('roles', function () {
+                return $this->roles->map(function ($r) {
+                    return ['id' => $r->id, 'name' => $r->name];
+                });
+            }),
             'gender'       => $this->gender,
             'dob'          => $this->dob,
             'avatar'       => $this->avatar,
@@ -66,6 +73,7 @@ class UserResource extends JsonResource
                     'nrc'          => $father->nrc,
                     'phone'        => $father->phone,
                     'address'      => $father->address,
+                    'alive_status' => $father->alive_status,
                 ] : null;
             })(),
             'mother'       => (function() {
@@ -75,6 +83,7 @@ class UserResource extends JsonResource
                     'nrc'          => $mother->nrc,
                     'phone'        => $mother->phone,
                     'address'      => $mother->address,
+                    'alive_status' => $mother->alive_status,
                 ] : null;
             })(),
             'class_id'     => (function() {

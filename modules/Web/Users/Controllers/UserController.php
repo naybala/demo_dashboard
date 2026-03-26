@@ -11,6 +11,7 @@ use BasicDashboard\Web\Users\Services\UserService;
 use BasicDashboard\Web\Users\Validation\StoreUserRequest;
 use BasicDashboard\Web\Users\Validation\UpdateUserRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
@@ -46,7 +47,6 @@ class UserController extends Controller
     {
         $decodedId = customDecoder($id);
         $user = User::with(['roles', 'guardians'])->findOrFail($decodedId);  
-        dd($user);      
         return Inertia::render('Users/Show', [
             'user' => (new UserResource($user))->resolve(),
         ]);
@@ -58,7 +58,7 @@ class UserController extends Controller
             'types'   => UserType::options(),
             'genders' => Gender::options(),
             'roles'   => Role::where('guard_name', 'web')->get(['id', 'name']),
-            'classes' => \Illuminate\Support\Facades\DB::table('classes')->select('id', 'name')->whereNull('deleted_at')->get(),
+            'classes' => DB::table('classes')->select('id', 'name')->whereNull('deleted_at')->get(),
         ]);
     }
 
@@ -79,7 +79,7 @@ class UserController extends Controller
             'types'   => UserType::options(),
             'genders' => Gender::options(),
             'roles'   => Role::where('guard_name', 'web')->get(['id', 'name']),
-            'classes' => \Illuminate\Support\Facades\DB::table('classes')->select('id', 'name')->whereNull('deleted_at')->get(),
+            'classes' => DB::table('classes')->select('id', 'name')->whereNull('deleted_at')->get(),
         ]);
     }
 

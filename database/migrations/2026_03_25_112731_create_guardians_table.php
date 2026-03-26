@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('job')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
+            $table->string("password")->nullable(); // for guardian login
             $table->text('address')->nullable();
             $table->string('alive_status')->default('alive'); // alive, dead
             $table->unsignedInteger('created_by')->nullable();

@@ -12,7 +12,6 @@ class UserService
     public function getPaginatedUsers(array $filters)
     {
         return User::query()
-            ->where('user_type', UserType::User)
             ->filterByKeyword($filters['keyword'] ?? null)
             ->with(['roles', 'guardians'])
             ->orderByLatest()

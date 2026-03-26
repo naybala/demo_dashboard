@@ -89,6 +89,20 @@ class User extends Authenticatable
         return $value ? \Illuminate\Support\Facades\Storage::disk('s3')->url($value) : 'upload/profile.png';
     }
 
+    public function setAvatarAttribute($value)
+    {
+        if ($value) {
+            $cloudUrl = config('config.cloud_url');
+            if ($cloudUrl && str_starts_with($value, $cloudUrl)) {
+                $value = str_replace(rtrim($cloudUrl, '/') . '/', '', $value);
+            }
+            if ($value === 'upload/profile.png' || $value === rtrim($cloudUrl, '/') . '/' || empty($value)) {
+                $value = null;
+            }
+        }
+        $this->attributes['avatar'] = $value;
+    }
+
     public function guardians()
     {
         return $this->morphMany(\BasicDashboard\Foundations\Domain\Guardians\Guardian::class, 'owner');

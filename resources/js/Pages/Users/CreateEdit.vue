@@ -32,7 +32,7 @@ const typeOptions = computed(
 const genderOptions = computed(
   () =>
     props.genders?.map((gender) => ({
-      id: gender.value,
+      id: String(gender.value),
       label: gender.label,
     })) || [],
 );
@@ -54,10 +54,10 @@ const form = useForm({
   password: "",
   password_confirmation: "",
   user_type: props.user?.user_type || props.types?.[0]?.value || "",
-  gender: props.user?.gender || "",
+  gender: props.user?.gender ? String(props.user.gender) : "",
   dob: props.user?.dob || "",
   phone_number: props.user?.phone_number || "",
-  role: props.user?.roles?.[0]?.name || "",
+  role: props.user?.roles?.[0]?.name || props.user?.role_marked || "",
   status: props.user?.status || "active",
   profile: {
     marital_status: props.user?.profile?.marital_status || "",
