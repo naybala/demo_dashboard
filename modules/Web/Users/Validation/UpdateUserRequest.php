@@ -28,7 +28,7 @@ class UpdateUserRequest extends FormRequest
         $id = customDecoder($this->user);
         return [
             "fullname"     => "required|string|max:100",
-            "staff_id"     => ["required", "string", Rule::unique('users', 'staff_id')->ignore($id)->whereNull('deleted_at')],
+            "staff_id"     => ["nullable", "string", Rule::unique('users', 'staff_id')->ignore($id)->whereNull('deleted_at')],
             "email"        => ["nullable", "email", Rule::unique('users', 'email')->ignore($id)->whereNull('deleted_at')],
             "password"     => "nullable|confirmed|min:8",
             "status"       => "required",

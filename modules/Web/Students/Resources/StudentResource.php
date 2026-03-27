@@ -2,8 +2,9 @@
 
 namespace BasicDashboard\Web\Students\Resources;
 
+use BasicDashboard\Web\Classes\Resources\ClassResource;
+use BasicDashboard\Web\Grades\Resources\GradeResource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class StudentResource extends JsonResource
 {
@@ -27,7 +28,7 @@ class StudentResource extends JsonResource
             'religion'          => $this->religion,
             'address'           => $this->address,
             'registration_date' => $this->registration_date?->format('Y-m-d'),
-            'avatar'            => Storage::url($this->avatar),
+            'avatar'            => $this->avatar,
             'student_info'      => $this->student_info,
             
             // Academic Details
@@ -36,8 +37,8 @@ class StudentResource extends JsonResource
             'year_attended'     => $this->year_attended?->format('Y-m-d'),
             'grade_id'          => $this->grade_id ? customEncoder($this->grade_id) : null,
             
-            'class'             => new \BasicDashboard\Web\Classes\Resources\ClassResource($this->whenLoaded('class')),
-            'grade'             => new \BasicDashboard\Web\Grades\Resources\GradeResource($this->whenLoaded('grade')),
+            'class'             => new ClassResource($this->whenLoaded('class')),
+            'grade'             => new GradeResource($this->whenLoaded('grade')),
         ];
 
         // Flatten Guardians info for easy consumer access

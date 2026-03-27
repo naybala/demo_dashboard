@@ -47,8 +47,9 @@ class UserController extends Controller
     {
         $decodedId = customDecoder($id);
         $user = User::with(['roles', 'guardians'])->findOrFail($decodedId);  
+        $user = (new UserResource($user))->resolve();
         return Inertia::render('Users/Show', [
-            'user' => (new UserResource($user))->resolve(),
+            'user' => $user,
         ]);
     }
 

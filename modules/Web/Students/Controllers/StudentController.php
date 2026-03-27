@@ -65,7 +65,7 @@ class StudentController extends BaseController
     {
         $decodedId = customDecoder($id);
         $student = $this->studentService->findOrFail($decodedId);
-        $student = (new StudentResource($student))->resolve();        
+        $student = (new StudentResource($student))->resolve();       
         return Inertia::render('School/Students/Show', [
             'student' => $student,
         ]);

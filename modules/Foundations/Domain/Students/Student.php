@@ -9,6 +9,7 @@ use BasicDashboard\Foundations\Domain\Classes\SchoolClass;
 use BasicDashboard\Foundations\Domain\Grades\Grade;
 use BasicDashboard\Foundations\Domain\Guardians\Guardian;
 use BasicDashboard\Foundations\Domain\Marks\Mark;
+use Illuminate\Support\Facades\Storage;
 
 
 class Student extends Model
@@ -50,12 +51,13 @@ class Student extends Model
         'year_attended'     => 'date',
     ];
 
-    public function getProfilePhotoAttribute($value)
+    public function getAvatarAttribute($value)
     {
-        return $value ? \Illuminate\Support\Facades\Storage::disk('s3')->url($value) : 'upload/profile.png';
+        return $value ? Storage::disk('s3')->url($value) : 'upload/profile.png';
     }
 
-    public function setProfilePhotoAttribute($value)
+
+     public function setAvatarAttribute($value)
     {
         if ($value) {
             $cloudUrl = config('config.cloud_url');
@@ -66,7 +68,7 @@ class Student extends Model
                 $value = null;
             }
         }
-        $this->attributes['profile_photo'] = $value;
+        $this->attributes['avatar'] = $value;
     }
 
     public function class()

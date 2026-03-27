@@ -225,15 +225,17 @@ const submit = () => {
               </div>
 
               <div>
-                <InputLabel for="staff_id" value="Staff ID *" />
+                <InputLabel for="staff_id" value="Staff ID" />
                 <TextInput
                   id="staff_id"
                   v-model="form.staff_id"
                   type="text"
                   class="mt-1 block w-full bg-gray-50"
                   placeholder="Staff ID"
-                  required
                 />
+                <p class="mt-1 text-xs text-gray-500">
+                  Leave blank to auto-generate (e.g. STAF-2026-0001)
+                </p>
                 <InputError :message="form.errors.staff_id" class="mt-2" />
               </div>
 

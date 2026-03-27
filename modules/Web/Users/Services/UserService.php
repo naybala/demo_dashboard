@@ -21,7 +21,13 @@ class UserService
     public function createUser(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $user = User::create($data['user_data']);
+            $userData = $data['user_data'];
+            
+            if (empty($userData['staff_id'])) {
+                $userData['staff_id'] = $this->generateStaffId();
+            }
+            
+            $user = User::create($userData);
 
             if (!empty($data['relations']['spouse']['name'])) {
                 $user->guardians()->create(array_merge($data['relations']['spouse'], ['relation' => 'spouse']));
@@ -107,5 +113,26 @@ class UserService
             DB::table('classes')->where('head_teacher_id', $user->id)->update(['head_teacher_id' => null]);
             return $user->delete();
         });
+    }
+
+    private function generateStaffId(): string
+    {
+        $prefix = 'STAF-';
+        $year = date('Y');
+        $fullPrefix = $prefix . $year . '-';
+        
+        $latest = User::withTrashed()
+            ->where('staff_id', 'like', $fullPrefix . '%')
+            ->orderBy('staff_id', 'desc')
+            ->first();
+
+        if (!$latest) {
+            return $fullPrefix . '0001';
+        }
+
+        $lastNumber = (int) substr($latest->staff_id, strlen($fullPrefix));
+        $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        
+        return $fullPrefix . $nextNumber;
     }
 }

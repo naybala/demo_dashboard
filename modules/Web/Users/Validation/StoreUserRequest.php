@@ -29,7 +29,7 @@ class StoreUserRequest extends FormRequest
     {
         return [
             "fullname"     => "required|string|max:100",
-            "staff_id"     => ["required", "string", Rule::unique('users', 'staff_id')->whereNull('deleted_at')],
+            "staff_id"     => ["nullable", "string", Rule::unique('users', 'staff_id')->whereNull('deleted_at')],
             "email"        => ["nullable", "email", Rule::unique('users', 'email')->whereNull('deleted_at')],
             "password"     => "required|confirmed|min:8",
             "status"       => "required",
