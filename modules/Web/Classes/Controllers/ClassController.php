@@ -40,9 +40,26 @@ class ClassController extends BaseController
         ]);
     }
 
-    public function overview(): Response
+    public function overview(Request $request): Response
     {
-        return Inertia::render('School/Classes/ClassSubject');
+        $classId = $request->query('id') ? customDecoder($request->query('id')) : null;
+        $data = $this->classService->getOverviewData($classId);
+        
+        return Inertia::render('School/Classes/ClassSubject', [
+            'classes' => ClassResource::collection($data['classes'])->toArray(request()),
+            'selectedClass' => $data['selectedClass'] ? (new ClassResource($data['selectedClass']))->toArray(request()) : null,
+        ]);
+    }
+
+    public function storeTimetable(Request $request, string $id): RedirectResponse
+    {
+        try {
+            $decodedId = customDecoder($id);
+            $this->classService->updateTimetable($decodedId, $request->input('file_path'));
+            return back()->with('success', __('Timetable updated successfully'));
+        } catch (Throwable $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function create(): Response

@@ -28,11 +28,13 @@ class ClassResource extends JsonResource
             'co_teacher_name'   => $this->coTeacher?->fullname,
             'notes'             => $this->notes,
             'status'            => $this->status,
+            'students_count'    => $this->students_count,
+            'timetable_url'     => $this->documents()->where('type', 'timetable')->first()?->url,
             'subjects'          => $this->subjects->map(fn($s) => [
                 'id'             => customEncoder($s->id),
                 'name'           => $s->name,
                 'teacher_id'     => $s->pivot->teacher_id ? customEncoder($s->pivot->teacher_id) : null,
-                'teacher_name'   => $s->pivot->teacher_id ? \BasicDashboard\Foundations\Domain\Users\User::find($s->pivot->teacher_id)?->fullname : null,
+                'teacher_name'   => $s->pivot->teacher?->fullname,
                 'hours_per_week' => $s->pivot->hours_per_week,
             ]),
         ];

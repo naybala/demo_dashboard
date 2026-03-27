@@ -89,4 +89,55 @@ class ClassService
         $schoolClass->subjects()->detach();
         $schoolClass->delete();
     }
+
+    public function getOverviewData(?int $selectedClassId = null): array
+    {
+        $classes = $this->schoolClass->with(['grade'])->withCount('students')->orderByLatest()->get();
+        
+        $selectedClass = null;
+        if ($selectedClassId) {
+            $selectedClass = $this->findOrFail($selectedClassId);
+            $selectedClass->loadCount('students');
+            
+            // Manual eager load subject teachers to avoid N+1 and relationship errors
+            if ($selectedClass->subjects->isNotEmpty()) {
+                $teacherIds = $selectedClass->subjects->pluck('pivot.teacher_id')->filter()->unique();
+                if ($teacherIds->isNotEmpty()) {
+                    $teachers = \BasicDashboard\Foundations\Domain\Users\User::whereIn('id', $teacherIds)->get()->keyBy('id');
+                    $selectedClass->subjects->each(function ($subject) use ($teachers) {
+                        $subject->pivot->setRelation('teacher', $teachers->get($subject->pivot->teacher_id));
+                    });
+                }
+            }
+        } elseif ($classes->isNotEmpty()) {
+            // Default to first class if none selected
+            $selectedClass = $this->findOrFail($classes->first()->id);
+            $selectedClass->loadCount('students');
+            
+            if ($selectedClass->subjects->isNotEmpty()) {
+                $teacherIds = $selectedClass->subjects->pluck('pivot.teacher_id')->filter()->unique();
+                if ($teacherIds->isNotEmpty()) {
+                    $teachers = \BasicDashboard\Foundations\Domain\Users\User::whereIn('id', $teacherIds)->get()->keyBy('id');
+                    $selectedClass->subjects->each(function ($subject) use ($teachers) {
+                        $subject->pivot->setRelation('teacher', $teachers->get($subject->pivot->teacher_id));
+                    });
+                }
+            }
+        }
+
+        return [
+            'classes' => $classes,
+            'selectedClass' => $selectedClass
+        ];
+    }
+
+    public function updateTimetable(int $classId, string $filePath): void
+    {
+        $schoolClass = $this->schoolClass->findOrFail($classId);
+        
+        $schoolClass->documents()->updateOrCreate(
+            ['type' => 'timetable'],
+            ['file_path' => $filePath, 'updated_by' => Auth::id()]
+        );
+    }
 }

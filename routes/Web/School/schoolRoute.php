@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::resource('grades', GradeController::class);
 Route::resource('students', StudentController::class);
 Route::get('overview-classes', [ClassController::class, 'overview'])->name('overview-classes');
+Route::post('classes/{id}/timetable', [ClassController::class, 'storeTimetable'])->name('classes.timetable.store');
 Route::resource('classes', ClassController::class);
 Route::resource('academic-sessions', AcademicSessionController::class);
 Route::resource('exams', ExamController::class);

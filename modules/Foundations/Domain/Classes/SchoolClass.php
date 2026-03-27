@@ -10,6 +10,7 @@ use BasicDashboard\Foundations\Domain\Users\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use BasicDashboard\Foundations\Domain\Documents\Document;
 
 class SchoolClass extends Model
 {
@@ -67,6 +68,11 @@ class SchoolClass extends Model
         return $this->belongsToMany(Subject::class, 'class_subjects', 'class_id', 'subject_id')
                     ->withPivot('teacher_id', 'hours_per_week')
                     ->withTimestamps();
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'owner');
     }
 
     public function scopeFilterByKeyword($query, ?string $keyword)
