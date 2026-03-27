@@ -42,7 +42,8 @@ class StudentController extends BaseController
             ]),
             'classes' => $this->classService->paginate(['paginate' => 1000])->map(fn($c) => [
                 'id' => customEncoder($c->id),
-                'name' => $c->name
+                'grade_id' => customEncoder($c->grade_id),
+                'section' => $c->section
             ]),
             'academic_sessions' => $this->academicSessionService->paginate(['paginate' => 1000])->map(fn($s) => [
                 'id' => customEncoder($s->id),
@@ -84,7 +85,8 @@ class StudentController extends BaseController
             ]),
             'classes' => $this->classService->paginate(['paginate' => 1000])->map(fn($c) => [
                 'id' => customEncoder($c->id),
-                'name' => $c->name
+                'grade_id' => customEncoder($c->grade_id),
+                'section' => $c->section
             ]),
             'academic_sessions' => $this->academicSessionService->paginate(['paginate' => 1000])->map(fn($s) => [
                 'id' => customEncoder($s->id),

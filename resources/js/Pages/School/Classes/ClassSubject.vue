@@ -1,9 +1,13 @@
 <script setup>
+import { __ } from "@/helpers.js";
 import { ref, computed } from "vue";
+
+const translate = __;
+const t = translate;
 import { Head, router, useForm } from "@inertiajs/vue3";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import Modal from "@/Components/Modal.vue";
-import DocumentUpload from "@/Components/DocumentUpload.vue";
+import ImageUpload from "@/Components/ImageUpload.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 
@@ -152,10 +156,11 @@ const saveTimetable = () => {
           {{ activeClass?.timetable_url ? 'Update' : 'Upload' }} Timetable Photo
         </h3>
         <div class="mb-6">
-          <DocumentUpload
+          <ImageUpload
             v-model="timetableForm.file_path"
-            label="Timetable Photo"
-            :show-view="true"
+            path="classes/timetables"
+            :label="__('school.timetable_photo', 'Timetable Photo')"
+            aspect-ratio="aspect-video"
           />
         </div>
         <div class="flex justify-end gap-3">

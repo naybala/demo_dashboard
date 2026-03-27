@@ -10,7 +10,7 @@ import AvatarUpload from "@/Components/AvatarUpload.vue";
 import DocumentUpload from "@/Components/DocumentUpload.vue";
 import { useForm, Head, Link, router } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 
 const props = defineProps({
   student: {
@@ -26,9 +26,12 @@ const props = defineProps({
   },
 });
 
-const classOptions = computed(() =>
-  props.classes.map((c) => ({ id: c.id, label: c.name })),
-);
+const classOptions = computed(() => {
+  if (!form.grade_id) return [];
+  return props.classes
+    .filter((c) => c.grade_id == form.grade_id)
+    .map((c) => ({ id: c.id, label: c.section }));
+});
 
 const gradeOptions = computed(() =>
   props.grades.map((g) => ({ id: g.id, label: g.name })),
@@ -94,6 +97,17 @@ const form = useForm({
     props.student?.additional_documents?.statement_of_purpose || "",
   signature: props.student?.additional_documents?.signature || "",
 });
+
+// Reset class when grade changes
+watch(
+  () => form.grade_id,
+  (newGradeId, oldGradeId) => {
+    // Only reset if it's a manual change (not initial load)
+    if (oldGradeId !== undefined && oldGradeId !== "") {
+      form.class_id = "";
+    }
+  },
+);
 
 const submit = () => {
   if (props.is_editing) {
@@ -206,6 +220,17 @@ const submit = () => {
                     <InputError
                       :message="form.errors.academic_year"
                       class="mt-2"
+                    />
+                  </div>
+
+                  <div>
+                    <InputLabel for="grade_id" value="Grade" />
+                    <SearchableSelect
+                      id="grade_id"
+                      v-model="form.grade_id"
+                      :options="gradeOptions"
+                      placeholder="Select Grade..."
+                      class="mt-1 block w-full"
                     />
                   </div>
 
@@ -462,16 +487,6 @@ const submit = () => {
                       type="date"
                       v-model="form.year_attended"
                       class="mt-1 block w-full bg-gray-50"
-                    />
-                  </div>
-                  <div>
-                    <InputLabel for="grade_id" value="Grade" />
-                    <SearchableSelect
-                      id="grade_id"
-                      v-model="form.grade_id"
-                      :options="gradeOptions"
-                      placeholder="Select Grade..."
-                      class="mt-1 block w-full"
                     />
                   </div>
                 </div>
