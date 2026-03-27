@@ -2,6 +2,7 @@
 
 namespace BasicDashboard\Foundations\Domain\Grades;
 
+use BasicDashboard\Foundations\Domain\Classes\SchoolClass;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
