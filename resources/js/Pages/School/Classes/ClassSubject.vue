@@ -22,7 +22,7 @@ const timetableForm = useForm({
 });
 
 const selectClass = (id) => {
-  router.get(route("overview-classes"), { id: id }, { preserveState: true });
+  router.get("/overview-classes", { id: id }, { preserveState: true });
 };
 
 const openTimetableModal = () => {
@@ -31,7 +31,7 @@ const openTimetableModal = () => {
 };
 
 const saveTimetable = () => {
-  timetableForm.post(route("classes.timetable.store", { id: activeClass.value.id }), {
+  timetableForm.post(`/classes/${activeClass.value.id}/timetable`, {
     onSuccess: () => {
       showTimetableModal.value = false;
     },
