@@ -157,7 +157,7 @@ const submit = () => {
         >
           <div class="p-8 border-b border-gray-100 dark:border-gray-700">
             <div class="mb-6 flex justify-center">
-              <AvatarUpload v-model="form.avatar" />
+              <AvatarUpload v-model="form.avatar" path="users/avatars" />
             </div>
 
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
@@ -499,7 +499,10 @@ const submit = () => {
               <div v-if="!isEditing || form.password.length > 0">
                 <InputLabel
                   for="password_confirmation"
-                  :value="'Confirm Password' + (!isEditing || form.password.length > 0 ? ' *' : '')"
+                  :value="
+                    'Confirm Password' +
+                    (!isEditing || form.password.length > 0 ? ' *' : '')
+                  "
                 />
                 <TextInput
                   id="password_confirmation"

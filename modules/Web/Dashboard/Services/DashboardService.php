@@ -20,10 +20,12 @@ class DashboardService extends BaseController
     public function getDashboardData(array $filters = []): array
     {        
         return [
-            'stats' => [],
-            'monthly_revenue' => [],
-            'daily_revenue' => [],
-            'filters' => []
+            'stats' => [
+                'total_students' => DB::table('students')->whereNull('deleted_at')->count(),
+                'total_teachers' => DB::table('users')->where('user_type', 2)->whereNull('deleted_at')->count(),
+                'total_classes'  => DB::table('classes')->whereNull('deleted_at')->count(),
+            ],
+            'filters' => $filters
         ];
     }
 

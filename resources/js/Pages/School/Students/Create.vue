@@ -334,7 +334,10 @@ const submit = () => {
 
                   <div class="pt-4">
                     <InputLabel value="Profile Picture" class="mb-2" />
-                    <AvatarUpload v-model="form.avatar" />
+                    <AvatarUpload
+                      v-model="form.avatar"
+                      path="students/avatars"
+                    />
                     <InputError :message="form.errors.avatar" class="mt-2" />
                   </div>
                 </div>

@@ -46,8 +46,8 @@ const form = ref({
 const errors = ref({});
 
 const headers = [
-  __("school.student_code", "Code"),
   __("school.student_name", "Full Name"),
+  __("school.student_code", "Code"),
   __("school.gender", "Gender"),
   __("school.dob", "DOB"),
   { label: __("table.action", "Action"), class: "text-center" },
@@ -68,10 +68,6 @@ const handleReset = () => {
 
 const openCreatePage = () => {
   router.get("/students/create");
-};
-
-const openEditPage = (student) => {
-  router.get(`/students/${student.id}/edit`);
 };
 
 const confirmDelete = (student) => {
@@ -106,13 +102,17 @@ const deleteStudent = () => {
     <div class="py-6">
       <div class="mx-auto sm:px-6 lg:px-8">
         <!-- Header & Stats -->
-        <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div
+          class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
           <div>
             <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
               {{ __("school.students", "Students") }}
             </h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {{ __("school.students_subtitle", "Manage your school students.") }}
+              {{
+                __("school.students_subtitle", "Manage your school students.")
+              }}
             </p>
           </div>
           <div class="flex items-center gap-3">
@@ -120,8 +120,18 @@ const deleteStudent = () => {
               @click="openCreatePage"
               class="flex items-center gap-2 text-sm font-medium bg-blue-600 hover:bg-blue-700"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
               {{ __("messages.create", "Add Student") }}
             </PrimaryButton>
@@ -129,7 +139,9 @@ const deleteStudent = () => {
         </div>
 
         <!-- Filter Bar -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+        <div
+          class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
+        >
           <div class="flex flex-col md:flex-row gap-4 items-end">
             <div class="flex-1 w-full">
               <TextInput
@@ -144,7 +156,10 @@ const deleteStudent = () => {
               <SecondaryButton @click="handleReset" v-if="search">
                 {{ __("messages.reset", "Reset") }}
               </SecondaryButton>
-              <PrimaryButton @click="handleSearch" class="bg-gray-700 hover:bg-gray-800">
+              <PrimaryButton
+                @click="handleSearch"
+                class="bg-gray-700 hover:bg-gray-800"
+              >
                 {{ __("messages.search", "Search") }}
               </PrimaryButton>
             </div>
@@ -152,41 +167,70 @@ const deleteStudent = () => {
         </div>
 
         <!-- Table -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+        >
+          <div
+            class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500"
+          >
             Showing {{ data.length }} of {{ meta.total }} students
           </div>
-          
+
           <BaseTable :headers="headers">
             <tr
               v-for="student in data"
               :key="student.id"
               class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0"
             >
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-medium"
+              >
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10">
+                    <img
+                      class="h-10 w-10 rounded-full object-cover border border-gray-200"
+                      :src="student.avatar || '/upload/profile.png'"
+                      alt=""
+                    />
+                  </div>
+                  <div class="ml-4">
+                    <div
+                      class="text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      {{ student.full_name }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
+              >
                 {{ student.student_code }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-medium">
-                {{ student.full_name }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 capitalize">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 capitalize"
+              >
                 {{ student.gender }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+              >
                 {{ student.dob }}
               </td>
               <td class="px-6 py-4 text-sm text-center">
                 <div class="flex items-center justify-center gap-2">
-                  <Link
-                    :href="`/students/${student.id}`"
-                  >
-                    <SecondaryButton>{{ __("messages.view", "View") }}</SecondaryButton>
+                  <Link :href="`/students/${student.id}`">
+                    <SecondaryButton>{{
+                      __("messages.view", "View")
+                    }}</SecondaryButton>
                   </Link>
                   <Link
                     v-if="permissions.includes('edit students')"
                     :href="`/students/${student.id}/edit`"
                   >
-                    <SecondaryButton>{{ __("messages.edit", "Edit") }}</SecondaryButton>
+                    <SecondaryButton>{{
+                      __("messages.edit", "Edit")
+                    }}</SecondaryButton>
                   </Link>
                   <SecondaryButton
                     v-if="permissions.includes('delete students')"

@@ -41,11 +41,7 @@ class HandleInertiaRequests extends Middleware
                     'id' => $request->user()->id,
                     'fullname' => $request->user()->fullname,
                     'email' => $request->user()->email,
-                    'avatar' => (function($user) {
-                        $avatarCloudPhoto = $user->avatar ?: config('cache.default_profile_photo_cloud');
-                        $avatarLocalPhoto = $user->avatar ?: config('cache.default_profile_photo_local');
-                        return config('cache.file_system_disk') == 'local' ? $avatarLocalPhoto : \Illuminate\Support\Facades\Storage::url($avatarCloudPhoto);
-                    })($request->user()),
+                    'avatar' => $request->user()->avatar,
                 ] : null,
             ],
             'flash' => [
