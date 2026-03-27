@@ -7,6 +7,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import SearchableSelect from "@/Components/SearchableSelect.vue";
 import AvatarUpload from "@/Components/AvatarUpload.vue";
+import DocumentUpload from "@/Components/DocumentUpload.vue";
 import { useForm, Head, Link, router } from "@inertiajs/vue3";
 import { __ } from "@/helpers.js";
 import { computed } from "vue";
@@ -83,6 +84,15 @@ const form = useForm({
   guardian_email: props.student?.guardian_email || "",
   guardian_address: props.student?.guardian_address || "",
   guardian_alive_status: props.student?.guardian_alive_status || "alive",
+  academic_transcripts:
+    props.student?.additional_documents?.academic_transcripts || "",
+  degree_certificates:
+    props.student?.additional_documents?.degree_certificates || "",
+  letters_of_recommendation:
+    props.student?.additional_documents?.letters_of_recommendation || "",
+  statement_of_purpose:
+    props.student?.additional_documents?.statement_of_purpose || "",
+  signature: props.student?.additional_documents?.signature || "",
 });
 
 const submit = () => {
@@ -749,23 +759,94 @@ const submit = () => {
                   </div>
                 </div>
               </section>
-
-              <section class="flex flex-col justify-end pb-4 pt-10">
-                <div class="flex justify-end gap-3 mt-auto">
-                  <SecondaryButton @click="router.get('/students')">{{
-                    __("messages.cancel")
-                  }}</SecondaryButton>
-                  <PrimaryButton
-                    type="submit"
-                    :disabled="form.processing"
-                    class="bg-blue-600 hover:bg-blue-700"
-                    >{{
-                      is_editing ? "Update Student" : "Save Student"
-                    }}</PrimaryButton
+            </div>
+            <div class="grid grid-cols-1">
+              <!-- add additional documents -->
+              <section class="mt-12">
+                <div class="flex items-center gap-3 mb-6">
+                  <div
+                    class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+                    {{
+                      __("school.additional_documents", "Additional Documents")
+                    }}
+                  </h3>
+                </div>
+
+                <div class="grid grid-cols-1 gap-8">
+                  <DocumentUpload
+                    v-model="form.academic_transcripts"
+                    label="Academic Transcripts"
+                    :required="true"
+                    path="students/documents"
+                    :show-view="true"
+                    :error="form.errors.academic_transcripts"
+                  />
+                  <DocumentUpload
+                    v-model="form.degree_certificates"
+                    label="Degree Certificates"
+                    :required="true"
+                    path="students/documents"
+                    :show-view="true"
+                    :error="form.errors.degree_certificates"
+                  />
+                  <DocumentUpload
+                    v-model="form.letters_of_recommendation"
+                    label="Letters of Recommendation"
+                    path="students/documents"
+                    :show-view="true"
+                    :error="form.errors.letters_of_recommendation"
+                  />
+                  <DocumentUpload
+                    v-model="form.statement_of_purpose"
+                    label="Statement of Purpose"
+                    :required="true"
+                    path="students/documents"
+                    :show-view="true"
+                    :error="form.errors.statement_of_purpose"
+                  />
+                  <DocumentUpload
+                    v-model="form.signature"
+                    label="Signature"
+                    :required="true"
+                    path="students/documents"
+                    :show-view="true"
+                    :error="form.errors.signature"
+                  />
                 </div>
               </section>
             </div>
+            <section class="flex flex-col justify-end pb-4 pt-10">
+              <div class="flex justify-end gap-3 mt-auto">
+                <SecondaryButton @click="router.get('/students')">{{
+                  __("messages.cancel")
+                }}</SecondaryButton>
+                <PrimaryButton
+                  type="submit"
+                  :disabled="form.processing"
+                  class="bg-blue-600 hover:bg-blue-700"
+                  >{{
+                    is_editing ? "Update Student" : "Save Student"
+                  }}</PrimaryButton
+                >
+              </div>
+            </section>
           </div>
         </form>
       </div>

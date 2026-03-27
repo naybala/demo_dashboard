@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use BasicDashboard\Foundations\Domain\Classes\SchoolClass;
 use BasicDashboard\Foundations\Domain\Grades\Grade;
 use BasicDashboard\Foundations\Domain\Guardians\Guardian;
+use BasicDashboard\Foundations\Domain\Documents\Document;
 use BasicDashboard\Foundations\Domain\Marks\Mark;
 use Illuminate\Support\Facades\Storage;
 
@@ -57,7 +58,7 @@ class Student extends Model
     }
 
 
-     public function setAvatarAttribute($value)
+    public function setAvatarAttribute($value)
     {
         if ($value) {
             $cloudUrl = config('config.cloud_url');
@@ -70,6 +71,7 @@ class Student extends Model
         }
         $this->attributes['avatar'] = $value;
     }
+    
 
     public function class()
     {
@@ -84,6 +86,11 @@ class Student extends Model
     public function guardians()
     {
         return $this->morphMany(Guardian::class, 'owner');
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'owner');
     }
 
     public function marks()

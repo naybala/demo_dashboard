@@ -35,6 +35,7 @@ class StudentService
             $student = $this->student->create($request);
             
             $this->saveGuardians($student, $request);
+            $this->saveDocuments($student, $request);
             
             return $student;
         });
@@ -60,7 +61,7 @@ class StudentService
 
     public function findOrFail(int $id): Student
     {
-        return $this->student->with(['guardians', 'class', 'grade'])->findOrFail($id);
+        return $this->student->with(['guardians', 'class', 'grade', 'documents'])->findOrFail($id);
     }
 
     public function update(array $request, string $id): Student
@@ -72,6 +73,7 @@ class StudentService
             $student->update($request);
             
             $this->saveGuardians($student, $request);
+            $this->saveDocuments($student, $request);
             
             return $student;
         });
@@ -115,6 +117,31 @@ class StudentService
         $decodedId = customDecoder($id);
         $student = $this->student->findOrFail($decodedId);
         $student->guardians()->delete();
+        $student->documents()->delete();
         $student->delete();
+    }
+
+    private function saveDocuments(Student $student, array $request): void
+    {
+        $documentTypes = [
+            'academic_transcripts',
+            'degree_certificates',
+            'letters_of_recommendation',
+            'statement_of_purpose',
+            'signature',
+        ];
+
+        foreach ($documentTypes as $type) {
+            if (isset($request[$type])) {
+                if ($request[$type]) {
+                    $student->documents()->updateOrCreate(
+                        ['type' => $type],
+                        ['file_path' => $request[$type], 'updated_by' => Auth::id()]
+                    );
+                } else {
+                    $student->documents()->where('type', $type)->delete();
+                }
+            }
+        }
     }
 }

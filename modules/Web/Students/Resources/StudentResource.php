@@ -39,6 +39,10 @@ class StudentResource extends JsonResource
             
             'class'             => new ClassResource($this->whenLoaded('class')),
             'grade'             => new GradeResource($this->whenLoaded('grade')),
+            
+            'additional_documents' => $this->documents->mapWithKeys(function ($doc) {
+                return [$doc->type => $doc->url];
+            }),
         ];
 
         // Flatten Guardians info for easy consumer access

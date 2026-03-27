@@ -70,6 +70,13 @@ class StoreStudentRequest extends FormRequest
             'guardian_email'         => 'nullable|email|max:255',
             'guardian_address'       => 'nullable|string',
             'guardian_alive_status'  => 'nullable|string|max:50',
+
+            // Additional Documents
+            'academic_transcripts'      => ($studentId ? 'nullable' : 'required') . '|string',
+            'degree_certificates'       => ($studentId ? 'nullable' : 'required') . '|string',
+            'letters_of_recommendation' => 'nullable|string',
+            'statement_of_purpose'      => ($studentId ? 'nullable' : 'required') . '|string',
+            'signature'                 => ($studentId ? 'nullable' : 'required') . '|string',
         ];
     }
 
