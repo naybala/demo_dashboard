@@ -16,8 +16,9 @@ class StoreStudentRequest extends FormRequest
         $studentId = $this->route('student') ? customDecoder($this->route('student')) : null;
 
         return [
-            'student_code'      => 'required|string|max:50|unique:students,student_code,' . $studentId,
-            'academic_year'     => 'nullable|string|max:20',
+            'student_code'      => 'nullable|string|max:50|unique:students,student_code,' . $studentId,
+            'student_info'      => 'nullable|string|max:50',
+            'academic_year'     => 'nullable|date',
             'class_id'          => 'nullable|exists:classes,id',
             'full_name'         => 'required|string|max:255',
             'first_name'        => 'nullable|string|max:255',
@@ -32,11 +33,12 @@ class StoreStudentRequest extends FormRequest
             'religion'          => 'nullable|string|max:100',
             'address'           => 'nullable|string',
             'registration_date' => 'nullable|date',
+            'avatar'     => 'nullable|string',
             
             // Academic Details
             'school_attended'   => 'nullable|string|max:255',
             'grade_attended'    => 'nullable|string|max:100',
-            'year_attended'     => 'nullable|string|max:50',
+            'year_attended'     => 'nullable|date',
             'grade_id'          => 'nullable|exists:grades,id',
 
             // Father's Information

@@ -120,6 +120,7 @@ const submitForm = () => {
   form[method](url, {
     onSuccess: () => {
       showCreateEditModal.value = false;
+      form.reset();
     },
     onError: () => {
       // Errors are automatically handled by useForm

@@ -84,6 +84,7 @@ const submitForm = () => {
   form[method](url, {
     onSuccess: () => {
       showCreateEditModal.value = false;
+      form.reset();
     },
   });
 };

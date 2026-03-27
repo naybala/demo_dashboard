@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use BasicDashboard\Foundations\Domain\Classes\SchoolClass;
 use BasicDashboard\Foundations\Domain\Grades\Grade;
+use BasicDashboard\Foundations\Domain\Guardians\Guardian;
+use BasicDashboard\Foundations\Domain\Marks\Mark;
 
 
 class Student extends Model
@@ -35,6 +37,7 @@ class Student extends Model
         'grade_attended',
         'year_attended',
         'grade_id',
+        'student_info',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -43,7 +46,28 @@ class Student extends Model
     protected $casts = [
         'dob'               => 'date',
         'registration_date' => 'date',
+        'academic_year'     => 'date',
+        'year_attended'     => 'date',
     ];
+
+    public function getProfilePhotoAttribute($value)
+    {
+        return $value ? \Illuminate\Support\Facades\Storage::disk('s3')->url($value) : 'upload/profile.png';
+    }
+
+    public function setProfilePhotoAttribute($value)
+    {
+        if ($value) {
+            $cloudUrl = config('config.cloud_url');
+            if ($cloudUrl && str_starts_with($value, $cloudUrl)) {
+                $value = str_replace(rtrim($cloudUrl, '/') . '/', '', $value);
+            }
+            if ($value === 'upload/profile.png' || $value === rtrim($cloudUrl, '/') . '/' || empty($value)) {
+                $value = null;
+            }
+        }
+        $this->attributes['profile_photo'] = $value;
+    }
 
     public function class()
     {

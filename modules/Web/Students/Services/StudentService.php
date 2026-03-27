@@ -26,12 +26,35 @@ class StudentService
     {
         return DB::transaction(function () use ($request) {
             $request['created_by'] = Auth::id();
+            
+            if (empty($request['student_code'])) {
+                $request['student_code'] = $this->generateStudentCode();
+            }
+            
             $student = $this->student->create($request);
             
             $this->saveGuardians($student, $request);
             
             return $student;
         });
+    }
+
+    private function generateStudentCode(): string
+    {
+        $prefix = 'STU-';
+        $latest = $this->student->withTrashed()
+            ->where('student_code', 'like', $prefix . '%')
+            ->orderBy('student_code', 'desc')
+            ->first();
+
+        if (!$latest) {
+            return $prefix . date('Y') . '0001';
+        }
+
+        $lastNumber = (int) substr($latest->student_code, strlen($prefix) + 4);
+        $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        
+        return $prefix . date('Y') . $nextNumber;
     }
 
     public function findOrFail(int $id): Student
@@ -72,6 +95,7 @@ class StudentService
 
             if (!$student->guardians()->where('relation', $prefix)->exists()) {
                 $data['created_by'] = Auth::id();
+                $data['password'] = \Illuminate\Support\Facades\Hash::make('password');
             }
 
             if ($data['name']) {

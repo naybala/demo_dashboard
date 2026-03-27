@@ -11,7 +11,7 @@ class StudentResource extends JsonResource
         $data = [
             'id'                => customEncoder($this->id),
             'student_code'      => $this->student_code,
-            'academic_year'     => $this->academic_year,
+            'academic_year'     => $this->academic_year?->format('Y-m-d'),
             'class_id'          => $this->class_id ? customEncoder($this->class_id) : null,
             'full_name'         => $this->full_name,
             'first_name'        => $this->first_name,
@@ -26,11 +26,13 @@ class StudentResource extends JsonResource
             'religion'          => $this->religion,
             'address'           => $this->address,
             'registration_date' => $this->registration_date?->format('Y-m-d'),
+            'profile_photo'     => $this->profile_photo,
+            'student_info'      => $this->student_info,
             
             // Academic Details
             'school_attended'   => $this->school_attended,
             'grade_attended'    => $this->grade_attended,
-            'year_attended'     => $this->year_attended,
+            'year_attended'     => $this->year_attended?->format('Y-m-d'),
             'grade_id'          => $this->grade_id ? customEncoder($this->grade_id) : null,
         ];
 
