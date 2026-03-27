@@ -218,7 +218,7 @@ const deleteStudent = () => {
       :message="
         __(
           'school.delete_student_message',
-          `Are you sure you want to delete ${studentToDelete?.fullname}? This action cannot be undone.`,
+          `Are you sure you want to delete ${studentToDelete?.full_name}? This action cannot be undone.`,
         )
       "
       @confirm="deleteStudent"

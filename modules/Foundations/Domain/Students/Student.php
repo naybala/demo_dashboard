@@ -32,7 +32,7 @@ class Student extends Model
         'religion',
         'address',
         'registration_date',
-        'profile_photo',
+        'avatar',
         'school_attended',
         'grade_attended',
         'year_attended',

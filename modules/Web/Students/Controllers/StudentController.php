@@ -65,9 +65,9 @@ class StudentController extends BaseController
     {
         $decodedId = customDecoder($id);
         $student = $this->studentService->findOrFail($decodedId);
-        
+        $student = (new StudentResource($student))->resolve();        
         return Inertia::render('School/Students/Show', [
-            'student' => clone (new StudentResource($student))->resolve(),
+            'student' => $student,
         ]);
     }
 
@@ -77,7 +77,7 @@ class StudentController extends BaseController
         $student = $this->studentService->findOrFail($decodedId);
         
         return Inertia::render('School/Students/Create', [
-            'student' => new StudentResource($student),
+            'student' => (new StudentResource($student))->resolve(),
             'grades' => $this->gradeService->paginate(['paginate' => 1000])->map(fn($g) => [
                 'id' => customEncoder($g->id),
                 'name' => $g->name

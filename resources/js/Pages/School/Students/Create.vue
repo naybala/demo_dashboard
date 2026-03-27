@@ -47,7 +47,7 @@ const form = useForm({
   email: props.student?.email || "",
   registration_date: props.student?.registration_date || "",
   student_code: props.student?.student_code || "",
-  avatar: props.student?.profile_photo || "",
+  avatar: props.student?.avatar || "",
   gender: props.student?.gender || "male",
   dob: props.student?.dob || "",
   place_of_birth: props.student?.place_of_birth || "",
@@ -334,11 +334,8 @@ const submit = () => {
 
                   <div class="pt-4">
                     <InputLabel value="Profile Picture" class="mb-2" />
-                    <AvatarUpload v-model="form.profile_photo" />
-                    <InputError
-                      :message="form.errors.profile_photo"
-                      class="mt-2"
-                    />
+                    <AvatarUpload v-model="form.avatar" />
+                    <InputError :message="form.errors.avatar" class="mt-2" />
                   </div>
                 </div>
               </div>

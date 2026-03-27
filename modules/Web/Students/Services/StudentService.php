@@ -6,6 +6,7 @@ use BasicDashboard\Foundations\Domain\Students\Student;
 use BasicDashboard\Foundations\Domain\Guardians\Guardian;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StudentService
 {
@@ -59,7 +60,7 @@ class StudentService
 
     public function findOrFail(int $id): Student
     {
-        return $this->student->with(['guardians'])->findOrFail($id);
+        return $this->student->with(['guardians', 'class', 'grade'])->findOrFail($id);
     }
 
     public function update(array $request, string $id): Student
@@ -95,7 +96,7 @@ class StudentService
 
             if (!$student->guardians()->where('relation', $prefix)->exists()) {
                 $data['created_by'] = Auth::id();
-                $data['password'] = \Illuminate\Support\Facades\Hash::make('password');
+                $data['password'] = Hash::make('password');
             }
 
             if ($data['name']) {
