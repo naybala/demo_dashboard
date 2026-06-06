@@ -8,6 +8,8 @@ use BasicDashboard\Web\Common\BaseController;
 use BasicDashboard\Web\DailyIncomes\Resources\DailyIncomeResource;
 use BasicDashboard\Web\DailyIncomes\Services\DailyIncomeService;
 use BasicDashboard\Web\OwnProducts\Services\OwnProductService;
+use BasicDashboard\Web\Warehouses\Services\WarehouseService;
+use BasicDashboard\Web\Warehouses\Resources\WarehouseResource;
 use BasicDashboard\Web\DailyIncomes\Validation\StoreDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\UpdateDailyIncomeRequest;
 use BasicDashboard\Web\DailyIncomes\Validation\DeleteDailyIncomeRequest;
@@ -40,7 +42,8 @@ class DailyIncomeController extends BaseController
 
     public function __construct(
         private DailyIncomeService $dailyIncomeService,
-        private OwnProductService $ownProductService
+        private OwnProductService $ownProductService,
+        private WarehouseService $warehouseService
     ) {
     }
 
@@ -55,8 +58,10 @@ class DailyIncomeController extends BaseController
 
     public function create(): Response
     {
+        $warehouses = WarehouseResource::collection($this->warehouseService->all())->response()->getData(true)['data'];
         return Inertia::render('DailyIncomes/CreateEdit', [
             'products' => [],
+            'warehouses' => $warehouses,
         ]);
     }
 
@@ -91,10 +96,12 @@ class DailyIncomeController extends BaseController
         // so the SearchableSelect can show the correct initial labels.
         $productIds = $items->pluck('own_product_id')->unique();
         $products = $this->ownProductService->getByIdsWithUnit($productIds);
+        $warehouses = WarehouseResource::collection($this->warehouseService->all())->response()->getData(true)['data'];
 
         return Inertia::render('DailyIncomes/CreateEdit', [
             'dailyIncome' => $data,
             'products' => $products,
+            'warehouses' => $warehouses,
         ]);
     }
 

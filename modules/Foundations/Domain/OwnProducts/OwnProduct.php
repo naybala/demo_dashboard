@@ -96,4 +96,14 @@ class OwnProduct extends Model
     {
         return $this->dailyIncomes()->exists();
     }
+
+    public function inventories(): HasMany
+    {
+        return $this->hasMany(\BasicDashboard\Foundations\Domain\Inventories\Inventory::class);
+    }
+
+    public function stockTransactions(): HasMany
+    {
+        return $this->hasMany(\BasicDashboard\Foundations\Domain\StockTransactions\StockTransaction::class);
+    }
 }

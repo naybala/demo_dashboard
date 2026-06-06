@@ -12,6 +12,7 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
   };
 
   const form = useForm({
+    warehouse_id: dailyIncome?.warehouse_id || "",
     date: dailyIncome?.date || new Date().toISOString().split("T")[0],
     is_instant: dailyIncome?.is_instant ?? true,
     note: dailyIncome?.note || "",
@@ -24,8 +25,9 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
       investment: item.investment.toString().replace(/,/g, ""),
       profit: item.profit.toString().replace(/,/g, ""),
       id: item.id,
+      stock_left: null,
     })) || [
-      { own_product_id: "", amount: "", price: "", investment: "", profit: "" },
+      { own_product_id: "", amount: "", price: "", investment: "", profit: "", stock_left: null },
     ],
   });
 
@@ -40,6 +42,7 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
           price: "",
           investment: "",
           profit: "",
+          stock_left: null,
         },
       ],
     }));
@@ -79,6 +82,52 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     });
   };
 
+  const fetchStockLeft = async (index) => {
+    const data = get(form);
+    const item = data.items[index];
+    const warehouseId = data.warehouse_id;
+    const ownProductId = item.own_product_id;
+
+    if (!warehouseId || !ownProductId) {
+      form.update((d) => {
+        const items = [...d.items];
+        items[index] = { ...items[index], stock_left: null };
+        return { ...d, items };
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`/inventories/check-stock?warehouse_id=${encodeURIComponent(warehouseId)}&own_product_id=${encodeURIComponent(ownProductId)}`);
+      const result = await response.json();
+      form.update((d) => {
+        const items = [...d.items];
+        items[index] = { ...items[index], stock_left: result.quantity };
+        return { ...d, items };
+      });
+    } catch (err) {
+      console.error("Failed to fetch stock:", err);
+    }
+  };
+
+  const fetchAllStock = async () => {
+    const data = get(form);
+    const warehouseId = data.warehouse_id;
+    if (!warehouseId) {
+      form.update((d) => {
+        const items = d.items.map(item => ({ ...item, stock_left: null }));
+        return { ...d, items };
+      });
+      return;
+    }
+
+    for (let i = 0; i < data.items.length; i++) {
+      if (data.items[i].own_product_id) {
+        await fetchStockLeft(i);
+      }
+    }
+  };
+
   const handleProductChange = (index, selectedProduct = null) => {
     if (selectedProduct) updateRegistry(selectedProduct);
 
@@ -107,6 +156,8 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
       }
       return { ...data, items };
     });
+
+    fetchStockLeft(index);
   };
 
   const submit = () => {
@@ -126,6 +177,21 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     );
   });
 
+  // Derived store to validate stock levels
+  const isStockSufficient = derived(form, ($form) => {
+    if (!$form.warehouse_id) return true;
+    return $form.items.every((item) => {
+      if (!item.own_product_id || item.stock_left === null) return true;
+      const amount = parseInt(item.amount.toString().replace(/,/g, "")) || 0;
+      return amount <= item.stock_left;
+    });
+  });
+
+  // Fetch initial stock levels on mount
+  setTimeout(() => {
+    fetchAllStock();
+  }, 100);
+
   return {
     form,
     addItem,
@@ -134,5 +200,7 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     calculateProfit,
     submit,
     totalAmount,
+    fetchAllStock,
+    isStockSufficient,
   };
 }

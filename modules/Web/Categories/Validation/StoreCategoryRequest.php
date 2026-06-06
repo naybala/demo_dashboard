@@ -24,7 +24,7 @@ class StoreCategoryRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'is_show' => $this->has('is_show') ? 1 : 0,
+            'is_show' => filter_var($this->input('is_show'), FILTER_VALIDATE_BOOLEAN) ? 1 : 0,
         ]);
     }
 

@@ -75,7 +75,7 @@
       >
         {formatNumber(product.profit)}
       </td>
-      <td class="flex gap-2">
+      <td class="px-6 py-4 align-middle"><div class="flex gap-2 items-center">
         {#if permissions.includes("edit own-products")}
           <Link href={`/own-products/${product.id}/edit`}>
             <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
@@ -89,7 +89,7 @@
             {__("messages.delete", "Delete")}
           </SecondaryButton>
         {/if}
-      </td>
+      </div></td>
     </tr>
   {/each}
 </BaseTable>

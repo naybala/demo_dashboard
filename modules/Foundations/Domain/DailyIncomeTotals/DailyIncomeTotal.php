@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 #[ObservedBy([AuditObserver::class])]
 #[Fillable([
+    'warehouse_id',
     'voucher_no',
     'total_price',
     'total_investment',
@@ -32,5 +33,10 @@ class DailyIncomeTotal extends Model
     public function dailyIncomes(): HasMany
     {
         return $this->hasMany(DailyIncome::class);
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(\BasicDashboard\Foundations\Domain\Warehouses\Warehouse::class);
     }
 }

@@ -13,6 +13,7 @@
 
   export let dailyIncome = null;
   export let products = [];
+  export let warehouses = [];
 
   $: permissions = $page.props.permissions || [];
 
@@ -20,6 +21,12 @@
     id: p.id,
     label: `${p.name} (${p.unit?.name || "No Unit"})`,
     searchKey: p.name,
+  }));
+
+  $: warehouseOptions = warehouses.map((w) => ({
+    id: w.id,
+    label: `${w.name}${w.location ? ` (${w.location})` : ""}`,
+    searchKey: w.name,
   }));
 
   const {
@@ -30,6 +37,8 @@
     calculateProfit,
     submit,
     totalAmount: totalAmountStore,
+    fetchAllStock,
+    isStockSufficient,
   } = useDailyIncomeForm(dailyIncome, products);
 
   $: totalAmount = formatNumber($totalAmountStore, 0);
@@ -62,7 +71,7 @@
 
   <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
     <form on:submit|preventDefault={submit} class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
           <InputLabel for="date" value={__("dailyIncome.date", "Date")} />
           <input
@@ -73,6 +82,20 @@
             required
           />
           <InputError message={$form.errors.date} />
+        </div>
+
+        <div>
+          <InputLabel for="warehouse_id" value="Warehouse (for stock deduction)" />
+          <div class="mt-1">
+            <SearchableSelect
+              asyncUrl="/warehouses/search"
+              options={warehouseOptions}
+              bind:value={$form.warehouse_id}
+              placeholder="Select Warehouse"
+              on:change={fetchAllStock}
+            />
+          </div>
+          <InputError message={$form.errors.warehouse_id} />
         </div>
 
         <div class="flex items-end">
@@ -137,6 +160,20 @@
                           "Select Product",
                         )}
                       />
+                      {#if $form.warehouse_id && item.own_product_id}
+                        <div class="mt-1 text-xs font-semibold">
+                          {#if item.stock_left !== null}
+                            <span class={parseInt(item.amount || 0) > item.stock_left ? 'text-red-600 dark:text-red-400 font-bold bg-red-50 dark:bg-red-950/30 px-1.5 py-0.5 rounded' : 'text-green-600 dark:text-green-400 font-bold bg-green-50 dark:bg-green-950/30 px-1.5 py-0.5 rounded'}>
+                              Stock Left: {item.stock_left}
+                              {#if parseInt(item.amount || 0) > item.stock_left}
+                                &nbsp;(Insufficient!)
+                              {/if}
+                            </span>
+                          {:else}
+                            <span class="text-gray-400">Loading stock...</span>
+                          {/if}
+                        </div>
+                      {/if}
                     </td>
                     <td class="px-4 py-2">
                       <CurrencyInput
@@ -228,6 +265,20 @@
                       "Select Product",
                     )}
                   />
+                  {#if $form.warehouse_id && item.own_product_id}
+                    <div class="text-xs font-semibold mt-1">
+                      {#if item.stock_left !== null}
+                        <span class={parseInt(item.amount || 0) > item.stock_left ? 'text-red-600 dark:text-red-400 font-bold bg-red-50 dark:bg-red-950/30 px-1.5 py-0.5 rounded' : 'text-green-600 dark:text-green-400 font-bold bg-green-50 dark:bg-green-950/30 px-1.5 py-0.5 rounded'}>
+                          Stock Left: {item.stock_left}
+                          {#if parseInt(item.amount || 0) > item.stock_left}
+                            &nbsp;(Insufficient!)
+                          {/if}
+                        </span>
+                      {:else}
+                        <span class="text-gray-400">Loading stock...</span>
+                      {/if}
+                    </div>
+                  {/if}
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -295,11 +346,16 @@
       </div>
 
       <div class="flex items-center justify-end gap-4">
+        {#if !$isStockSufficient}
+          <span class="text-sm text-red-600 dark:text-red-400 font-medium bg-red-50 dark:bg-red-950/30 px-3 py-1.5 rounded">
+            ⚠️ Please correct items with insufficient stock.
+          </span>
+        {/if}
         <SecondaryButton on:click={() => router.get("/daily-incomes")}
           >{__("messages.cancel", "Cancel")}</SecondaryButton
         >
         {#if (dailyIncome && permissions.includes("edit daily-incomes")) || (!dailyIncome && permissions.includes("create daily-incomes"))}
-          <PrimaryButton type="submit" disabled={$form.processing}>
+          <PrimaryButton type="submit" disabled={$form.processing || !$isStockSufficient}>
             {dailyIncome
               ? __("messages.update_record", "Update Record")
               : __("messages.save_record", "Save Record")}

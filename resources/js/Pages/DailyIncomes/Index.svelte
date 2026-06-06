@@ -235,7 +235,7 @@
         >
           {income.is_instant ? "Yes" : "No"}
         </td>
-        <td class="flex gap-2">
+        <td class="px-6 py-4 align-middle"><div class="flex gap-2 items-center">
           <Link href={`/daily-incomes/${income.id}`}>
             <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
           </Link>
@@ -252,7 +252,7 @@
               {__("messages.delete", "Delete")}
             </SecondaryButton>
           {/if}
-        </td>
+        </div></td>
       </tr>
     {/each}
   </BaseTable>

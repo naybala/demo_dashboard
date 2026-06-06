@@ -21,13 +21,13 @@ class PermissionSeeder extends Seeder
         $permissions = ['manage','show','create','edit','delete'];
         foreach($features as $feature){
             foreach($permissions as $permission){
-                Permission::create([
+                Permission::firstOrCreate([
                     'name' => $permission . ' ' . $feature
                 ]);
             }
         }
 
-        $role = Role::create(['name' => 'super_admin','can_access_panel'=>1]);
+        $role = Role::firstOrCreate(['name' => 'super_admin'], ['can_access_panel'=>1]);
         $role->givePermissionTo(Permission::all());
         
     }

@@ -74,6 +74,7 @@ class DailyIncomeAction
     public function createTotal(array $request, array $totals,$model)
     {
         return $model->create([
+            'warehouse_id' => $request['warehouse_id'] ?? null,
             'voucher_no' => $this->generateVoucherNo(),
             'total_price' => $totals['total_price'],
             'total_investment' => $totals['total_investment'],
@@ -96,6 +97,7 @@ class DailyIncomeAction
     public function updateTotal(int $totalId, array $request, array $totals,$model): void
     {
         $model->where('id', $totalId)->update([
+            'warehouse_id' => $request['warehouse_id'] ?? null,
             'total_price' => $totals['total_price'],
             'total_investment' => $totals['total_investment'],
             'total_profit' => $totals['total_profit'],

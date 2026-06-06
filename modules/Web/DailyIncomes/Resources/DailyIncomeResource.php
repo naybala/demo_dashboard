@@ -33,7 +33,8 @@ class DailyIncomeResource extends JsonResource
             "is_instant" => $this->dailyIncomeTotal?->is_instant ?? true,
             "voucher_no" => $this->dailyIncomeTotal?->voucher_no,
             "note" => $this->dailyIncomeTotal?->note,
-
+            "warehouse_id" => $this->dailyIncomeTotal?->warehouse_id ? customEncoder($this->dailyIncomeTotal->warehouse_id) : null,
+            "warehouse_name" => $this->dailyIncomeTotal?->warehouse?->name,
         ];
     }
 }

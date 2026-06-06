@@ -40,7 +40,7 @@
           {category.is_show ? "Yes" : "No"}
         </span>
       </td>
-      <td class="flex gap-2">
+      <td class="px-6 py-4 align-middle"><div class="flex gap-2 items-center">
         {#if permissions.includes("edit categories")}
           <SecondaryButton on:click={() => onEdit(category)}>
             {__("messages.edit", "Edit")}
@@ -52,7 +52,7 @@
             {__("messages.delete", "Delete")}
           </SecondaryButton>
         {/if}
-      </td>
+      </div></td>
     </tr>
   {/each}
 </BaseTable>

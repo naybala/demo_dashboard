@@ -25,7 +25,8 @@ class DailyIncomeService
         private DailyIncome $dailyIncome,
         private DailyIncomeTotal $dailyIncomeTotal,
         private OwnProduct $ownProduct,
-        private DailyIncomeAction $dailyIncomeAction
+        private DailyIncomeAction $dailyIncomeAction,
+        private \BasicDashboard\Web\Inventories\Services\InventoryService $inventoryService
     )
     {
     }
@@ -33,7 +34,7 @@ class DailyIncomeService
     public function paginate(array $request)
     {
         return $this->dailyIncome
-            ->with(['ownProduct.unit', 'dailyIncomeTotal'])
+            ->with(['ownProduct.unit', 'dailyIncomeTotal.warehouse'])
             ->filterByKeyword($request['keyword'] ?? null)
             ->filterByDateRange($request['from_date'] ?? null, $request['to_date'] ?? null)
             ->filterByInstant($request['is_instant'] ?? null)
@@ -45,24 +46,101 @@ class DailyIncomeService
     public function store(array $request): void
     {
         DB::transaction(function () use ($request) {
+            $warehouseId = isset($request['warehouse_id']) ? (int) customDecoder($request['warehouse_id']) : null;
+            if ($warehouseId) {
+                foreach ($request['items'] as $item) {
+                    $productId = (int) customDecoder($item['own_product_id']);
+                    $amount = (float) str_replace(',', '', $item['amount']);
+                    if (!$this->inventoryService->hasSufficientStock($warehouseId, $productId, $amount)) {
+                        $product = $this->ownProduct->find($productId);
+                        $productName = $product ? $product->name : 'Product';
+                        throw new \App\Exceptions\WarningException("Insufficient stock for {$productName} in the selected warehouse.");
+                    }
+                }
+            }
+
             $totals = $this->dailyIncomeAction->calculateTotalsAndRows($request);
             $total = $this->dailyIncomeAction->createTotal($request, $totals,$this->dailyIncomeTotal);
             $this->dailyIncomeAction->createDailyIncomes($totals['rows'], $total->id,$this->dailyIncome);
+
+            if ($warehouseId) {
+                foreach ($request['items'] as $item) {
+                    $productId = (int) customDecoder($item['own_product_id']);
+                    $amount = (float) str_replace(',', '', $item['amount']);
+
+                    \BasicDashboard\Foundations\Domain\StockTransactions\StockTransaction::create([
+                        'warehouse_id' => $warehouseId,
+                        'own_product_id' => $productId,
+                        'quantity' => $amount,
+                        'type' => 'out',
+                        'reference_type' => 'daily_income',
+                        'reference_id' => $total->id,
+                        'note' => "Sold via Voucher: " . $total->voucher_no,
+                        'created_by' => auth()->id(),
+                    ]);
+
+                    $this->inventoryService->adjustInventory($warehouseId, $productId, -$amount);
+                }
+            }
         });
     }
 
     public function findOrFail(string $id): DailyIncome
     {
-        return $this->dailyIncome->with('dailyIncomeTotal')->findOrFail($id);
+        return $this->dailyIncome->with(['dailyIncomeTotal.warehouse'])->findOrFail($id);
     }
 
     public function update(array $request, string $id): void
     {
         DB::transaction(function () use ($request, $id) {
             $totalId = $this->dailyIncomeAction->getTotalIdFromIncome($id,$this->dailyIncome);
+
+            // Revert all old stock transactions for this voucher
+            $oldTransactions = \BasicDashboard\Foundations\Domain\StockTransactions\StockTransaction::where('reference_type', 'daily_income')
+                ->where('reference_id', $totalId)
+                ->get();
+            foreach ($oldTransactions as $tx) {
+                $this->inventoryService->adjustInventory($tx->warehouse_id, $tx->own_product_id, $tx->quantity);
+                $tx->delete();
+            }
+
+            $newWarehouseId = isset($request['warehouse_id']) ? (int) customDecoder($request['warehouse_id']) : null;
+            if ($newWarehouseId) {
+                foreach ($request['items'] as $item) {
+                    $productId = (int) customDecoder($item['own_product_id']);
+                    $amount = (float) str_replace(',', '', $item['amount']);
+                    if (!$this->inventoryService->hasSufficientStock($newWarehouseId, $productId, $amount)) {
+                        $product = $this->ownProduct->find($productId);
+                        $productName = $product ? $product->name : 'Product';
+                        throw new \App\Exceptions\WarningException("Insufficient stock for {$productName} in the selected warehouse.");
+                    }
+                }
+            }
+
             $totals = $this->dailyIncomeAction->calculateTotalsAndRows($request);
             $this->dailyIncomeAction->updateTotal($totalId, $request, $totals,$this->dailyIncomeTotal);
             $this->dailyIncomeAction->replaceDailyIncomes($totalId, $totals['rows'],$this->dailyIncome);
+
+            if ($newWarehouseId) {
+                $total = $this->dailyIncomeTotal->findOrFail($totalId);
+                foreach ($request['items'] as $item) {
+                    $productId = (int) customDecoder($item['own_product_id']);
+                    $amount = (float) str_replace(',', '', $item['amount']);
+
+                    \BasicDashboard\Foundations\Domain\StockTransactions\StockTransaction::create([
+                        'warehouse_id' => $newWarehouseId,
+                        'own_product_id' => $productId,
+                        'quantity' => $amount,
+                        'type' => 'out',
+                        'reference_type' => 'daily_income',
+                        'reference_id' => $totalId,
+                        'note' => "Sold via Voucher (Updated): " . $total->voucher_no,
+                        'created_by' => auth()->id(),
+                    ]);
+
+                    $this->inventoryService->adjustInventory($newWarehouseId, $productId, -$amount);
+                }
+            }
         });
     }
 
@@ -71,8 +149,18 @@ class DailyIncomeService
         DB::transaction(function () use ($id) {
             $dailyIncome = $this->dailyIncome->findOrFail($id);
             if ($dailyIncome->daily_income_total_id) {
-                $this->dailyIncome->where('daily_income_total_id', $dailyIncome->daily_income_total_id)->delete();
-                $this->dailyIncomeTotal->where('id', $dailyIncome->daily_income_total_id)->delete();
+                $totalId = $dailyIncome->daily_income_total_id;
+
+                $oldTransactions = \BasicDashboard\Foundations\Domain\StockTransactions\StockTransaction::where('reference_type', 'daily_income')
+                    ->where('reference_id', $totalId)
+                    ->get();
+                foreach ($oldTransactions as $tx) {
+                    $this->inventoryService->adjustInventory($tx->warehouse_id, $tx->own_product_id, $tx->quantity);
+                    $tx->delete();
+                }
+
+                $this->dailyIncome->where('daily_income_total_id', $totalId)->delete();
+                $this->dailyIncomeTotal->where('id', $totalId)->delete();
             } else {
                 $dailyIncome->delete();
             }

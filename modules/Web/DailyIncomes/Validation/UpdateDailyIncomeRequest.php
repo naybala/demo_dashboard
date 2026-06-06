@@ -36,12 +36,14 @@ class UpdateDailyIncomeRequest extends FormRequest
 
         $this->merge([
             'is_instant' => $this->boolean('is_instant') ? 1 : 0,
+            'warehouse_id' => $this->filled('warehouse_id') ? customDecoder($this->input('warehouse_id')) : null,
         ]);
     }
 
     public function rules(): array
     {
         return [
+            "warehouse_id" => "nullable|exists:warehouses,id",
             "date" => "required|date",
             "items" => "required|array|min:1",
             "items.*.own_product_id" => "required|exists:own_products,id",
