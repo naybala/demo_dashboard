@@ -53,6 +53,7 @@ Route::group(['middleware' => ['auth', 'permission.check']], function (): void {
     Route::post('daily-incomes/import', [DailyIncomeController::class, 'import'])->name('daily-incomes.import');
     Route::get('daily-incomes/sample-excel', [DailyIncomeController::class, 'downloadSample'])->name('daily-incomes.sample-excel');
     Route::resource('daily-incomes' ,DailyIncomeController::class);
+    Route::get('own-products/pos', [OwnProductController::class, 'posProducts'])->name('own-products.pos');
     Route::get('own-products/search', [OwnProductController::class, 'search'])->name('own-products.search');
     Route::resource('own-products' ,OwnProductController::class);
 

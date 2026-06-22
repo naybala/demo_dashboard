@@ -133,4 +133,49 @@ class OwnProductController extends BaseController
         
         return response()->json($products->response()->getData(true));
     }
+
+    public function posProducts(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $categoryId = $request->get('category_id');
+        $warehouseId = $request->get('warehouse_id');
+        $keyword = $request->get('keyword');
+
+        $query = \BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct::with(['unit', 'category']);
+
+        if ($categoryId && $categoryId !== 'all') {
+            $decodedCategoryId = customDecoder($categoryId);
+            $query->where('category_id', $decodedCategoryId);
+        }
+
+        if ($keyword) {
+            $query->where('name', 'LIKE', '%' . $keyword . '%');
+        }
+
+        $products = $query->orderBy('name')->get();
+
+        $decodedWarehouseId = $warehouseId ? customDecoder($warehouseId) : null;
+        
+        $data = $products->map(function ($product) use ($decodedWarehouseId) {
+            $stock = 0;
+            if ($decodedWarehouseId) {
+                $stockVal = \BasicDashboard\Foundations\Domain\Inventories\Inventory::where('warehouse_id', $decodedWarehouseId)
+                    ->where('own_product_id', $product->id)
+                    ->first();
+                $stock = $stockVal ? (float)$stockVal->quantity : 0;
+            }
+            return [
+                'id' => customEncoder($product->id),
+                'name' => $product->name,
+                'price' => number_format($product->price, 2, '.', ''),
+                'investment' => number_format($product->investment, 2, '.', ''),
+                'profit' => number_format($product->profit, 2, '.', ''),
+                'image' => $product->image,
+                'unit' => $product->unit?->name,
+                'category_id' => customEncoder($product->category_id),
+                'stock' => $stock,
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
 }

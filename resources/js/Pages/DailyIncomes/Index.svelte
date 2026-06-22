@@ -24,6 +24,7 @@
   const headers = [
     { key: "date", label: __("table.date", "Date") },
     { key: "voucher_no", label: __("table.voucher_no", "Voucher No") },
+    { key: "warehouse", label: __("warehouse.warehouse", "Warehouse") },
     { key: "own_product", label: __("table.product_name", "Product") },
     { key: "amount", label: __("table.amount", "Amount") },
     { key: "price", label: __("table.price", "Price") },
@@ -196,14 +197,14 @@
 
   <BaseTable {headers}>
     {#each data as income, i}
-      <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+      <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
         >
           {income.date}
         </td>
         <td
-          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
+          class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white"
         >
           {i > 0 && data[i - 1].voucher_no === income.voucher_no
             ? " "
@@ -212,47 +213,58 @@
         <td
           class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
         >
+          {i > 0 && data[i - 1].voucher_no === income.voucher_no
+            ? " "
+            : income.warehouse_name || "N/A"}
+        </td>
+        <td
+          class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+        >
           {income.own_product}
         </td>
         <td
-          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono"
         >
           {formatNumber(income.amount, 0)}
-          {income.unit}
+          {income.unit || "unit"}
         </td>
         <td
-          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono"
         >
-          {formatNumber(income.price, 0)}
+          {formatNumber(income.price, 0)} MMK
         </td>
         <td
-          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+          class="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400 font-bold font-mono"
         >
-          {formatNumber(income.profit, 0)}
+          {formatNumber(income.profit, 0)} MMK
         </td>
         <td
-          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
+          class="px-6 py-4 whitespace-nowrap text-sm align-middle"
         >
-          {income.is_instant ? "Yes" : "No"}
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold {income.is_instant ? 'bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400'}">
+            {income.is_instant ? "Instant" : "Deferred"}
+          </span>
         </td>
-        <td class="px-6 py-4 align-middle"><div class="flex gap-2 items-center">
-          <Link href={`/daily-incomes/${income.id}`}>
-            <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
-          </Link>
-          {#if permissions.includes("edit daily-incomes")}
-            <Link href={`/daily-incomes/${income.id}/edit`}>
-              <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+        <td class="px-6 py-4 align-middle">
+          <div class="flex gap-2 items-center">
+            <Link href={`/daily-incomes/${income.id}`}>
+              <SecondaryButton>{__("messages.view", "View")}</SecondaryButton>
             </Link>
-          {/if}
-          {#if permissions.includes("delete daily-incomes")}
-            <SecondaryButton
-              variant="danger"
-              on:click={() => confirmDelete(income)}
-            >
-              {__("messages.delete", "Delete")}
-            </SecondaryButton>
-          {/if}
-        </div></td>
+            {#if permissions.includes("edit daily-incomes")}
+              <Link href={`/daily-incomes/${income.id}/edit`}>
+                <SecondaryButton>{__("messages.edit", "Edit")}</SecondaryButton>
+              </Link>
+            {/if}
+            {#if permissions.includes("delete daily-incomes")}
+              <SecondaryButton
+                variant="danger"
+                on:click={() => confirmDelete(income)}
+              >
+                {__("messages.delete", "Delete")}
+              </SecondaryButton>
+            {/if}
+          </div>
+        </td>
       </tr>
     {/each}
   </BaseTable>

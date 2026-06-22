@@ -57,6 +57,14 @@ class PermissionMiddleware
             if (str_ends_with($request->route()->getName(), ".search")) {
                 return $next($request);
             }
+
+            if (str_ends_with($request->route()->getName(), ".check-stock")) {
+                return $next($request);
+            }
+
+            if (str_ends_with($request->route()->getName(), ".pos")) {
+                return $next($request);
+            }
         }
 
         $arrPermission = explode(",", $sessionPermission); //['manage users','create users','manage countries','create countries']

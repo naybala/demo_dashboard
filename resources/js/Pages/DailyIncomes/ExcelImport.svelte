@@ -2,12 +2,22 @@
   import AdminLayout from "@/Layouts/AdminLayout.svelte";
   import PrimaryButton from "@/Components/PrimaryButton.svelte";
   import SecondaryButton from "@/Components/SecondaryButton.svelte";
+  import SearchableSelect from "@/Components/SearchableSelect.svelte";
   import { useForm, router, Link } from "@inertiajs/svelte";
   import { __ } from "@/helpers.js";
+
+  export let warehouses = [];
+
+  $: warehouseOptions = warehouses.map((w) => ({
+    id: w.id,
+    label: `${w.name}${w.location ? ` (${w.location})` : ""}`,
+    searchKey: w.name,
+  }));
 
   let fileInput;
   let form = useForm({
     file: null,
+    warehouse_id: "",
   });
 
   const submit = () => {
@@ -92,6 +102,23 @@
       <hr class="my-6 border-gray-200 dark:border-gray-700" />
 
       <form on:submit|preventDefault={submit} class="max-w-md">
+        <div class="mb-5">
+          <label
+            for="warehouse_select"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
+            Select Warehouse (Optional):
+          </label>
+          <SearchableSelect
+            options={warehouseOptions}
+            bind:value={$form.warehouse_id}
+            placeholder="Direct Import (No Warehouse Stock Deduction)"
+          />
+          <p class="text-[11px] text-gray-400 mt-1.5 leading-relaxed">
+            If a warehouse is selected, stock availability will be validated and deducted for all imported items.
+          </p>
+        </div>
+
         <div class="mb-4">
           <label
             for="excelFile"

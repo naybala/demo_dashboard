@@ -12,10 +12,12 @@ use Exception;
 class DailyIncomesImport implements ToCollection, WithHeadingRow
 {
     protected DailyIncomeService $dailyIncomeService;
+    protected ?string $warehouseId;
 
-    public function __construct(DailyIncomeService $dailyIncomeService)
+    public function __construct(DailyIncomeService $dailyIncomeService, ?string $warehouseId = null)
     {
         $this->dailyIncomeService = $dailyIncomeService;
+        $this->warehouseId = $warehouseId;
     }
 
     public function collection(Collection $rows)
@@ -61,6 +63,7 @@ class DailyIncomesImport implements ToCollection, WithHeadingRow
                     'date' => $date,
                     'is_instant' => $isInstant,
                     'note' => $note,
+                    'warehouse_id' => $this->warehouseId,
                     'items' => []
                 ];
             }

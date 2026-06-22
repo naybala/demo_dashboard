@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use BasicDashboard\Web\DailyIncomes\Imports\DailyIncomesImport;
 use BasicDashboard\Web\DailyIncomes\Exports\DailyIncomesSampleExport;
+use BasicDashboard\Web\Categories\Services\CategoryService;
+use BasicDashboard\Web\Categories\Resources\CategoryResource;
+use BasicDashboard\Web\OwnProducts\Resources\OwnProductResource;
 
 
 /**
@@ -43,7 +46,8 @@ class DailyIncomeController extends BaseController
     public function __construct(
         private DailyIncomeService $dailyIncomeService,
         private OwnProductService $ownProductService,
-        private WarehouseService $warehouseService
+        private WarehouseService $warehouseService,
+        private CategoryService $categoryService
     ) {
     }
 
@@ -59,9 +63,11 @@ class DailyIncomeController extends BaseController
     public function create(): Response
     {
         $warehouses = WarehouseResource::collection($this->warehouseService->all())->response()->getData(true)['data'];
+        $categories = CategoryResource::collection($this->categoryService->all())->response()->getData(true)['data'];
         return Inertia::render('DailyIncomes/CreateEdit', [
             'products' => [],
             'warehouses' => $warehouses,
+            'categories' => $categories,
         ]);
     }
 
@@ -90,18 +96,22 @@ class DailyIncomeController extends BaseController
             'total_price' => number_format($dailyIncome->dailyIncomeTotal?->total_price ??0,2,'.',''),
             'total_investment' => number_format($dailyIncome->dailyIncomeTotal?->total_investment ??0,2,'.',''),
             'total_profit' => number_format($dailyIncome->dailyIncomeTotal?->total_profit ??0,2,'.',''),
+            'warehouse_id' => $dailyIncome->dailyIncomeTotal?->warehouse_id ? customEncoder($dailyIncome->dailyIncomeTotal->warehouse_id) : null,
         ];
 
         // For editing, we should pass the products that are already in the voucher
         // so the SearchableSelect can show the correct initial labels.
         $productIds = $items->pluck('own_product_id')->unique();
         $products = $this->ownProductService->getByIdsWithUnit($productIds);
+        $products = OwnProductResource::collection($products)->response()->getData(true)['data'];
         $warehouses = WarehouseResource::collection($this->warehouseService->all())->response()->getData(true)['data'];
+        $categories = CategoryResource::collection($this->categoryService->all())->response()->getData(true)['data'];
 
         return Inertia::render('DailyIncomes/CreateEdit', [
             'dailyIncome' => $data,
             'products' => $products,
             'warehouses' => $warehouses,
+            'categories' => $categories,
         ]);
     }
 
@@ -147,7 +157,10 @@ class DailyIncomeController extends BaseController
 
     public function importView(): Response
     {
-        return Inertia::render('DailyIncomes/ExcelImport');
+        $warehouses = WarehouseResource::collection($this->warehouseService->all())->response()->getData(true)['data'];
+        return Inertia::render('DailyIncomes/ExcelImport', [
+            'warehouses' => $warehouses
+        ]);
     }
 
     public function downloadSample()
@@ -158,11 +171,13 @@ class DailyIncomeController extends BaseController
     public function import(Request $request): RedirectResponse
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv|max:2048'
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+            'warehouse_id' => 'nullable|string'
         ]);
 
         try {
-            Excel::import(new DailyIncomesImport($this->dailyIncomeService), $request->file('file'));
+            $warehouseId = $request->input('warehouse_id');
+            Excel::import(new DailyIncomesImport($this->dailyIncomeService, $warehouseId), $request->file('file'));
             return redirect()->route(self::ROUTE . '.index')->with('success', 'Excel imported successfully.');
         } catch (Throwable $e) {
             Log::error("DailyIncome import failed", ['error' => $e->getMessage()]);

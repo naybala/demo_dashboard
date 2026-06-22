@@ -22,7 +22,7 @@ class DailyIncomeResource extends JsonResource
             "id" =>customEncoder($this->id),
             "date"=>$this->date,
             "name"=>$this->name,
-            "own_product_id"=>$this->own_product_id,
+            "own_product_id" => customEncoder($this->own_product_id),
             "own_product"=>$this->ownProduct?->name,
             "amount" => number_format($this->amount, 0, '.', ','),
             "price" => number_format($this->price, 0, '.', ','),

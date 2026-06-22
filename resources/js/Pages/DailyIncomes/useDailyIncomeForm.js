@@ -11,8 +11,10 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     }
   };
 
+  const savedWarehouseId = typeof window !== "undefined" ? sessionStorage.getItem("pos_warehouse_id") : "";
+
   const form = useForm({
-    warehouse_id: dailyIncome?.warehouse_id || "",
+    warehouse_id: dailyIncome?.warehouse_id || savedWarehouseId || "",
     date: dailyIncome?.date || new Date().toISOString().split("T")[0],
     is_instant: dailyIncome?.is_instant ?? true,
     note: dailyIncome?.note || "",
@@ -98,7 +100,19 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     }
 
     try {
-      const response = await fetch(`/inventories/check-stock?warehouse_id=${encodeURIComponent(warehouseId)}&own_product_id=${encodeURIComponent(ownProductId)}`);
+      const response = await fetch(`/inventories/check-stock?warehouse_id=${encodeURIComponent(warehouseId)}&own_product_id=${encodeURIComponent(ownProductId)}`, {
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin',
+      });
+      if (!response.ok) {
+        console.warn("check-stock HTTP error:", response.status, await response.text());
+        form.update((d) => {
+          const items = [...d.items];
+          items[index] = { ...items[index], stock_left: null };
+          return { ...d, items };
+        });
+        return;
+      }
       const result = await response.json();
       form.update((d) => {
         const items = [...d.items];
@@ -187,6 +201,91 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     });
   });
 
+  const handleProductClick = (product) => {
+    updateRegistry(product);
+
+    form.update((data) => {
+      const items = [...data.items];
+      const isEmptyFirstItem = items.length === 1 && !items[0].own_product_id;
+      const existingIndex = items.findIndex((item) => item.own_product_id === product.id);
+
+      if (existingIndex !== -1) {
+        const item = { ...items[existingIndex] };
+        const currentAmount = parseInt(item.amount.toString().replace(/,/g, "")) || 0;
+        const newAmount = currentAmount + 1;
+        item.amount = newAmount.toString();
+        
+        const unitPrice = parseFloat(product.price.toString().replace(/,/g, "")) || 0;
+        const unitInv = parseFloat(product.investment.toString().replace(/,/g, "")) || 0;
+        item.price = (newAmount * unitPrice).toFixed(2);
+        item.investment = (newAmount * unitInv).toFixed(2);
+        item.profit = (newAmount * (unitPrice - unitInv)).toFixed(2);
+        
+        items[existingIndex] = item;
+      } else {
+        const newItem = {
+          own_product_id: product.id,
+          amount: "1",
+          price: parseFloat(product.price).toFixed(2),
+          investment: parseFloat(product.investment).toFixed(2),
+          profit: parseFloat(product.profit).toFixed(2),
+          stock_left: product.stock !== undefined ? product.stock : null,
+        };
+
+        if (isEmptyFirstItem) {
+          items[0] = newItem;
+        } else {
+          items.push(newItem);
+        }
+      }
+      return { ...data, items };
+    });
+
+    const currentData = get(form);
+    const addedIndex = currentData.items.findIndex(item => item.own_product_id === product.id);
+    if (addedIndex !== -1 && currentData.items[addedIndex].stock_left === null) {
+      fetchStockLeft(addedIndex);
+    }
+  };
+
+  const updateQuantity = (index, change) => {
+    form.update((data) => {
+      const items = [...data.items];
+      const item = { ...items[index] };
+      const currentAmount = parseInt(item.amount.toString().replace(/,/g, "")) || 0;
+      const newAmount = currentAmount + change;
+
+      if (newAmount <= 0) {
+        if (items.length > 1) {
+          items.splice(index, 1);
+        } else {
+          items[0] = { own_product_id: "", amount: "", price: "", investment: "", profit: "", stock_left: null };
+        }
+      } else {
+        const product = productRegistry.find((p) => p.id === item.own_product_id);
+        if (product) {
+          item.amount = newAmount.toString();
+          const unitPrice = parseFloat(product.price.toString().replace(/,/g, "")) || 0;
+          const unitInv = parseFloat(product.investment.toString().replace(/,/g, "")) || 0;
+          item.price = (newAmount * unitPrice).toFixed(2);
+          item.investment = (newAmount * unitInv).toFixed(2);
+          item.profit = (newAmount * (unitPrice - unitInv)).toFixed(2);
+          items[index] = item;
+        }
+      }
+      return { ...data, items };
+    });
+  };
+
+  const clearCart = () => {
+    form.update((data) => ({
+      ...data,
+      items: [
+        { own_product_id: "", amount: "", price: "", investment: "", profit: "", stock_left: null },
+      ],
+    }));
+  };
+
   // Fetch initial stock levels on mount
   setTimeout(() => {
     fetchAllStock();
@@ -202,5 +301,9 @@ export function useDailyIncomeForm(dailyIncome = null, products = []) {
     totalAmount,
     fetchAllStock,
     isStockSufficient,
+    handleProductClick,
+    updateQuantity,
+    clearCart,
+    productRegistry,
   };
 }
