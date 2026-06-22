@@ -63,25 +63,51 @@
     );
   };
 
-  async function fetchPosProducts() {
+  let currentPage = 1;
+  let hasMore = true;
+  let isLoadingMore = false;
+
+  async function fetchPosProducts(reset = true) {
     if (!$form.warehouse_id) {
       posProductsList = [];
+      hasMore = false;
       return;
     }
-    isLoadingProducts = true;
+
+    if (reset) {
+      currentPage = 1;
+      posProductsList = [];
+      isLoadingProducts = true;
+    } else {
+      isLoadingMore = true;
+    }
+
     try {
-      const url = `/own-products/pos?warehouse_id=${encodeURIComponent($form.warehouse_id)}&category_id=${selectedCategory}&keyword=${encodeURIComponent(searchQuery)}`;
+      const url = `/own-products/pos?warehouse_id=${encodeURIComponent($form.warehouse_id)}&category_id=${selectedCategory}&keyword=${encodeURIComponent(searchQuery)}&page=${currentPage}`;
       const response = await fetch(url, {
         headers: { Accept: "application/json" },
       });
       if (response.ok) {
         const result = await response.json();
-        posProductsList = result.data || [];
+        if (reset) {
+          posProductsList = result.data || [];
+        } else {
+          posProductsList = [...posProductsList, ...(result.data || [])];
+        }
+        hasMore = result.has_more || false;
       }
     } catch (e) {
       console.error("Error fetching POS products:", e);
     } finally {
       isLoadingProducts = false;
+      isLoadingMore = false;
+    }
+  }
+
+  function loadNextPage() {
+    if (hasMore && !isLoadingMore && !isLoadingProducts) {
+      currentPage += 1;
+      fetchPosProducts(false);
     }
   }
 
@@ -94,7 +120,7 @@
     ) {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
-        fetchPosProducts();
+        fetchPosProducts(true);
       }, 300);
     }
   }
@@ -179,6 +205,9 @@
         {clearCart}
         {getProductDetails}
         {calculateProfit}
+        {hasMore}
+        {isLoadingMore}
+        {loadNextPage}
         {submit}
       />
     {/if}

@@ -139,6 +139,8 @@ class OwnProductController extends BaseController
         $categoryId = $request->get('category_id');
         $warehouseId = $request->get('warehouse_id');
         $keyword = $request->get('keyword');
+        $page = (int) $request->get('page', 1);
+        $limit = 24;
 
         $query = \BasicDashboard\Foundations\Domain\OwnProducts\OwnProduct::with(['unit', 'category']);
 
@@ -151,18 +153,22 @@ class OwnProductController extends BaseController
             $query->where('name', 'LIKE', '%' . $keyword . '%');
         }
 
-        $products = $query->orderBy('name')->get();
+        $paginator = $query->orderBy('name')->paginate($limit);
+        $products = $paginator->items();
 
         $decodedWarehouseId = $warehouseId ? customDecoder($warehouseId) : null;
         
-        $data = $products->map(function ($product) use ($decodedWarehouseId) {
-            $stock = 0;
-            if ($decodedWarehouseId) {
-                $stockVal = \BasicDashboard\Foundations\Domain\Inventories\Inventory::where('warehouse_id', $decodedWarehouseId)
-                    ->where('own_product_id', $product->id)
-                    ->first();
-                $stock = $stockVal ? (float)$stockVal->quantity : 0;
-            }
+        $stockLookup = [];
+        if ($decodedWarehouseId && !empty($products)) {
+            $productIds = collect($products)->pluck('id')->toArray();
+            $stockLookup = \BasicDashboard\Foundations\Domain\Inventories\Inventory::where('warehouse_id', $decodedWarehouseId)
+                ->whereIn('own_product_id', $productIds)
+                ->pluck('quantity', 'own_product_id')
+                ->toArray();
+        }
+
+        $data = collect($products)->map(function ($product) use ($decodedWarehouseId, $stockLookup) {
+            $stock = $stockLookup[$product->id] ?? 0;
             return [
                 'id' => customEncoder($product->id),
                 'name' => $product->name,
@@ -172,10 +178,14 @@ class OwnProductController extends BaseController
                 'image' => $product->image,
                 'unit' => $product->unit?->name,
                 'category_id' => customEncoder($product->category_id),
-                'stock' => $stock,
+                'stock' => (float)$stock,
             ];
-        });
+        })->toArray();
 
-        return response()->json(['data' => $data]);
+        return response()->json([
+            'data' => $data,
+            'has_more' => $paginator->hasMorePages(),
+            'next_page' => $page + 1
+        ]);
     }
 }

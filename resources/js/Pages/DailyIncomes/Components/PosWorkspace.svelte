@@ -13,6 +13,8 @@
   export let totalAmount;
   export let permissions = [];
   export let isStockSufficient;
+  export let hasMore = false;
+  export let isLoadingMore = false;
 
   export let handleSearch;
   export let handleProductClick;
@@ -21,6 +23,7 @@
   export let clearCart;
   export let getProductDetails;
   export let calculateProfit;
+  export let loadNextPage;
   export let submit;
 </script>
 
@@ -178,6 +181,19 @@
               </div>
             </div>
           {/each}
+
+          {#if hasMore}
+            <div class="col-span-full flex justify-center pt-6 pb-2">
+              <button
+                type="button"
+                class="px-8 py-3 bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-400 text-indigo-650 font-bold rounded-2xl shadow-sm text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                disabled={isLoadingMore}
+                on:click={loadNextPage}
+              >
+                {isLoadingMore ? "Loading more..." : "Load More Products"}
+              </button>
+            </div>
+          {/if}
         </div>
       {/if}
     </div>
